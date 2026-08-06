@@ -1,0 +1,28 @@
+﻿<form>
+    <div id="die-roller-move-handle"></div>
+    <div class="die-roller-expanded">
+        {{> "systems/tinyd6v14/templates/partials/roll-bar.hbs" excludeTextLabels=true }}
+        <div class="d-flex dr-actions justify-content-center mt-2">
+            <div class="td-actions shape-diamond dr-shapes">
+                <div class="actions-btns">
+                    <button type="button" class="minus dr-act dr-act-minus" title="{{localize "tinyd6.dieRoller.actionRemove"}}">−</button>
+                    <button type="button" class="plus dr-act dr-act-plus" title="{{localize "tinyd6.dieRoller.actionAdd"}}">+</button>
+                </div>
+                <div class="inner">
+                    <div class="action-meter" id="dr-actions-meter">
+                        {{#times actions}}
+                        <button type="button" class="act {{#if (lookup ../spentMap .)}}spent{{else}}avail{{/if}}" data-action-idx="{{.}}"></button>
+                        {{/times}}
+                    </div>
+                </div>
+            </div>
+            <button class="die-roller-collapse" type="button" title="{{localize "tinyd6.dieRoller.collapse"}}">
+                <span class="fas fa-fw fa-chevron-down"></span>
+            </button>
+        </div>
+    </div>
+    <div class="die-roller-collapsed" title="{{localize "tinyd6.dieRoller.expand"}}">
+        <span class="fas fa-fw fa-dice-d6"></span>
+        <span class="fas fa-fw fa-chevron-up"></span>
+    </div>
+</form>

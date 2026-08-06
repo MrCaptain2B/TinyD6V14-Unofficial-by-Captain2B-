@@ -1,0 +1,17 @@
+<div class="td-actions shape-diamond">
+    <div class="actions-btns">
+        {{#if owner}}
+        <button type="button" class="minus" title="{{localize "tinyd6.sheet.actions.minus"}}">−</button>
+        <button type="button" class="plus" title="{{localize "tinyd6.sheet.actions.plus"}}">+</button>
+        {{/if}}
+    </div>
+    <div class="inner">
+        <div class="action-meter">
+            {{#times data.system.actions.max}}
+            <button type="button" class="act {{#if (lt . ../data.system.actions.value)}}spent{{else}}avail{{/if}}"
+                    data-action-idx="{{.}}" title="{{#if (lt . ../data.system.actions.value)}}{{localize "tinyd6.sheet.actions.restore"}}{{else}}{{localize "tinyd6.sheet.actions.spend"}}{{/if}}"></button>
+            {{/times}}
+        </div>
+        <div class="lbl">{{localize "tinyd6.sheet.actions.name"}}</div>
+    </div>
+</div>

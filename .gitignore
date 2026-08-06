@@ -1,0 +1,4 @@
+node_modules
+css/backup/
+templates/hud/token-hud.design.html
+*.bak

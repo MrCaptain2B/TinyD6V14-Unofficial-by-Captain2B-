@@ -1,0 +1,32 @@
+﻿<form class="{{cssClass}}" autocomplete="off">
+    {{> "systems/tinyd6v14/templates/partials/item-header.hbs" placeholder='tinyd6.armor.name'}}
+    <table>
+        <tr>
+            <th class="text-nowrap">{{localize 'tinyd6.armor.type'}}</th>
+            <th class="text-nowrap">{{localize 'tinyd6.armor.damageReduction'}}</th>
+            <th class="text-nowrap">{{localize 'tinyd6.armor.armorHp'}}</th>
+            <th class="text-nowrap">{{localize 'tinyd6.armor.slots'}}</th>
+        </tr>
+        <tr>
+            <td>
+                <select name="system.group">
+                    {{selectOptions config.armorTypes selected=data.system.group localize="true"}}
+                </select>
+            </td>
+            <td>
+                <input type="text" class="text-center" name="system.damageReduction" value="{{data.system.damageReduction}}" data-dtype="Number"/>
+            </td>
+            <td>
+                <div class="armor-hp-inputs d-flex align-items-center">
+                    <input type="text" class="text-center" name="system.armorHp.value" value="{{data.system.armorHp.value}}" data-dtype="Number"/>
+                    <span>/</span>
+                    <input type="text" class="text-center" name="system.armorHp.max" value="{{data.system.armorHp.max}}" data-dtype="Number"/>
+                </div>
+            </td>
+            <td>
+                <input type="text" class="text-center" name="system.slots" value="{{data.system.slots}}" data-dtype="Number"/>
+            </td>
+        </tr>
+    </table>
+    {{editor descriptionHTML target="system.description" button=true owner=owner editable=editable}}
+</form>

@@ -1,0 +1,19 @@
+&.die-roller
+{
+  @import "window-content";
+
+  button
+  {
+    background: $theme-input-bg;
+    color: $theme-text;
+    line-height: 2.5rem;
+    font-size: 1.6rem;
+    border: 1px solid $theme-border;
+
+    &:hover
+    {
+      background: $theme-hover-bg;
+      color: $white;
+    }
+  }
+}

@@ -1,0 +1,96 @@
+<div class="col left">
+    {{#if showWeapons}}
+    <button type="button" class="control-icon" data-action="togglePalette" data-palette="weapons"
+            data-tooltip="tinyd6.TokenWeapons" data-tooltip-direction="RIGHT">
+        <i class="fa-solid fa-crosshairs" inert></i>
+    </button>
+    <div class="palette palette-weapons" data-palette="weapons">
+        {{#each weapons as |weapon|}}
+        <div class="wcard {{#if weapon.empty}}weapon-empty{{/if}}" data-weapon-id="{{weapon.id}}">
+            <div class="whead">
+                <img src="{{weapon.img}}" alt="{{weapon.name}}">
+                <span class="wname" title="{{weapon.name}}">{{weapon.name}}</span>
+                {{#if weapon.reload}}<span class="charges {{#if weapon.empty}}empty{{/if}}">{{weapon.charges}}/{{weapon.uses}}</span>{{/if}}
+            </div>
+            <div class="wactions">
+                <button type="button" class="wbtn attack {{#if weapon.empty}}empty{{/if}}"
+                        data-action="weaponAttack" title="{{localize "tinyd6.Attack"}}">
+                    {{localize "tinyd6.Attack"}} <i class="fa-solid fa-burst" inert></i>
+                </button>
+                {{#if weapon.reload}}
+                <button type="button" class="wbtn reload" data-action="weaponReload" title="{{localize "tinyd6.Reload"}}">
+                    {{localize "tinyd6.Reload"}} <i class="fa-solid fa-rotate-right" inert></i>
+                </button>
+                {{/if}}
+            </div>
+        </div>
+        {{/each}}
+    </div>
+    {{/if}}
+
+    {{#if canConfigure}}
+    <button type="button" class="control-icon" data-action="config" data-tooltip="HUD.OpenConfig">
+        <i class="fa-solid fa-gear" inert></i>
+    </button>
+    {{/if}}
+</div>
+
+<div class="col middle">
+    <div class="attribute hp-rail">
+        <button type="button" class="hp-stepper minus" data-action="hpStep" data-step="-1"
+                {{#unless hpEditable}}disabled{{/unless}} title="−1 HP">−</button>
+        <span class="hp-heart"><i class="fa-solid fa-heart-pulse" inert></i></span>
+        <input type="text" name="bar1" class="hp-value" value="{{bar1Data.value}}" max="{{hpMax}}"
+               {{#unless bar1Data.editable}}disabled{{/unless}}>
+        <button type="button" class="hp-stepper plus" data-action="hpStep" data-step="1"
+                {{#unless hpEditable}}disabled{{/unless}} title="+1 HP">+</button>
+    </div>
+
+    {{#if showArmor}}
+    <div class="attribute">
+        <div class="armor-box" data-tooltip="tinyd6.TokenArmor" data-tooltip-direction="UP">
+            <img class="armor-icon" src="{{armorIcon}}" inert>
+            <input type="number" step="any" min="0" data-edit-attr="dr" title="DR"
+                   value="{{armorTotal}}" {{disabled (not armorEditable)}}>
+            <input type="number" step="any" min="0" data-edit-attr="hp" title="Armor HP"
+                   value="{{armorHpTotal}}" {{disabled (not armorEditable)}}>
+        </div>
+    </div>
+    {{/if}}
+
+    {{#if deathChip}}
+    <div class="attribute">
+        <span class="death-chip {{deathChip.state}}" title="{{deathChip.tooltip}}">
+            <i class="fa-solid {{deathChip.icon}}" inert></i> {{deathChip.label}}
+        </span>
+    </div>
+    {{/if}}
+</div>
+
+<div class="col right">
+    {{#if isGM}}
+    <button type="button" class="control-icon {{visibilityClass}}" data-action="visibility" data-tooltip="HUD.ToggleVis">
+        <img src="{{icons.visibility}}">
+    </button>
+    {{/if}}
+
+    <button type="button" class="control-icon" data-action="togglePalette" data-palette="effects" data-tooltip="HUD.AssignStatusEffects">
+        <img src="{{icons.effects}}">
+    </button>
+    <div class="palette status-effects" data-palette="effects">
+        {{#each statusEffects as |status|}}
+        <img class="effect-control {{status.cssClass}}" src="{{status.src}}" data-action="effect"
+             {{#if status.title}}data-tooltip-text="{{status.title}}"{{/if}} data-status-id="{{status.id}}">
+        {{/each}}
+    </div>
+
+    <button type="button" class="control-icon {{targetClass}}" data-action="target" data-tooltip="HUD.ToggleTargetState">
+        <i class="fa-solid fa-bullseye" inert></i>
+    </button>
+
+    {{#if canToggleCombat}}
+    <button type="button" class="control-icon {{combatClass}}" data-action="combat" data-tooltip="HUD.ToggleCombatState">
+        <img src="{{icons.combat}}">
+    </button>
+    {{/if}}
+</div>

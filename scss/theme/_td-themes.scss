@@ -1,0 +1,754 @@
+/* ============================================================
+   Tiny D6 — Оформления листа (sheetStyle)
+   Каждая тема — класс на окне листа вида .td-sheet-*.
+   Темы переопределяют набор переменных --td-* поверх
+   базового макета из redesign.css, не трогая вёрстку.
+   ============================================================ */
+
+/* Что все темы наследуют из redesign.css:
+   --td-bg, --td-card, --td-field, --td-hover, --td-border,
+   --td-text, --td-strong, --td-muted, --td-accent,
+   --td-accent-soft, --td-ok, --td-danger, --td-radius, --td-font */
+
+/* ------------------------------------------------------------
+   DEFAULT (по умолчанию) — текущий тёмный с синим акцентом.
+   Ничего не переопределяем: берём значения из redesign.css
+   ------------------------------------------------------------ */
+
+
+/* ------------------------------------------------------------
+   ПЕРГАМЕНТ (V1) — тёплый фэнтези / рукописный
+   ------------------------------------------------------------ */
+.tinyd6.sheet.hero.td-sheet-perkament,
+.tinyd6.sheet.npc.td-sheet-perkament {
+    --td-bg: #cdbb92;
+    --td-card: #ddcca6;
+    --td-field: #e4d6b2;
+    --td-hover: #d6c494;
+    --td-border: #a08a58;
+    --td-text: #2e2415;
+    --td-strong: #211a0e;
+    --td-muted: #6b5b3c;
+    --td-accent: #8b2f2f;
+    --td-accent-soft: #a85a3c;
+    --td-ok: #3f6d3a;
+    --td-danger: #8b2f2f;
+    --td-radius: 3px;
+    --td-font: "Georgia", "Times New Roman", serif;
+
+    background-image:
+        radial-gradient(120% 90% at 50% 10%, transparent 55%, rgba(46,36,21,.22) 100%),
+        radial-gradient(ellipse 65% 40% at 18% 22%, rgba(160,138,88,.16), transparent 70%),
+        radial-gradient(ellipse 60% 45% at 82% 68%, rgba(160,138,88,.12), transparent 70%);
+    background-size: 100% 100%, 100% 100%, 100% 100%;
+}
+.tinyd6.sheet.td-sheet-perkament .window-content,
+.tinyd6.sheet.npc.td-sheet-perkament .window-content {
+    background:
+        radial-gradient(rgba(46,36,21,.09) 1px, transparent 1px),
+        radial-gradient(rgba(46,36,21,.054) 1px, transparent 1px),
+        radial-gradient(140% 90% at 50% 0%, rgba(255,250,235,.45) 0%, rgba(255,250,235,0) 45%),
+        var(--td-bg);
+    background-size: 3px 3px, 5px 5px, 100% 100%, 100% 100%;
+}
+.tinyd6.sheet.td-sheet-perkament .window-content::before,
+.tinyd6.sheet.npc.td-sheet-perkament .window-content::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    background: url("../assets/folk/grunge.svg") center/cover no-repeat;
+    opacity: .1;
+}
+.tinyd6.sheet.td-sheet-perkament .window-content { position: relative; }
+.tinyd6.sheet.td-sheet-perkament .window-content form.actor-sheet { position: relative; z-index: 1; }
+
+/* Заголовки: рукописный шрифт, маркер-акцент вместо плашки */
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet,
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet {
+    font-family: Georgia, "Times New Roman", serif;
+    color: var(--td-text);
+}
+/* Тёмный текст в полях и редакторе (не даём белым остаться) */
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .editor,
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .editor .editor-content,
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .editor-content p,
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .editor,
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .editor .editor-content,
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .editor-content p {
+    color: var(--td-text);
+}
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet input[type="text"],
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet input:not([type]),
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet textarea,
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet select,
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet input[type="text"],
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet input:not([type]),
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet textarea,
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet select {
+    color: var(--td-text);
+}
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .floating-header,
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .section-header,
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .floating-header,
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .section-header {
+    font-family: Georgia, "Times New Roman", serif;
+    letter-spacing: .02em;
+    text-transform: none;
+    border-bottom: 1px solid var(--td-border);
+}
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .floating-header::before,
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .section-header::before,
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .floating-header::before,
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .section-header::before {
+    width: 10px; height: 10px; background: var(--td-accent);
+    border-radius: 0; transform: rotate(45deg);
+    box-shadow: 0 0 0 1px rgba(46,36,21,.5);
+}
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .floating-header::after,
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .section-header::after,
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .floating-header::after,
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .section-header::after {
+    content: ""; flex: 1 1 auto;
+}
+
+/* Метры-руви: квадратные "зазубренные" руны */
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .health-box,
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .corruption-box,
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .advancement-progress-box,
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .health-box,
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .corruption-box,
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .advancement-progress-box {
+    border-radius: 2px;
+    border: 1px solid var(--td-border);
+    background: var(--td-field);
+    box-shadow: inset 0 0 0 1px rgba(122,106,74,.25);
+}
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .health-box:checked,
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .corruption-box:checked,
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .advancement-progress-box:checked,
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .health-box:checked,
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .corruption-box:checked,
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .advancement-progress-box:checked {
+    background: var(--td-accent);
+    border-color: var(--td-accent);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.35);
+}
+
+/* Вкладки: как странички книги */
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .td-tab { text-transform: none; letter-spacing: .02em; font-family: Georgia, serif; }
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .td-tab.active::after { height: 3px; }
+/* Бейдж-мы архетипа: подчёркнуто чернилами */
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .archetype-body,
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .heritage-trait,
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .heritage-trait {
+    border-left: 3px solid var(--td-accent);
+}
+/* Портрет: тёплая гравировка */
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .character-art,
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .character-art,
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .td-avatar,
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .td-avatar {
+    border-radius: 3px; border: 2px solid var(--td-border);
+}
+/* Броня и кнопки — сплавленные */
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .equipped-armor .total-armor,
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .equipped-armor .total-armor {
+    border-radius: 4px; box-shadow: 0 2px 0 rgba(122,106,74,.4);
+}
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .item-add,
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .item-add { border-radius: 4px; }
+/* Акцентные кнопки: бордовый градиент на hover, красные удаления */
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .roll-dice:hover,
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .roll-dice:hover {
+    background: linear-gradient(180deg, var(--td-accent), #6b2323);
+}
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .roll-dice:hover .fas,
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .roll-dice:hover .fas { background: rgba(255,255,255,.2); }
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .item-control,
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .item-control {
+    color: var(--td-muted); border: 1px solid transparent; border-radius: 4px;
+    width: 22px; height: 22px; justify-content: center; font-size: 12px;
+    transition: color .15s ease, border-color .15s ease, background .15s ease;
+}
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .item-control:hover,
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .item-control:hover {
+    color: #b04040; border-color: rgba(176,64,64,.5); background: rgba(176,64,64,.1);
+}
+
+
+/* ------------------------------------------------------------
+   НУАР (V2) — тёмный, медь, досье
+   ------------------------------------------------------------ */
+.tinyd6.sheet.td-sheet-noir,
+.tinyd6.sheet.npc.td-sheet-noir {
+    --td-bg: #0d0e11;
+    --td-card: #16181d;
+    --td-field: #1b1d23;
+    --td-hover: #262a33;
+    --td-border: #2c2c34;
+    --td-text: #d8d8d8;
+    --td-strong: #ffffff;
+    --td-muted: #8b8f9a;
+    --td-accent: #b0773a;
+    --td-accent-soft: #d3a25e;
+    --td-ok: #2e7d32;
+    --td-danger: #a34a4a;
+    --td-radius: 4px;
+    --td-font: "Segoe UI", system-ui, sans-serif;
+    /* Точечный растр — плёночное зерно (паттерн) */
+    --td-noise: radial-gradient(rgba(255,255,255,.06) 1px, transparent 1.5px);
+    --td-noise-size: 12px 12px;
+}
+.tinyd6.sheet.td-sheet-noir .window-content,
+.tinyd6.sheet.npc.td-sheet-noir .window-content {
+    /* Задник: свет фонаря сверху + виньетка */
+    background:
+        radial-gradient(120% 90% at 50% 50%, transparent 45%, rgba(0,0,0,.5) 100%),
+        radial-gradient(90% 45% at 50% 0%, rgba(216,176,115,.10) 0%, transparent 62%),
+        #0d0e11;
+}
+/* Паттерн растра — поверх всего контента листа */
+.tinyd6.sheet.td-sheet-noir form.actor-sheet::after,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background-image: var(--td-noise);
+    background-size: var(--td-noise-size);
+    opacity: .55;
+}
+.tinyd6.sheet.td-sheet-noir form.actor-sheet,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet { position: relative; }
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .td-hero-head,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .td-hero-head {
+    position: relative;
+    border-bottom-color: var(--td-accent);
+    background:
+        linear-gradient(90deg, #0d0e11 0%, rgba(13,14,17,0) 16%),
+        linear-gradient(90deg, rgba(13,14,17,0) 84%, #0d0e11 100%),
+        linear-gradient(180deg, rgba(13,14,17,0) 0%, rgba(13,14,17,.12) 30%, rgba(13,14,17,.82) 92%, rgba(13,14,17,1) 100%),
+        url("../assets/noir/city.svg") no-repeat center bottom / cover;
+}
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .td-hero-head::before,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .td-hero-head::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1;
+    background:
+        radial-gradient(110% 130% at 50% 0%, rgba(216,176,115,.10) 0%, transparent 55%),
+        linear-gradient(180deg, rgba(13,14,17,0) 55%, rgba(13,14,17,.75) 100%);
+}
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .td-hero-head > *,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .td-hero-head > * { position: relative; z-index: 2; }
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .td-avatar,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .td-avatar {
+    border-radius: 50%;
+}
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .td-stat,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .td-stat {
+    border-left-color: rgba(176,119,58,.4);
+}
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .td-stat .n,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .td-stat .n { color: var(--td-accent); }
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .td-tab.active::after,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .td-tab.active::after { background: var(--td-accent); }
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .health-box,
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .corruption-box,
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .advancement-progress-box,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .health-box,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .corruption-box,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .advancement-progress-box {
+    border-radius: 3px;
+    background: #2a2b32;
+    border: 1px solid #3a3b44;
+}
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .health-box:checked,
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .corruption-box:checked,
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .advancement-progress-box:checked,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .health-box:checked,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .corruption-box:checked,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .advancement-progress-box:checked {
+    background: linear-gradient(180deg, var(--td-accent), #7f4d1f);
+    border-color: var(--td-accent);
+}
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .roll-dice,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .roll-dice {
+    border-radius: 3px; text-transform: uppercase; letter-spacing: .04em; font-size: 12px;
+}
+/* Акцентные кнопки: медный градиент на hover, красные кнопки удаления */
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .roll-dice:hover,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .roll-dice:hover {
+    background: linear-gradient(180deg, var(--td-accent), #7f4d1f);
+}
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .roll-dice:hover .fas,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .roll-dice:hover .fas { background: rgba(255,255,255,.2); }
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .item-control,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .item-control {
+    color: var(--td-muted); border: 1px solid transparent; border-radius: 5px;
+    width: 22px; height: 22px; justify-content: center; font-size: 12px;
+    transition: color .15s ease, border-color .15s ease, background .15s ease;
+}
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .item-control:hover,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .item-control:hover {
+    color: #e08a8a; border-color: rgba(224,138,138,.5); background: rgba(224,138,138,.1);
+}
+/* Тёмные поля: подложка, акцентная обводка при фокусе */
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .property input[type="text"],
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .property input:not([type]),
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .property input[type="text"],
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .property input:not([type]),
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .proficiencies .mastered input,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .proficiencies .mastered input {
+    background: var(--td-field); border: 1px solid var(--td-border); border-radius: 5px;
+    padding: 5px 8px; transition: border-color .15s ease, box-shadow .15s ease;
+}
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .property input[type="text"]:focus,
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .property input:not([type]):focus,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .property input[type="text"]:focus,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .property input:not([type]):focus,
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .proficiencies .mastered input:focus,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .proficiencies .mastered input:focus {
+    border-color: var(--td-accent); box-shadow: 0 0 0 1px rgba(176,119,58,.25);
+}
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .editor:focus-within,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .editor:focus-within {
+    border-color: var(--td-accent); box-shadow: 0 0 0 1px rgba(176,119,58,.25);
+}
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .item-add,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .item-add { border-radius: 3px; background: var(--td-accent); }
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .equipped-armor .total-armor,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .equipped-armor .total-armor {
+    border-radius: 5px; background: linear-gradient(180deg, var(--td-accent), #7f4d1f);
+}
+
+
+/* ------------------------------------------------------------
+   МИНИМАЛИЗМ (V3) — светлый, чистый, строгий
+   ------------------------------------------------------------ */
+.tinyd6.sheet.td-sheet-minimal,
+.tinyd6.sheet.npc.td-sheet-minimal {
+    --td-bg: #fafaf7;
+    --td-card: #f3f4ef;
+    --td-field: #eef0eb;
+    --td-hover: #e5e8e1;
+    --td-border: #dfe2da;
+    --td-text: #33373f;
+    --td-strong: #1b1e24;
+    --td-muted: #9aa0a8;
+    --td-accent: #4a7db3;
+    --td-accent-soft: #6f9fce;
+    --td-ok: #3f7d5a;
+    --td-danger: #a34a4a;
+    --td-radius: 8px;
+    --td-font: "Segoe UI", system-ui, sans-serif;
+}
+.tinyd6.sheet.td-sheet-minimal .window-content,
+.tinyd6.sheet.npc.td-sheet-minimal .window-content {
+    background: var(--td-bg);
+}
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet { color: var(--td-text); }
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .td-hero-head,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .td-hero-head {
+    border-bottom: 2px solid var(--td-border);
+}
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .td-avatar,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .td-avatar {
+    border-radius: 12px; background: #fff; border: 1px solid var(--td-border);
+}
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .td-stat,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .td-stat { border-left-color: var(--td-border); }
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .floating-header,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .floating-header,
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .section-header,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .section-header {
+    border-bottom: 0; padding-bottom: 6px; text-transform: uppercase; letter-spacing: .12em;
+}
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .floating-header::before,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .floating-header::before,
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .section-header::before,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .section-header::before {
+    display: none;
+}
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .td-tab,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .td-tab { letter-spacing: .1em; }
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .health-box,
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .corruption-box,
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .advancement-progress-box,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .health-box,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .corruption-box,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .advancement-progress-box {
+    border-radius: 6px; background: var(--td-field); border: 1px solid var(--td-border);
+}
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .health-box:checked,
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .corruption-box:checked,
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .advancement-progress-box:checked,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .health-box:checked,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .corruption-box:checked,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .advancement-progress-box:checked {
+    background: var(--td-accent); border-color: var(--td-accent);
+}
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .roll-dice,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .roll-dice { border-radius: 6px; }
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .item-add,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .item-add { border-radius: 6px; }
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .property input:focus,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .property input:focus { background: var(--td-hover); }
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .editor,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .editor {
+    background: var(--td-field); color: var(--td-text);
+}
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .editor .editor-content,
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .editor .editor-content p,
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .editor [role="application"],
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .editor .ProseMirror,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .editor .editor-content,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .editor .editor-content p,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .editor [role="application"],
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .editor .ProseMirror {
+    color: var(--td-text);
+}
+
+/* Minimal: поля ввода с подложкой и акцентным фокусом */
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .property input[type="text"],
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .property input:not([type]),
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .property input[type="text"],
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .property input:not([type]),
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .proficiencies .mastered input,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .proficiencies .mastered input {
+    background: var(--td-field); border: 1px solid var(--td-border); border-radius: 6px;
+    padding: 5px 8px; transition: border-color .15s ease, box-shadow .15s ease;
+}
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .property input[type="text"]:focus,
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .property input:not([type]):focus,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .property input[type="text"]:focus,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .property input:not([type]):focus,
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .proficiencies .mastered input:focus,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .proficiencies .mastered input:focus {
+    border-color: var(--td-accent); box-shadow: 0 0 0 1px rgba(74,125,179,.25);
+}
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .editor:focus-within,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .editor:focus-within {
+    border-color: var(--td-accent); box-shadow: 0 0 0 1px rgba(74,125,179,.25);
+}
+
+/* Minimal: акцентные кнопки — синяя заливка на hover, красные удаления */
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .roll-dice:hover,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .roll-dice:hover {
+    background: linear-gradient(180deg, var(--td-accent), #35618f);
+    border-color: var(--td-accent);
+}
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .roll-dice:hover .fas,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .roll-dice:hover .fas { background: rgba(255,255,255,.2); }
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .item-control,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .item-control {
+    color: var(--td-muted); border: 1px solid transparent; border-radius: 5px;
+    width: 22px; height: 22px; justify-content: center; font-size: 12px;
+    transition: color .15s ease, border-color .15s ease, background .15s ease;
+}
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .item-control:hover,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .item-control:hover {
+    color: #c96a6a; border-color: rgba(201,106,106,.5); background: rgba(201,106,106,.08);
+}
+
+/* ============================================================
+   FOLK — декоративные фоны вкладок (perkament)
+   ============================================================ */
+.tinyd6.sheet.hero.td-sheet-perkament form.actor-sheet .td-pane { position: relative; }
+.tinyd6.sheet.hero.td-sheet-perkament form.actor-sheet .td-pane > section,
+.tinyd6.sheet.hero.td-sheet-perkament form.actor-sheet .td-pane > .td-tabs { position: relative; z-index: 2; }
+
+.tinyd6.sheet.hero.td-sheet-perkament form.actor-sheet .folk-bg {
+    position: absolute; z-index: 0; pointer-events: none;
+}
+
+/* Женщина — слева, во всю высоту пэна */
+.tinyd6.sheet.hero.td-sheet-perkament form.actor-sheet .folk-bg-hero {
+    top: 0; bottom: 0; left: -30px;
+    height: auto; width: auto; aspect-ratio: 948 / 1612;
+    background: url("../assets/folk/maincharacter.png") left center / auto 100% no-repeat;
+}
+
+/* Дракон — справа, во всю высоту пэна */
+.tinyd6.sheet.hero.td-sheet-perkament form.actor-sheet .folk-bg-dragon {
+    top: 0; bottom: 0; right: -30px;
+    height: auto; width: auto; aspect-ratio: 1906 / 2016;
+    background: url("../assets/folk/dragon.svg") right center / auto 100% no-repeat;
+    opacity: .4;
+}
+
+/* ============================================================
+   ТЕМАТИЗАЦИЯ ВНЕШНИХ КАРТОЧЕК И ДИЕРОЛЛЕРА
+   Чат-карточки получают класс темы через renderChatMessage,
+   окно Die Roller — через classes в DieRoller.js.
+   ============================================================ */
+
+/* ---------- Переменные темы для чат-карточек ---------- */
+.chat-message.td-sheet-perkament .tinyd6 {
+    --td-bg: #cdbb92; --td-card: #ddcca6; --td-field: #e4d6b2;
+    --td-hover: #d6c494; --td-border: #a08a58; --td-text: #2e2415;
+    --td-strong: #211a0e; --td-muted: #6b5b3c; --td-accent: #8b2f2f;
+    --td-accent-soft: #a85a3c; --td-ok: #3f6d3a; --td-danger: #8b2f2f;
+    --td-radius: 6px;
+}
+.chat-message.td-sheet-noir .tinyd6 {
+    --td-bg: #0d0e11; --td-card: #16181d; --td-field: #1b1d23;
+    --td-hover: #262a33; --td-border: #2c2c34; --td-text: #d8d8d8;
+    --td-strong: #ffffff; --td-muted: #8b8f9a; --td-accent: #b0773a;
+    --td-accent-soft: #d3a25e; --td-ok: #2e7d32; --td-danger: #a34a4a;
+    --td-radius: 4px;
+}
+.chat-message.td-sheet-minimal .tinyd6 {
+    --td-bg: #f5f5f2; --td-card: #ffffff; --td-field: #ffffff;
+    --td-hover: #eef0ed; --td-border: #dcded9; --td-text: #33373f;
+    --td-strong: #1b1e24; --td-muted: #9aa0a8; --td-accent: #4a7db3;
+    --td-accent-soft: #6f9fce; --td-ok: #3f7d5a; --td-danger: #a34a4a;
+    --td-radius: 8px;
+}
+
+/* ---------- Item-card ---------- */
+.chat-message .tinyd6.item-card,
+.chat-message .tinyd6.death-mini {
+    background: var(--td-card); border: 1px solid var(--td-border);
+    border-radius: var(--td-radius); padding: 12px;
+    box-shadow: 0 4px 14px -8px rgba(0,0,0,.35);
+}
+.chat-message .tinyd6.item-card .item-card-head img,
+.chat-message .tinyd6.death-mini img { border-radius: 5px; }
+.chat-message .tinyd6.item-card .item-card-name {
+    font-size: 15px; font-weight: 700; color: var(--td-strong);
+    border-bottom: 1px solid var(--td-border); padding-bottom: 6px;
+}
+.chat-message .tinyd6.item-card .item-card-type {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
+    color: var(--td-accent); margin-top: 2px;
+}
+.chat-message .tinyd6.item-card .item-card-body {
+    padding-top: 8px; font-size: 13px; color: var(--td-text);
+}
+.chat-message .tinyd6.item-card .item-card-body p { margin: 0 0 .5em; }
+.chat-message .tinyd6.item-card .item-card-body p:last-child { margin-bottom: 0; }
+
+/* ---------- Attack-card ---------- */
+.chat-message .tinyd6.attack-card {
+    background: var(--td-card); border: 1px solid var(--td-border);
+    border-radius: var(--td-radius); padding: 12px;
+    box-shadow: 0 4px 14px -8px rgba(0,0,0,.35);
+}
+.chat-message .tinyd6.attack-card .attack-card-head img { border-radius: 5px; }
+.chat-message .tinyd6.attack-card .attack-card-name {
+    font-size: 15px; font-weight: 700; color: var(--td-strong); margin: 0;
+}
+.chat-message .tinyd6.attack-card .attack-card-sub {
+    font-size: 12px; color: var(--td-muted); margin-top: 3px;
+}
+.chat-message .tinyd6.attack-card .attack-hit { color: var(--td-ok); font-weight: 700; margin-right: 8px; }
+.chat-message .tinyd6.attack-card .attack-miss { color: var(--td-danger); font-weight: 700; margin-right: 8px; }
+.chat-message .tinyd6.attack-card .attack-crit {
+    color: var(--td-accent); font-weight: 800; text-transform: uppercase; letter-spacing: .04em;
+    font-size: 11px; padding: 1px 7px; border-radius: 10px;
+    background: var(--td-field); border: 1px solid var(--td-border); margin-right: 8px;
+}
+.chat-message .tinyd6.attack-card .attack-damage .attack-damage-base {
+    color: var(--td-muted); margin-right: 4px;
+}
+.chat-message .tinyd6.attack-card .attack-card-roll { gap: 8px; margin: 10px 0; flex-wrap: wrap; }
+.chat-message .tinyd6.attack-card .attack-die {
+    width: 40px; height: 40px; border-radius: 8px;
+    background: var(--td-field); border: 1px solid var(--td-border);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 22px; color: var(--td-accent-soft);
+}
+.chat-message .tinyd6.attack-card .attack-card-footer {
+    border-top: 1px solid var(--td-border); padding-top: 10px;
+    gap: 12px; flex-wrap: wrap;
+}
+.chat-message .tinyd6.attack-card .attack-damage { font-size: 13px; color: var(--td-text); }
+.chat-message .tinyd6.attack-card .attack-apply {
+    margin-left: auto; background: var(--td-accent); color: #fff;
+    border: 0; border-radius: 6px; padding: 7px 14px; cursor: pointer;
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 6px;
+}
+.chat-message .tinyd6.attack-card .attack-apply:hover { background: var(--td-accent-soft); }
+.chat-message .tinyd6.attack-card .attack-report {
+    font-size: 12px; color: var(--td-ok); font-weight: 600;
+}
+.chat-message .tinyd6.attack-card .attack-card-ranout {
+    margin: 8px 0 4px; padding: 6px 10px; font-size: 12px; font-weight: 600;
+    color: var(--td-danger); background: color-mix(in srgb, var(--td-danger) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--td-danger) 40%, transparent); border-radius: 5px;
+}
+.chat-message .tinyd6.attack-card .attack-card-undo {
+    border-top: 1px dashed var(--td-border); margin-top: 8px; padding-top: 8px;
+}
+.chat-message .tinyd6.attack-card .attack-undo {
+    background: var(--td-field); color: var(--td-accent); border: 1px solid var(--td-border);
+    border-radius: 6px; padding: 6px 12px; cursor: pointer;
+    font-family: inherit; font-size: 12px; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 6px;
+}
+.chat-message .tinyd6.attack-card .attack-undo:hover { background: var(--td-hover); }
+
+/* ---------- Отчёт о применённом уроне / заглушки ---------- */
+.chat-message .tinyd6.attack-report-chat {
+    padding: 8px 12px; border-left: 3px solid var(--td-accent);
+    background: color-mix(in srgb, var(--td-accent) 8%, transparent);
+    border-radius: 4px; font-size: 13px; color: var(--td-text);
+}
+.chat-message .tinyd6.reload-stub {
+    padding: 10px 14px;
+    background: var(--td-card);
+    border: 1px solid var(--td-border);
+    border-left: 4px solid var(--td-accent);
+    border-radius: var(--td-radius);
+    font-size: 13px; color: var(--td-text);
+    box-shadow: 0 4px 14px -8px rgba(0,0,0,.35);
+    overflow-wrap: break-word;
+}
+.chat-message .tinyd6.reload-stub i.fas {
+    display: inline-block; vertical-align: middle; margin-right: 6px;
+    color: var(--td-accent); font-size: 14px;
+}
+.chat-message .tinyd6.reload-stub b { color: var(--td-strong); font-weight: 700; }
+.chat-message .tinyd6.death-stub {
+    padding: 10px 14px; border-left: 3px solid var(--td-danger);
+    background: color-mix(in srgb, var(--td-danger) 8%, transparent);
+    border-radius: 6px; font-size: 13px; color: var(--td-text); line-height: 1.5;
+}
+.chat-message .tinyd6.death-stub .dice {
+    letter-spacing: .15em; margin-right: 6px; font-size: 15px; color: var(--td-strong);
+}
+.chat-message .tinyd6.death-stub b { color: var(--td-danger); }
+.chat-message .tinyd6.death-stub.death-timer {
+    padding: 12px 18px; font-size: 17px; font-weight: 600; color: var(--td-danger);
+    border-left: 4px solid var(--td-danger);
+    background: color-mix(in srgb, var(--td-danger) 10%, transparent);
+    border-radius: 8px; letter-spacing: .02em;
+}
+.chat-message .tinyd6.death-stub.death-timer b { color: var(--td-danger); }
+
+/* ---------- Результат броска + разбор кубиков ---------- */
+.chat-message .tinyd6.roll-result {
+    border-radius: var(--td-radius); font-weight: 700; letter-spacing: .06em;
+}
+.chat-message .tinyd6.roll-result.bg-success { background: var(--td-ok); }
+.chat-message .tinyd6.roll-result.bg-danger { background: var(--td-danger); }
+.chat-message .tinyd6.dice-breakdown {
+    background: var(--td-card); color: var(--td-text);
+    border: 1px solid var(--td-border); border-radius: var(--td-radius);
+    border-top: 0; border-top-left-radius: 0; border-top-right-radius: 0;
+}
+.chat-message .tinyd6.dice-breakdown .fas { color: var(--td-accent-soft); }
+
+/* ---------- Die Roller (окно) ---------- */
+.tinyd6.die-roller.td-sheet-perkament {
+    --td-bg: #cdbb92; --td-card: #ddcca6; --td-field: #e4d6b2;
+    --td-hover: #d6c494; --td-border: #a08a58; --td-text: #2e2415;
+    --td-strong: #211a0e; --td-muted: #6b5b3c; --td-accent: #8b2f2f;
+    --td-accent-soft: #a85a3c; --td-radius: 6px;
+    --dr-bg: var(--td-card);
+    --dr-field: var(--td-field);
+    --dr-border: var(--td-border);
+    --dr-text: var(--td-text);
+    --dr-strong: var(--td-strong);
+    --dr-accent: var(--td-accent);
+    --dr-act-avail: rgba(139,47,47,.9);
+    --dr-act-spent: rgba(60,50,30,.5);
+}
+.tinyd6.die-roller.td-sheet-noir {
+    --td-bg: #0d0e11; --td-card: #16181d; --td-field: #1b1d23;
+    --td-hover: #262a33; --td-border: #2c2c34; --td-text: #d8d8d8;
+    --td-strong: #ffffff; --td-muted: #8b8f9a; --td-accent: #b0773a;
+    --td-accent-soft: #d3a25e; --td-radius: 4px;
+    --dr-bg: var(--td-card);
+    --dr-field: var(--td-field);
+    --dr-border: var(--td-border);
+    --dr-text: var(--td-text);
+    --dr-strong: var(--td-strong);
+    --dr-accent: var(--td-accent);
+    --dr-act-avail: rgba(176,119,58,.9);
+    --dr-act-spent: rgba(70,70,78,.85);
+}
+.tinyd6.die-roller.td-sheet-minimal {
+    --td-bg: #f5f5f2; --td-card: #ffffff; --td-field: #ffffff;
+    --td-hover: #eef0ed; --td-border: #dcded9; --td-text: #33373f;
+    --td-strong: #1b1e24; --td-muted: #9aa0a8; --td-accent: #4a7db3;
+    --td-accent-soft: #6f9fce; --td-radius: 8px;
+    --dr-bg: var(--td-card);
+    --dr-field: var(--td-field);
+    --dr-border: var(--td-border);
+    --dr-text: var(--td-text);
+    --dr-strong: var(--td-strong);
+    --dr-accent: var(--td-accent);
+    --dr-act-avail: rgba(74,125,179,.9);
+    --dr-act-spent: rgba(154,160,168,.6);
+}
+
+/* Окно и кнопки броска */
+.tinyd6.die-roller.td-sheet-perkament .window-content,
+.tinyd6.die-roller.td-sheet-noir .window-content,
+.tinyd6.die-roller.td-sheet-minimal .window-content {
+    background: var(--dr-bg);
+}
+.tinyd6.die-roller.td-sheet-perkament .die-roller,
+.tinyd6.die-roller.td-sheet-noir .die-roller,
+.tinyd6.die-roller.td-sheet-minimal .die-roller { gap: 8px; }
+.tinyd6.die-roller.td-sheet-perkament .roll-dice,
+.tinyd6.die-roller.td-sheet-noir .roll-dice,
+.tinyd6.die-roller.td-sheet-minimal .roll-dice {
+    flex: 1 1 0; min-width: 0; margin: 0;
+    background: var(--dr-field); border: 1px solid var(--dr-border);
+    border-radius: var(--td-radius); padding: 8px 10px;
+    font-size: 13px; color: var(--dr-text); font-family: inherit;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+}
+.tinyd6.die-roller.td-sheet-perkament .roll-dice:hover,
+.tinyd6.die-roller.td-sheet-noir .roll-dice:hover,
+.tinyd6.die-roller.td-sheet-minimal .roll-dice:hover {
+    background: var(--dr-accent); border-color: var(--dr-accent); color: #fff;
+}
+.tinyd6.die-roller.td-sheet-perkament .roll-dice .fas,
+.tinyd6.die-roller.td-sheet-noir .roll-dice .fas,
+.tinyd6.die-roller.td-sheet-minimal .roll-dice .fas {
+    width: 18px; height: 18px; font-size: 11px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--dr-accent); border-radius: 5px;
+}
+.tinyd6.die-roller.td-sheet-perkament .roll-dice:hover .fas,
+.tinyd6.die-roller.td-sheet-noir .roll-dice:hover .fas,
+.tinyd6.die-roller.td-sheet-minimal .roll-dice:hover .fas { background: rgba(255,255,255,.25); }
+.tinyd6.die-roller.td-sheet-perkament .action-modifiers label,
+.tinyd6.die-roller.td-sheet-noir .action-modifiers label,
+.tinyd6.die-roller.td-sheet-minimal .action-modifiers label {
+    color: var(--dr-text); font-size: 12px;
+    display: inline-flex; align-items: center; gap: 6px;
+}
+.tinyd6.die-roller.td-sheet-perkament .action-modifiers input,
+.tinyd6.die-roller.td-sheet-noir .action-modifiers input,
+.tinyd6.die-roller.td-sheet-minimal .action-modifiers input { accent-color: var(--dr-accent); }
+.tinyd6.die-roller.td-sheet-perkament .die-roller-collapsed,
+.tinyd6.die-roller.td-sheet-noir .die-roller-collapsed,
+.tinyd6.die-roller.td-sheet-minimal .die-roller-collapsed {
+    background: var(--dr-bg); color: var(--dr-text); border: 1px solid var(--dr-border);
+}
+.tinyd6.die-roller.td-sheet-perkament .die-roller-collapse,
+.tinyd6.die-roller.td-sheet-noir .die-roller-collapse,
+.tinyd6.die-roller.td-sheet-minimal .die-roller-collapse { color: var(--dr-text); }
+
+/* Счётчик действий (ромбики) */
+.tinyd6.die-roller.td-sheet-perkament .dr-shapes .act.avail,
+.tinyd6.die-roller.td-sheet-noir .dr-shapes .act.avail,
+.tinyd6.die-roller.td-sheet-minimal .dr-shapes .act.avail { background: var(--dr-act-avail); }
+.tinyd6.die-roller.td-sheet-perkament .dr-shapes .act.spent,
+.tinyd6.die-roller.td-sheet-noir .dr-shapes .act.spent,
+.tinyd6.die-roller.td-sheet-minimal .dr-shapes .act.spent { background: var(--dr-act-spent); }
+.tinyd6.die-roller.td-sheet-perkament .dr-shapes .actions-btns button,
+.tinyd6.die-roller.td-sheet-noir .dr-shapes .actions-btns button,
+.tinyd6.die-roller.td-sheet-minimal .dr-shapes .actions-btns button {
+    background: var(--dr-field); border-color: var(--dr-border); color: var(--dr-text);
+}
+.tinyd6.die-roller.td-sheet-perkament .dr-shapes .actions-btns button.plus:hover,
+.tinyd6.die-roller.td-sheet-noir .dr-shapes .actions-btns button.plus:hover,
+.tinyd6.die-roller.td-sheet-minimal .dr-shapes .actions-btns button.plus:hover {
+    background: var(--dr-accent); border-color: var(--dr-accent); color: #fff;
+}
+.tinyd6.die-roller.td-sheet-perkament .dr-shapes .actions-btns button.minus:hover,
+.tinyd6.die-roller.td-sheet-noir .dr-shapes .actions-btns button.minus:hover,
+.tinyd6.die-roller.td-sheet-minimal .dr-shapes .actions-btns button.minus:hover {
+    border-color: var(--td-danger); color: var(--td-danger);
+}

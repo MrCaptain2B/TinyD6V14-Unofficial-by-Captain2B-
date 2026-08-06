@@ -1,0 +1,87 @@
+{
+  "id": "tinyd6v14",
+  "title": "Tiny D6 (v14)",
+  "description": "Unofficial fork of the Tiny D6 system for Foundry VTT v14 with an improved token HUD (HP steppers, weapon palette, armor editor, death chips) and other fixes. Facilitates playing Tiny D6 games such as Tiny Dungeon and Tiny Frontiers.",
+  "authors": [
+    {
+      "id": "architech99",
+      "name": "architech99"
+    },
+    {
+      "id": "kaelad",
+      "name": "Chris Seieroe"
+    },
+    {
+      "id": "ParvusDomus",
+      "name": "ParvusDomus"
+    },
+    {
+      "id": "pixelmonsta",
+      "name": "pixelmonsta"
+    },
+    {
+      "id": "polski",
+      "name": "Polski"
+    },
+    {
+      "id": "captain2b",
+      "name": "Captain2B",
+      "url": "https://github.com/MrCaptain2B"
+    }
+  ],
+  "version": "14.0.1",
+  "compatibility": {
+    "minimum": 14,
+    "verified": 14
+  },
+  "esmodules": [
+    "module/tinyd6.js",
+    "module/settings.js"
+  ],
+  "styles": [
+    "css/tinyd6.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "es",
+      "name": "Spanish",
+      "path": "lang/es.json"
+    },
+    {
+      "lang": "de",
+      "name": "German",
+      "path": "lang/de.json"
+    },
+    {
+      "lang": "fr",
+      "name": "Français",
+      "path": "lang/fr.json"
+    },
+    {
+      "lang": "pl",
+      "name": "Polski",
+      "path": "lang/pl.json"
+    },
+    {
+      "lang": "pt-BR",
+      "name": "Português (Brasil)",
+      "path": "lang/pt-br.json"
+    }
+  ],
+  "socket": false,
+  "manifest": "https://raw.githubusercontent.com/MrCaptain2B/TinyD6V14-Unofficial-by-Captain2B-/main/system.json",
+  "download": "https://github.com/MrCaptain2B/TinyD6V14-Unofficial-by-Captain2B-/archive/refs/tags/v14.0.1.zip",
+  "protected": false,
+  "initiative": "2d6",
+  "grid": {
+    "distance": 5,
+    "units": "ft"
+  },
+  "primaryTokenAttribute": "wounds",
+  "secondaryTokenAttribute": "corruptionThreshold"
+}

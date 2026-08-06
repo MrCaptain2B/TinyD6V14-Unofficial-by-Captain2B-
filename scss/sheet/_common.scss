@@ -1,0 +1,111 @@
+&.sheet
+{
+  & > section
+  {
+    font-size: 14pt;
+  }
+
+  .help
+  {
+    color: $theme-text-muted;
+    font-style: italic;
+    font-size: 0.9rem;
+  }
+}
+
+.editor
+{
+  background-color: $theme-input-bg;
+  border: 1px solid $theme-border;
+  border-radius: 4px;
+  color: $theme-text;
+
+  & > [role=application]
+  {
+    min-height: 6.25rem;
+  }
+  
+  & > .editor-content
+  {
+    min-height: 2.5rem;
+  }
+}
+
+input,
+textarea,
+select
+{
+  background-color: transparent;
+  border: 0;
+  font-size: 14pt;
+  padding: 1px 0;
+  color: $theme-text;
+
+  &:hover,
+  &:focus
+  {
+    padding: 1px 3px;
+    background-color: $theme-input-bg;
+    border: 1px solid $theme-accent;
+    color: $theme-text-strong;
+  }
+}
+
+.hidden
+{
+  visibility: hidden;
+  display: none;
+}
+
+textarea
+{
+  resize: none;
+}
+
+h1,h2,h3,h4,h5,h6
+{
+  border-bottom: 0;
+}
+
+.section-header
+{
+  background-color: $h1-background;
+  color: $theme-text-strong;
+
+  h1
+  {
+    @extend h1;
+    font-size: 1.2rem;
+  }
+
+  .item-add
+  {
+    line-height: 2rem;
+  }
+}
+
+.actor-items
+{
+  list-style: none;
+
+  & > .actor-item
+  {
+    list-style-type: none;
+    border-bottom: 1px solid $theme-border;
+    margin-bottom: 0.5rem;
+
+    &:last-child
+    {
+      border-bottom: 0;
+    }
+  }
+}
+
+.character
+{
+  .property
+  {
+    @extend .health !optional;
+    margin: toRem(8px) 0;
+  }
+}

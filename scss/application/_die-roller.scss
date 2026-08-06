@@ -1,0 +1,84 @@
+&.die-roller {
+    position: fixed;
+    pointer-events: all;
+    flex-wrap: nowrap;
+    display: flex !important;
+    align-items: flex-end;
+    
+    .window-header
+    {
+        display: none;
+        visibility: hidden;
+        height: 0;
+    }
+
+    .window-content
+    {
+        overflow: hidden;
+        width: 100%;
+        z-index: 1001;
+
+        & > form
+        {
+            margin-left: 5px;
+        }
+    }
+
+    #die-roller-move-handle
+    {
+        z-index: 101;
+        font-size: 1px;
+        line-height: 100%;
+        position: absolute;
+        top: 0;
+        bottom:0;
+        left: 0;
+        width: 10px;
+        background: rgba(51, 51, 51, 0.8);
+    }
+
+    .die-roller-expanded
+    {
+        padding-right: 2.25rem;
+    }
+
+    .die-roller-collapse
+    {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 2rem;
+        height: 2.5rem;
+        padding: 0;
+        line-height: 2.5rem;
+        font-size: 1rem;
+    }
+
+    .die-roller-collapsed
+    {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        height: 2.5rem;
+        padding: 0 1.5rem;
+        color: $button-color;
+        background: $button-background;
+    }
+
+    &.collapsed
+    {
+        width: auto !important;
+        height: auto !important;
+
+        .window-content
+        {
+            display: none;
+        }
+
+        .die-roller-collapsed
+        {
+            display: flex;
+        }
+    }
+}

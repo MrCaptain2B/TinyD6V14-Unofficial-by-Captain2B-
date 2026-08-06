@@ -1,0 +1,19 @@
+.tiny-cthulhu
+{
+  font-family: "Signika", "Signika Negative", sans-serif;
+
+  &.sheet
+  {
+    @import "tiny-cthulhu/window-content";
+  }
+
+  @import "tiny-cthulhu/headings";
+  @import "tiny-cthulhu/hero-sheet";
+  @import "tiny-cthulhu/npc-sheet";
+  @import "tiny-cthulhu/die-roller";
+
+  .experience
+  {
+    @import "../partial/label_tabs";
+  }
+}

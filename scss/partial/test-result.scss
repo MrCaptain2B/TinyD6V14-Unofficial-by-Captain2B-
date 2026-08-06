@@ -1,0 +1,27 @@
+&.dice-breakdown
+{
+  background-color: $theme-card-bg;
+  color: $theme-text;
+  border: 1px solid $theme-border;
+  border-radius: 4px;
+  padding: toRem(8px) toRem(16px);
+}
+
+&.roll-result
+{
+  text-transform: uppercase;
+  text-align: center;
+  border-radius: 4px;
+
+  &.bg-success
+  {
+    background-color: #2e7d32;
+    color: $white;
+  }
+
+  &.bg-danger
+  {
+    background-color: #8a6d1a;
+    color: $white;
+  }
+}

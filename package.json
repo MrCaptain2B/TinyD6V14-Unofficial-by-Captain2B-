@@ -1,0 +1,18 @@
+{
+  "name": "foundry-tiny-d6",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Peter Adams <peter@solminion.com>",
+  "license": "MIT",
+  "scripts": {
+    "build:css": "gulp css"
+  },
+  "dependencies": {
+    "bootstrap": "^4.6.0",
+    "gulp": "^4.0.2",
+    "gulp-cli": "^2.3.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-sass": "^5.1.0",
+    "sass": "^1.77.8"
+  }
+}

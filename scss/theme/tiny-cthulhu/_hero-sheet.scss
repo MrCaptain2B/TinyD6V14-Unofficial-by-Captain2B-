@@ -1,0 +1,113 @@
+&.hero
+{
+  .character,
+  .trauma
+  {
+    margin-bottom: toRem(15px);
+  }
+
+  .proficiencies,
+  .traits
+  {
+    margin-bottom: toRem(24px);
+  }
+
+  .trauma
+  {
+    .health-meter
+    {
+      line-height: toRem(26px);
+    }
+    .increase-max-health
+    {
+      width: toRem(20px);
+      height: toRem(20px);
+      margin: toRem(3px) toRem(5px);
+    }
+  }
+
+  .character,
+  .traits:not(.standalone),
+  .inventory
+  {
+    position: relative;
+    border: 1px solid $theme-border;
+    border-radius: 4px;
+    background-color: $theme-card-bg;
+    padding: toRem(12px);
+    z-index: 1;
+
+    h1,h2,h3
+    {
+      &.floating-header
+      {
+        position: static;
+        top: auto !important;
+        right: auto;
+        color: $theme-text-strong;
+        background-color: transparent;
+        padding: 0 0 toRem(4px);
+        clip-path: none;
+        border-bottom: 2px solid $theme-accent;
+        margin-bottom: toRem(8px);
+      }
+
+      &.section-header
+      {
+        color: $theme-text-strong;
+        border-bottom: 1px solid $theme-border;
+        padding-bottom: toRem(4px);
+      }
+    }
+
+    @import "../../partial/label_tabs";
+  }
+
+  .traits:not(.standalone)
+  {
+    .floating-action
+    {
+      position: absolute;
+      top: toRem(8px);
+      right: toRem(12px);
+      clip-path: none;
+      background-color: transparent;
+      color: $theme-text-muted;
+      padding: 0;
+      z-index: 2;
+
+      a
+      {
+        &:hover
+        {
+          color: $theme-accent-soft;
+        }
+      }
+    }
+  }
+
+  .equipment
+  {
+    .equipped-weapon
+    {
+      line-height: 4rem;
+    }
+
+    .total-armor
+    {
+      display: inline-block;
+      text-align: center;
+      line-height: 4rem;
+      width: 2rem;
+      height: 4rem;
+      margin-right: 1rem;
+
+      font-size: 18pt;
+      font-weight: 600;
+      background-image: url("../assets/icons/armor.svg");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+    }
+  }
+}

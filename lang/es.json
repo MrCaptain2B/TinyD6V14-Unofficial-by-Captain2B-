@@ -1,0 +1,349 @@
+﻿{
+    "tinyd6":  {
+                   "TinyD6HeroSheet":  "Heroe",
+                   "TinyD6NpcSheet":  "PNJ",
+                   "TokenWeapons":  "Armas",
+"TokenActions":  "Acciones",
+                   "system":  {
+                                  "name":  "Tiny D6 2e",
+"dieRoller":  "Lanzador de Dados",
+"actions":  "Acciones",
+"actionAdd":  "Anadir accion",
+"actionRemove":  "Quitar accion",
+"collapse":  "Contraer",
+                                  "expand":  "Expandir"
+                              },
+                   "settings":  {
+                                    "title":  "Ajustes del Sistema",
+                                    "label":  "Ajustes del Sistema",
+                                    "description":  "Escoge las reglas y mecanicas opcionales que quieras activar de entre las opciones siguientes.",
+                                    "theme":  {
+                                                  "name":  "Tema",
+                                                  "hint":  "Selecciona el tema para una partida concreta de TinyD6",
+                                                  "choices":  {
+                                                                  "cthulhu":  "Tiny Cthulhu",
+                                                                  "dungeon":  "Tiny Dungeon 2e"
+                                                              }
+                                              },
+                                    "sheetStyle":  {
+                                                    "name":  "Estilo de hoja",
+                                                    "hint":  "Elige el estilo visual de las hojas de personaje",
+                                                    "choices":  {
+                                                                    "default":  "Oscuro (por defecto)",
+                                                                    "perkament":  "Pergamino пїЅ Folclore",
+                                                                    "noir":  "Noir пїЅ Cobre",
+                                                                    "minimal":  "Minimal пїЅ Claro"
+                                                                }
+                                                },
+                                    "enableCorruption":  {
+                                                             "name":  "Activar Corrupcion",
+                                                             "hint":  "Anade un contador a la hoja de personaje para marcar la Corrupcion."
+                                                         },
+                                    "enableAdvancement":  {
+                                                              "name":  "Progreso del Personaje",
+                                                              "hint":  "Progreso de los personajes basado en el numero de sesiones o en puntos de experiencia.",
+                                                              "choices":  {
+                                                                              "none":  "Ninguno",
+                                                                              "minimalist":  "Avance Minimalista",
+                                                                              "xp":  "Puntos de Experiencia"
+                                                                          }
+                                                          },
+                                    "rollerInCharsheet":  {
+                                                              "name":  "Dice Roller in Character Sheet",
+                                                              "hint":  "Enable to have a Dice Roller in the Character Sheet."
+                                                          },
+                                    "enableItemTracking":  {
+                                                               "name":  "Activar Huecos de Inventario",
+                                                               "hint":  "Muestra el uso de huecos en los objetos y calcula los huecos de inventario restantes."
+                                                           },
+                                    "enableDepletionPoints":  {
+                                                                  "name":  "Activar el Desgaste de Objetos",
+                                                                  "hint":  "Cuando se usan puntos de desgaste objetos, los registra en los objetos de los personajes."
+                                                              },
+                                    "enableCriticalHits":  {
+                                                               "name":  "Activar Exitos Criticos",
+                                                               "hint":  "Marca una prueba como \u0027Exito Critico\u0027 cuando todos los dados son 6."
+                                                           },
+                                    "enableCriticalFailure":  {
+                                                                  "name":  "Activar Fallos Criticos",
+                                                                  "hint":  "Marca una prueba como \u0027Fallo Critico\u0027 cuando todos los dados son 1."
+                                                              },
+                                    "enableVariableWeaponDamage":  {
+                                                                       "name":  "Dano de Arma Variable",
+                                                                       "hint":  "Calcula el dano variable de las armas al atacar."
+                                                                   },
+                                    "enablePowerOrigin":  {
+                                                              "name":  "Activar Origen de Poder",
+                                                              "hint":  "Anade un campo de texto para el Origen de tu Super Poder."
+                                                          },
+                                    "enableWeakness":  {
+                                                           "name":  "Activar Debilidad",
+                                                           "hint":  "Anade un campo de texto para tu Super Debilidad."
+                                                       },
+                                    "enablePanic":  {
+                                                        "name":  "Activar Panico",
+                                                        "hint":  "Anade un contador a la hoja de personaje para marcar el Panico."
+                                                    },
+                                    "enableRadiation":  {
+                                                            "name":  "Activar Radiacion",
+                                                            "hint":  "Anade un contador a la hoja de personaje para marcar la Radiacion."
+                                                        },
+                                    "enableGrit":  {
+                                                       "name":  "Activar Coraje",
+                                                       "hint":  "Anade un contador a la hoja de personaje para marcar el Coraje."
+                                                   },
+                                    "independentNpcTokens":  {
+                                                                 "name":  "Tokens PNJ independientes",
+                                                                 "hint":  "Los tokens colocados en la escena desde un actor PNJ se convierten en copias independientes con su propio HP y armadura."
+                                                             },
+                                    "defaultActions":  {
+                                                          "name":  "Acciones predeterminadas",
+                                                          "hint":  "Maximo de acciones predeterminado para nuevos actores (Tiny D6 estandar es 1)."
+                                                      },
+                                    "enableReloadHomerule":  {
+                                                                "name":  "Homerule: Recarga",
+                                                                "hint":  "Activa la homerule de recarga: las armas a distancia gastan municion (Uses) por ataque; las pesadas pueden limitarse a un ataque por ronda."
+                                                            },
+                                    "critAdvantage":  {
+                                                        "name":  "Homerule: Ventaja critica",
+                                                        "hint":  "Cuando todos los dados muestran 6 iguales en un ataque, el dano del arma se duplica (Critico). Elige si aplica a 2d6, 3d6 o ambos.",
+                                                        "choices":  {
+                                                                      "off":  "Desactivado",
+                                                                      "two":  "solo 2d6",
+                                                                      "three":  "solo 3d6",
+                                                                      "both":  "2d6 y 3d6"
+                                                                  }
+                                                    },
+"showNpcReloadMessages":  {
+                                                                 "name":  "Mostrar mensajes de recarga NPC",
+                                                                 "hint":  "Publicar mensajes de recarga/sin municion de NPC en el chat (por defecto off para reducir ruido)."
+                                                             },
+                                    "enableDeathHomerule":  {
+                                                                 "name":  "Homerule: Muerte y derribado",
+                                                                 "hint":  "Cuando los PV bajan a 0, heroes y NPC importantes hacen una tirada de muerte (1d6): exito - estabilizado (Derrotado); fallo - Agonizando con temporizador de rondas, luego Muerte. Los NPC normales simplemente son derrotados. Los derribados no pueden atacar."
+                                                             },
+                                    "deathRounds":  {
+                                                                 "name":  "Tirada de muerte: rondas para morir",
+                                                                 "hint":  "Rondas de combate que sobrevive un agonizante sin ser curado (estandar 3)."
+                                                             },
+                                    "deathSaveThreshold":  {
+                                                                 "name":  "Tirada de muerte: umbral de exito",
+                                                                 "hint":  "Una tirada de muerte (1d6) acierta si el resultado es al menos este valor (estandar 4)."
+                                                             },
+                                    "showNpcDeathMessages":  {
+                                                                 "name":  "Mostrar mensajes de derrota NPC",
+                                                                 "hint":  "Tambien publicar mensaje cuando un NPC normal es derrotado (por defecto off para reducir ruido)."
+                                                             }
+                                 },
+                   "dice":  {
+                                "modifier":  {
+                                                 "focus":  "Foco",
+                                                 "marksman":  "Francotirador"
+                                             },
+                                "roll":  {
+                                             "disadvantage":  "Desventaja",
+                                             "standard":  "Prueba normal",
+                                             "advantage":  "Ventaja",
+                                             "success":  "?Exito!",
+                                             "failure":  "Fallo",
+                                             "critical":  "??Exito Critico!!",
+                                             "botch":  "??Fallo Critico!!"
+                                         }
+                            },
+                   "sheet":  {
+                                 "tab":  {
+                                             "main":  "Main"
+                                         },
+                                 "combat":  "Combat",
+                                 "weaponProficiency":  "Weapon Proficiency",
+                                 "wounds":  "Wounds",
+                                 "armor":  "Armor",
+                                 "corruption":  "Corruption",
+                                 "xp":  "XP",
+                                 "actions":  {
+                                                 "name":  "Acciones",
+                                                 "spend":  "Gastar una accion",
+                                                 "restore":  "Restaurar una accion",
+                                                 "plus":  "Anadir accion maxima (+1)",
+                                                 "minus":  "Quitar accion maxima (-1)"
+                                             },
+                                 "newItem":  "Nuevo Objeto",
+                                 "description":  "Descripcion",
+                                 "none":  "Ninguno"
+                             },
+                   "actor":  {
+                                 "name":  "Nombre",
+                                 "npc":  "PNJ",
+                                 "people":  "Gente",
+                                 "traits":  "Rasgos",
+                                 "description":  "Descripcion",
+                                 "tiny-cthulhu":  {
+                                                      "character":  "Bio",
+                                                      "heritage":  {
+                                                                       "header":  "Arquetipo",
+                                                                       "traits":  "Rasgo de Arquetipo",
+                                                                       "delete":  "Eliminar Arquetipo"
+                                                                   }
+                                                  },
+                                 "tiny-dungeon":  {
+                                                      "character":  "Personaje",
+                                                      "heritage":  {
+                                                                       "header":  "Linaje",
+                                                                       "traits":  "Rasgo de Linaje",
+                                                                       "delete":  "Eliminar Linaje"
+                                                                   }
+                                                  },
+                                 "homeland":  "Origen",
+                                 "age":  "Edad",
+                                 "eyes":  "Ojos",
+                                 "hair":  "Pelo",
+                                 "familyTrade":  "Negocio Familiar",
+                                 "powerOrigin":  "Origen de Poder",
+                                 "weakness":  "Debilidad",
+                                 "belief":  "Creencia",
+                                 "xp":  {
+                                            "header":  "Experiencia",
+                                            "progression":  "Progreso",
+                                            "total":  "Total",
+                                            "spent":  "Gastado",
+                                            "remaining":  "Restante"
+                                        },
+                                 "wounds":  {
+                                                "header":  "Heridas",
+                                                "current":  "Actuales",
+                                                "max":  "Maximas:",
+                                                "increaseMax":  "Incrementar Salud Maxima",
+                                                "help":  "Marca una casilla cuando recibas dano. Desmarca cuando te cures."
+                                            },
+                                 "radiation":  {
+                                                   "header":  "Radiacion",
+                                                   "current":  "Actual",
+                                                   "max":  "Maxima:",
+                                                   "increaseMax":  "Incrementar Radiacion Maxima",
+                                                   "help":  "Marca una casilla cuando recibas radiacion."
+                                               },
+                                 "corruption":  {
+                                                    "test":  "Prueba de Corrupcion",
+                                                    "header":  "Corrupcion",
+                                                    "current":  "Actual",
+                                                    "max":  "Maxima:",
+                                                    "increaseMax":  "Incrementar Umbral de Corrupcion",
+                                                    "help":  "Marca una casilla cuando recibas corrupcion. Desmarca cuando te recuperes."
+                                                },
+                                 "panic":  {
+                                               "test":  "Prueba de Panico",
+                                               "header":  "Panico",
+                                               "current":  "Actual",
+                                               "help":  "Desmarca una casilla cuando recibes Panico."
+                                           },
+                                 "grit":  {
+                                              "header":  "Coraje",
+                                              "current":  "Actual",
+                                              "help":  "Desmarca una casilla cuando gastes Coraje."
+                                          },
+                                 "proficiencies":  {
+                                                       "header":  "Competencia",
+                                                       "mastered":  "Maestria"
+                                                   },
+                                 "gear":  "Inventario",
+                                 "equipped":  "Equipado",
+                                 "weaponry":  "Armamento",
+                                 "wearing":  "Vestido",
+                                 "important":  "PNJ importante",
+                                 "actions":  {
+                                                 "editTrait":  "Editar Rasgo",
+                                                 "chatTrait":  "",
+                                                 "chatItem":  "",
+                                                 "deleteTrait":  "Eliminar Rasgo"
+                                             }
+                             },
+                   "weaponCategories":  {
+                                            "melee":  "Cuerpo a Cuerpo",
+                                            "ranged":  "A Distancia"
+                                        },
+                   "weaponTypes":  {
+                                       "none":  "",
+                                       "light":  "Ligera",
+                                       "heavy":  "Pesada"
+                                   },
+                   "armorTypes":  {
+                                      "none":  "",
+                                      "light":  "Ligera",
+                                      "medium":  "Media",
+                                      "heavy":  "Pesada"
+                                  },
+                   "corruptionTests":  {
+                                           "none":  "Ninguno",
+                                           "disadvantage":  "Desventaja",
+                                           "standard":  "Normal"
+                                       },
+                   "weapon":  {
+                                  "name":  "Nombre",
+                                  "type":  "Tipo de Arma",
+                                  "damage":  "Dano",
+                                  "slots":  "Huecos de Inventario",
+                                  "description":  "Descripcion",
+                                  "light":  "Ligera",
+                                  "heavy":  "Pesada",
+                                  "ranged":  "A Distancia",
+                                  "lightMelee":  "L. CaC",
+                                  "heavyMelee":  "P. CaC",
+                                  "lightRanged":  "L. A Dist.",
+                                  "heavyRanged":  "P. A Dist.",
+                                   "lightShort":  "L",
+                                   "heavyShort":  "P",
+                                   "meleeShort":  "CaC",
+                                   "rangedShort":  "Dist",
+                                   "oneAttack":  "Un ataque por ronda",
+                                   "reload":  "Recargar",
+                                   "uses":  "Usos"
+                               },
+                    "reload":  {
+                                   "outOfAmmo":  "Sin municion — recarga!",
+                                   "ranOut":  "Municion agotada — recarga para continuar.",
+                                   "reloadBtn":  "Recargar (reiniciar al maximo)",
+                                   "reloaded":  "recargo",
+                                   "undoResource":  "Restaurar recurso"
+                               },
+                   "death":  {
+                                  "down":  "Derrotado",
+                                  "dying":  "Agonizando",
+                                  "dead":  "Muerto",
+                                  "cannotAct":  "Los derribados no pueden atacar.",
+                                  "thrown":  "Tirada de muerte",
+                                  "self":  "su propia tirada de muerte",
+                                  "stabilized":  "Estabilizado",
+                                  "stabilizedHint":  "El personaje esta derribado pero vivo y estabilizado.",
+                                  "dyingHint":  "El personaje agoniza y morira en {rounds} rondas si no es curado.",
+                                  "defeated":  "es derrotado.",
+                                  "died":  "ha muerto.",
+                                  "turnsLeft":  "{actor} morira en {n} turnos."
+                              },
+                   "armor":  {
+                                 "name":  "Nombre",
+                                 "type":  "Tipo de Armadura",
+                                 "damageReduction":  "RD",
+                                 "armorHp":  "HP Armadura",
+                                 "slots":  "Huecos de Inventario",
+                                 "depletion":  "Deterioro",
+                                 "description":  "Descripcion",
+                                 "none":  "Sin Armadura"
+                             },
+                   "gear":  {
+                                "name":  "Nombre",
+                                "slots":  "Huecos de Inventario",
+                                "depletion":  "Deterioro",
+                                "quantity":  "Cantidad",
+                                "description":  "Descripcion"
+                            },
+                   "heritage":  {
+                                    "trait":  "Rasgo de Linaje",
+                                    "startingHealth":  "Salud Inicial",
+                                    "corruptionThreshold":  "Umbral de Corrupcion"
+                                },
+                   "trait":  {
+                                 "name":  "Nombre",
+                                 "description":  "Descripcion"
+                             }
+               }
+}
