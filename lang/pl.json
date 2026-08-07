@@ -100,10 +100,10 @@
                                                           "name":  "Domyslne akcje",
                                                           "hint":  "Domyslna maksymalna liczba akcji dla nowych aktorow (standard Tiny D6 to 1)."
                                                       },
-                                    "enableReloadHomerule":  {
-                                                                "name":  "Homerule: Przeladowanie",
-                                                                "hint":  "Wlacza homerule przeladowania: bron dystansowa zuzywa amunicje (Uses) na atak; ciezkie mozna ograniczyc do jednego ataku na runde."
-                                                            },
+                                     "enableTinyD6Plus":  {
+                                                                 "name":  "Homerule: TinyD6+",
+                                                                 "hint":  "Wlacza homerules walki TinyD6+: przeladowanie (amunicja na atak), smierc i obalenie (rzut na smierc, umierajacy z licznikiem) oraz palete broni w HUD tokena."
+                                                             },
                                     "critAdvantage":  {
                                                         "name":  "Homerule: Krytyczna przewaga",
                                                         "hint":  "Gdy wszystkie kosci w ataku pokazuja identyczne szesci (6), obrazenia broni sa podwojone (Krytyczne). Wybierz, czy dziala dla 2k6, 3k6, czy obu.",
@@ -118,11 +118,7 @@
                                                                  "name":  "Pokazuj wiadomosci przeladowania NPC",
                                                                  "hint":  "Publikuj wiadomosci o przeladowaniu/braku amunicji NPC w czacie (domyslnie wylaczone, mniej szumu)."
                                                              },
-                                    "enableDeathHomerule":  {
-                                                                 "name":  "Homerule: Smierc i obalenie",
-                                                                 "hint":  "Gdy HP spadnie do 0, bohaterowie i wazni NPC wykonuja rzut na smierc (1k6): sukces - ustabilizowany (Pobity); porazka - Umierajacy z licznikiem rund, potem Smierc. Zwykli NPC sa po prostu obaleni. Obaleni nie moga atakowac."
-                                                             },
-                                    "deathRounds":  {
+"deathRounds":  {
                                                                  "name":  "Rzut na smierc: rundy do smierci",
                                                                  "hint":  "Liczba rund walki, ktore Umierajacy przezyje bez leczenia (standard 3)."
                                                              },

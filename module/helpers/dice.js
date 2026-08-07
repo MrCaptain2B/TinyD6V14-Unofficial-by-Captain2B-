@@ -240,21 +240,21 @@ export function openAttackDialog(actor, weapon) {
  * рендерит attack-card в чат. Урон применяется кнопкой на карточке.
  * dice: 1 = помеха, 2 = стандарт, 3 = преимущество.
  * focusAction / marksmanTrait снижают порог успеха на 1 каждый.
- * Homerule: Reloading — у оружия с reload тратится 1 заряд (даже при
+ * Homerule: TinyD6+ — у оружия с reload тратится 1 заряд (даже при
  * промахе); при 0 зарядов атака блокируется и в чат идёт заглушка. */
 export async function performWeaponAttack(actor, weapon, dice = 2, { focusAction = false, marksmanTrait = false } = {}) {
-    const homerule = game.settings.get('tinyd6v14', 'enableReloadHomerule');
+    const homerule = game.settings.get('tinyd6v14', 'enableTinyD6Plus');
     const showNpcMessages = game.settings.get('tinyd6v14', 'showNpcReloadMessages');
     const isNpc = actor?.type === "npc";
 
-    // Homerule: Death — выведенный из строя персонаж не может атаковать.
-    if (game.settings.get('tinyd6v14', 'enableDeathHomerule') && isDowned(actor))
+    // Homerule: TinyD6+ — выведенный из строя персонаж не может атаковать.
+    if (game.settings.get('tinyd6v14', 'enableTinyD6Plus') && isDowned(actor))
     {
         ui.notifications.warn(game.i18n.localize("tinyd6.death.cannotAct"));
         return;
     }
 
-    // Homerule: Reloading — проверка зарядов перед атакой.
+    // Homerule: TinyD6+ — проверка зарядов перед атакой.
     let weaponReload = false;
     let weaponMax = 0;
     let weaponCharges = 0;
@@ -316,7 +316,7 @@ export async function performWeaponAttack(actor, weapon, dice = 2, { focusAction
     }
     const cardDamage = isCrit ? weaponDamage * 2 : weaponDamage;
 
-    // Homerule: Reloading — тратим 1 заряд после броска (и при промахе).
+    // Homerule: TinyD6+ — тратим 1 заряд после броска (и при промахе).
     let reloadedToEmpty = false;
     if (weaponReload)
     {
@@ -357,6 +357,183 @@ export async function performWeaponAttack(actor, weapon, dice = 2, { focusAction
         speaker: ChatMessage.getSpeaker({ actor }),
         content
     });
+}
+
+/* Находит ammo-гир для перезарядки оружия.
+ * Ищет по ammoType оружия; если тип не задан или задан но не найден —
+ * по fallback: сначала тот же тип у любого гира, при пустой цели — любой
+ * ammo-гир. Возвращает первый подходящий предмет или null. */
+export function findAmmoItem(actor, weapon) {
+    if (!weapon?.system?.reload) return null;
+    const ammoItems = (actor?.items ?? []).filter(i => i.type === "gear" && i.system?.category === "ammo" && (Number(i.system.quantity?.value) || 0) > 0);
+    if (!ammoItems.length) return null;
+    const type = weapon.system.ammoType;
+    if (type) {
+        return ammoItems.find(i => i.system.ammoType === type) ?? null;
+    }
+    return ammoItems[0] ?? null;
+}
+
+/* Перезарядка оружия с учётом ammo-гира: списывает 1 рожок и заполняет
+ * магазин (charges = uses). Возвращает { ok, weapon, ammo } где
+ * ammo — использованный гир либо null. Если ammo нет — возвращает { ok:false }
+ * (рожок не списывается, заряды не трогаются). */
+export async function reloadWeapon(actor, weapon, { render = true } = {}) {
+    const ammo = findAmmoItem(actor, weapon);
+    const weaponReload = Boolean(weapon?.system?.reload);
+
+    // Если не reload либо ammo-гир не нужен/не найден — обычный сброс (резерв).
+    if (!weaponReload || !ammo) {
+        if (!weaponReload) return { ok: false, weapon, ammo: null, reason: "notReload" };
+        return { ok: false, weapon, ammo: null, reason: "no-ammo" };
+    }
+
+    const qty = Number(ammo.system.quantity?.value) || 0;
+    if (qty <= 0) return { ok: false, weapon, ammo, reason: "empty" };
+
+    await ammo.update({ "system.quantity.value": qty - 1 }, { render: false });
+    await weapon.update({ "system.charges": Number(weapon.system.uses) || 0 }, { render });
+
+    return { ok: true, weapon, ammo };
+}
+
+/* Оформление сообщения об исходе перезарядки. */
+export async function postReloadMessage(actor, weapon, ammo, { showForNpc = false } = {}) {
+    const isNpc = actor?.type === "npc";
+    const announce = showForNpc || !isNpc;
+    if (!announce) return;
+
+    const speaker = ChatMessage.getSpeaker({ actor });
+    const ammoName = ammo ? `<i class="fas fa-bell"></i> ${game.i18n.format("tinyd6.reload.ammoUsed", { ammo: ammo.name })}` : "";
+    const content = `<div class="tinyd6 reload-stub"><i class="fas fa-undo-alt"></i> <b>${actor.name}</b> ${game.i18n.localize("tinyd6.reload.reloaded")} <b>${weapon.name}</b>${ammoName}</div>`;
+    await ChatMessage.create({ speaker, content });
+}
+
+/* ============================================================
+   Лечение (Homerule: TinyD6+ / gear.category = heal)
+   ============================================================ */
+
+/* Разбирает формулу лечения heal-гира:
+ *  - фикс: число ("4", "10");
+ *  - кубы: "NdM" или "NdM±B" ("2d4", "1d6", "2d4+2").
+ * Возвращает null, если формула не распознана. */
+export function parseHealFormula(formula) {
+    const f = String(formula ?? "").trim().toLowerCase();
+    if (!f) return null;
+    const diceMatch = f.match(/^(\d+)?d(\d+)([+-]\d+)?$/);
+    if (diceMatch) {
+        const n = Math.max(1, parseInt(diceMatch[1]) || 1);
+        const sides = Math.max(1, parseInt(diceMatch[2]) || 1);
+        const bonus = diceMatch[3] ? parseInt(diceMatch[3]) : 0;
+        return { kind: "dice", n, sides, bonus };
+    }
+    const fixed = Number(f);
+    if (Number.isFinite(fixed) && f !== "") return { kind: "fixed", value: Math.max(0, fixed) };
+    return null;
+}
+
+/* Компактное отображение формулы ("4" или "2d4+2"). */
+export function formatHealFormula(formula) {
+    const p = parseHealFormula(formula);
+    if (!p) return "";
+    if (p.kind === "fixed") return String(p.value);
+    let s = `${p.n}d${p.sides}`;
+    if (p.bonus > 0) s += `+${p.bonus}`;
+    else if (p.bonus < 0) s += p.bonus;
+    return s;
+}
+
+/* Кубики формулы лечения для карточки в чате: список { face, result }.
+ * Для фикса возвращает один элемент без грани куба. */
+function _healRollFaces(parsed) {
+    if (parsed.kind === "fixed") return [{ face: null, result: parsed.value }];
+    const faces = [];
+    for (let i = 0; i < parsed.n; i++) faces.push({ face: _diceFace(1), result: 0 });
+    return faces;
+}
+
+/* Применяет heal-гир к цели: бросает формулу (если кубовая), восстанавливает
+ * HP (не выше max), списывает 1 шт. и постит карточку в чат. Возвращает
+ * { ok, reason, healed, applied, target }. */
+export async function useHealItem(healer, healItem, target, { showForNpc = false } = {}) {
+    const homerule = game.settings.get('tinyd6v14', 'enableTinyD6Plus');
+    if (!homerule) return { ok: false, reason: "disabled" };
+    if (!healer || !healItem || !target) return { ok: false, reason: "no-target" };
+    if (healItem.type !== "gear" || healItem.system?.category !== "heal") return { ok: false, reason: "not-heal" };
+
+    const qty = Number(healItem.system?.quantity?.value) || 0;
+    if (qty <= 0) return { ok: false, reason: "empty" };
+
+    const parsed = parseHealFormula(healItem.system?.heal);
+    if (!parsed) return { ok: false, reason: "bad-formula" };
+
+    const current = Number(target.system?.wounds?.value) || 0;
+    const max = Number(target.system?.wounds?.max) || current;
+    if (current >= max) return { ok: false, reason: "full" };
+
+    // Бросок: кубы + бонус, либо фикс.
+    let healed = 0;
+    let rolls = [];
+    let roll = null;
+    if (parsed.kind === "dice")
+    {
+        const formula = `${parsed.n}d${parsed.sides}${parsed.bonus ? (parsed.bonus > 0 ? "+" : "") + parsed.bonus : ""}`;
+        roll = await new Roll(formula, {}).evaluate();
+        healed = Number(roll.total) || 0;
+        rolls = roll.dice?.[0]?.results?.map(r => r.result) ?? [];
+    }
+    else
+    {
+        healed = parsed.value;
+    }
+    healed = Math.max(0, Math.floor(healed));
+
+    // Списываем гир только при реальном лечении.
+    await healItem.update({ "system.quantity.value": Math.max(0, qty - 1) }, { render: false });
+    const applied = Math.min(max - current, healed);
+    await target.update({ "system.wounds.value": current + applied });
+
+    const isNpc = healer?.type === "npc";
+    const announce = showForNpc || !isNpc;
+    if (announce)
+    {
+        await postHealMessage(healer, healItem, target, {
+            applied,
+            healed,
+            rolls,
+            roll,
+            faces: _healRollFaces(parsed)
+        });
+    }
+    return { ok: true, healed, applied, target, item: healItem };
+}
+
+/* Карточка лечения в чат (death-mini в «зелёном» варианте). */
+export async function postHealMessage(healer, healItem, target, { applied, healed, rolls = [], roll = null, faces = [] } = {}) {
+    const speaker = ChatMessage.getSpeaker({ actor: healer });
+    const formula = formatHealFormula(healItem.system?.heal);
+
+    const facesHtml = faces.map((f, i) => {
+        const result = rolls[i] ?? f.result;
+        const face = rolls[i] ? _diceFace(rolls[i]) : "";
+        return `<span class="death-mini-icon mini"><i class="fas ${face}"></i><b>${result}</b></span>`;
+    }).join("");
+
+    const content = `<div class="tinyd6 death-mini heal-mini">
+        <div class="death-mini-body">
+            <span class="death-mini-title">${game.i18n.localize("tinyd6.heal.heal")} — <b>${healItem.name}</b></span>
+            <span class="death-mini-sub"><b>${healer.name}</b> ${game.i18n.localize("tinyd6.heal.usesOn")} <b>${target.name}</b>: ${applied} HP (${formula || ""})</span>
+        </div>
+    </div>`;
+
+    const chatData = { speaker, content };
+    if (roll) chatData.rolls = [roll];
+    await ChatMessage.create(chatData);
+}
+
+/* Находит heal-гир по id (среди предметов актёра). */
+export function findHealItem(actor, itemId) {
+    return (actor?.items ?? []).get(itemId) ?? null;
 }
 
 /* Применяет урон атаки к целям из карточки чата с учётом брони цели.

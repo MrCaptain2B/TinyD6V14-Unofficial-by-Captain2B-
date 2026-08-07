@@ -3,6 +3,7 @@
                    "TinyD6HeroSheet":  "Heroi",
                    "TinyD6NpcSheet":  "NPC",
                    "TokenWeapons":  "Armas",
+                   "TokenHeal":  "Curar e estabilizar",
 "TokenActions":  "Acoes",
                    "system":  {
                                   "name":  "Tiny D6 2e",
@@ -100,10 +101,10 @@
                                                           "name":  "Acoes padrao",
                                                           "hint":  "Maximo de acoes padrao para novos atores (padrao Tiny D6 e 1)."
                                                       },
-                                    "enableReloadHomerule":  {
-                                                                "name":  "Homerule: Recarga",
-                                                                "hint":  "Ativa a homerule de recarga: armas de distancia gastam municao (Uses) por ataque; armas pesadas podem ser limitadas a um ataque por rodada."
-                                                            },
+                                     "enableTinyD6Plus":  {
+                                                                 "name":  "Homerule: TinyD6+",
+                                                                 "hint":  "Ativa as homerules de combate TinyD6+: recarga (municao por ataque), morte e derrotado (salvacao, agonizando com temporizador) e a paleta de armas no HUD do token."
+                                                             },
                                     "critAdvantage":  {
                                                         "name":  "Homerule: Vantagem critica",
                                                         "hint":  "Quando todos os dados mostram 6 identicos em um ataque, o dano da arma e dobrado (Critico). Escolha se isso se aplica a 2d6, 3d6 ou ambos.",
@@ -118,11 +119,7 @@
                                                                  "name":  "Mostrar mensagens de recarga NPC",
                                                                  "hint":  "Postar mensagens de recarga/sem municao de NPC no chat (desativado por padrao para reduzir ruido)."
                                                              },
-                                    "enableDeathHomerule":  {
-                                                                 "name":  "Homerule: Morte e derrotado",
-                                                                 "hint":  "Quando os PV caem a 0, herois e NPCs importantes fazem uma salvacao (1d6): sucesso - estabilizado (Derrotado); falha - Agonizando com temporizador de rounds, depois Morte. NPCs normais sao apenas derrotados. Derrotados nao podem atacar."
-                                                             },
-                                    "deathRounds":  {
+"deathRounds":  {
                                                                  "name":  "Salvacao: rounds para morrer",
                                                                  "hint":  "Rounds de combate que um agonizante sobrevive sem cura (padrao 3)."
                                                              },
@@ -296,14 +293,20 @@
                                    "rangedShort":  "D",
                                    "oneAttack":  "Um ataque por rodada",
                                    "reload":  "Recarregar",
-                                   "uses":  "Usos"
-                               },
-                    "reload":  {
+"uses":  "Usos",
+                                    "ammoType":  "Tipo de municao",
+                                    "ammoAny":  "- qualquer municao"
+                                },
+                     "reload":  {
                                    "outOfAmmo":  "Sem municao — recarregue!",
                                    "ranOut":  "Municao esgotada — recarregue para continuar.",
                                    "reloadBtn":  "Recarregar (reiniciar para o maximo)",
                                    "reloaded":  "recarregou",
-                                   "undoResource":  "Restaurar recurso"
+                                   "undoResource":  "Restaurar recurso",
+                                    "noMag":  "Nenhum carregador do tipo \"{type}\" no inventario.",
+                                    "emptyMag":  "Carregador \"{type}\" vazio (0 restantes).",
+                                    "noMagAny":  "Nenhum carregador (municao) no inventario.",
+                                    "ammoUsed":  " (carregador {ammo})"
                                },
                    "death":  {
                                   "down":  "Derrotado",
@@ -318,7 +321,31 @@
                                   "defeated":  "e derrotado.",
                                   "died":  "morreu.",
                                   "turnsLeft":  "{actor} morrera em {n} turnos."
-                              },
+                   },
+                   "stabilize":  {
+                     "title":  "Estabilizar",
+                     "sheetHint":  "Selecione um aliado caído (0 PV) e faça uma salvaguarda contra a morte.",
+                     "subtitle":  "faça uma salvaguarda contra a morte para estabilizar. Qualquer dado igual ou acima do limite é um sucesso.",
+                     "self":  "Você não pode se estabilizar.",
+                     "noTarget":  "Selecione primeiro um aliado caído (0 PV) como alvo.",
+                     "notDowned":  "Este alvo não está caído.",
+                     "thrown":  "Estabilização",
+                     "target":  "alvo",
+                     "success":  "Estabilizado",
+                     "fail":  "Falhou",
+                     "roll":  "Estabilizar"
+                   },
+                   "heal":  {
+                     "use":  "Usar",
+                     "heal":  "Curar",
+                     "usesOn":  "usa",
+                     "heals":  "cura {hp} PV",
+                     "noTarget":  "Selecione um token alvo para curar ou use em si mesmo.",
+                     "empty":  "Este item de cura está sem usos.",
+      "emptyHint":  "Nenhum item de cura. Selecione um aliado caído para estabilizar.",
+                     "full":  "O alvo está com PV cheios.",
+                     "badFormula":  "Fórmula de cura inválida neste item."
+                   },
                    "armor":  {
                                  "name":  "Nome",
                                  "type":  "Tipo de Armadura",
@@ -334,7 +361,18 @@
                                 "slots":  "Vagas",
                                 "depletion":  "Desgaste",
                                 "quantity":  "Quantidade",
-                                "description":  "Descricao"
+                                "description":  "Descricao",
+                                "category":  "Categoria",
+                                "ammoType":  "Tipo de municao",
+                                "ammoTypePlaceholder":  "ex.: 9x19",
+                                "heal":  "Cura (PV)",
+                                "healPlaceholder":  "4 ou 2d4+2",
+                                "categories":  {
+                                                "item":  "Item",
+                                                "ammo":  "Municao",
+                                                "heal":  "Cura",
+                                                "money":  "Dinheiro"
+                            }
                             },
                    "heritage":  {
                                     "trait":  "Traco de Heranca",

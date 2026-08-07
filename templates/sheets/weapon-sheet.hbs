@@ -8,7 +8,7 @@
         </tr>
         <tr>
             <td class="text-nowrap">
-                {{#if config.enableReloadHomerule}}
+                {{#if config.enableTinyD6Plus}}
                 <select name="system.weaponType">
                     {{selectOptions config.weaponCombos selected=data.system.weaponType localize="true"}}
                 </select>
@@ -30,7 +30,7 @@
         </tr>
     </table>
 
-    {{#if config.enableReloadHomerule}}
+    {{#if config.enableTinyD6Plus}}
     <div class="weapon-reload-opts">
         {{#if (or (eq data.system.weaponType "heavyMelee") (eq data.system.weaponType "heavyRanged"))}}
         <label class="toggle-line">
@@ -47,6 +47,15 @@
         <div class="field-row">
             <label>{{localize "tinyd6.weapon.uses"}}</label>
             <input type="number" class="text-center" name="system.uses" value="{{data.system.uses}}" min="0"/>
+        </div>
+        <div class="field-row">
+            <label>{{localize "tinyd6.weapon.ammoType"}}</label>
+            <select name="system.ammoType">
+                <option value="">{{localize "tinyd6.weapon.ammoAny"}}</option>
+                {{#each config.ammoTypes}}
+                    <option value="{{this}}" {{#if (eq ../data.system.ammoType this)}}selected{{/if}}>{{this}}</option>
+                {{/each}}
+            </select>
         </div>
         {{/if}}
     </div>

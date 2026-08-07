@@ -3,6 +3,7 @@
                    "TinyD6HeroSheet":  "Heroe",
                    "TinyD6NpcSheet":  "PNJ",
                    "TokenWeapons":  "Armas",
+                   "TokenHeal":  "Curar y estabilizar",
 "TokenActions":  "Acciones",
                    "system":  {
                                   "name":  "Tiny D6 2e",
@@ -100,10 +101,10 @@
                                                           "name":  "Acciones predeterminadas",
                                                           "hint":  "Maximo de acciones predeterminado para nuevos actores (Tiny D6 estandar es 1)."
                                                       },
-                                    "enableReloadHomerule":  {
-                                                                "name":  "Homerule: Recarga",
-                                                                "hint":  "Activa la homerule de recarga: las armas a distancia gastan municion (Uses) por ataque; las pesadas pueden limitarse a un ataque por ronda."
-                                                            },
+                                     "enableTinyD6Plus":  {
+                                                                 "name":  "Homerule: TinyD6+",
+                                                                 "hint":  "Activa las homerules de combate TinyD6+: recarga (municion por ataque), muerte y derribado (tirada de muerte, agonizando con temporizador) y la paleta de armas en el HUD del token."
+                                                             },
                                     "critAdvantage":  {
                                                         "name":  "Homerule: Ventaja critica",
                                                         "hint":  "Cuando todos los dados muestran 6 iguales en un ataque, el dano del arma se duplica (Critico). Elige si aplica a 2d6, 3d6 o ambos.",
@@ -118,11 +119,7 @@
                                                                  "name":  "Mostrar mensajes de recarga NPC",
                                                                  "hint":  "Publicar mensajes de recarga/sin municion de NPC en el chat (por defecto off para reducir ruido)."
                                                              },
-                                    "enableDeathHomerule":  {
-                                                                 "name":  "Homerule: Muerte y derribado",
-                                                                 "hint":  "Cuando los PV bajan a 0, heroes y NPC importantes hacen una tirada de muerte (1d6): exito - estabilizado (Derrotado); fallo - Agonizando con temporizador de rondas, luego Muerte. Los NPC normales simplemente son derrotados. Los derribados no pueden atacar."
-                                                             },
-                                    "deathRounds":  {
+"deathRounds":  {
                                                                  "name":  "Tirada de muerte: rondas para morir",
                                                                  "hint":  "Rondas de combate que sobrevive un agonizante sin ser curado (estandar 3)."
                                                              },
@@ -296,14 +293,20 @@
                                    "rangedShort":  "Dist",
                                    "oneAttack":  "Un ataque por ronda",
                                    "reload":  "Recargar",
-                                   "uses":  "Usos"
-                               },
-                    "reload":  {
+"uses":  "Usos",
+                                    "ammoType":  "Tipo de municion",
+                                    "ammoAny":  "- cualquier municion"
+                                    },
+                     "reload":  {
                                    "outOfAmmo":  "Sin municion — recarga!",
                                    "ranOut":  "Municion agotada — recarga para continuar.",
                                    "reloadBtn":  "Recargar (reiniciar al maximo)",
                                    "reloaded":  "recargo",
-                                   "undoResource":  "Restaurar recurso"
+                                   "undoResource":  "Restaurar recurso",
+                                    "noMag":  "No hay cargadores de tipo \"{type}\" en el inventario.",
+                                    "emptyMag":  "El cargador \"{type}\" esta vacio (0 restantes).",
+                                    "noMagAny":  "No hay cargadores (municion) en el inventario.",
+                                    "ammoUsed":  " (cargador {ammo})"
                                },
                    "death":  {
                                   "down":  "Derrotado",
@@ -318,7 +321,31 @@
                                   "defeated":  "es derrotado.",
                                   "died":  "ha muerto.",
                                   "turnsLeft":  "{actor} morira en {n} turnos."
-                              },
+                   },
+                   "stabilize":  {
+                     "title":  "Estabilizar",
+                     "sheetHint":  "Selecciona un aliado derribado (0 PV) y lanza una tirada de salvación.",
+                     "subtitle":  "lanza una tirada de salvación para estabilizar. Cualquier dado igual o superior al umbral es un éxito.",
+                     "self":  "No puedes estabilizarte a ti mismo.",
+                     "noTarget":  "Selecciona primero un aliado derribado (0 PV) como objetivo.",
+                     "notDowned":  "Este objetivo no está derribado.",
+                     "thrown":  "Estabilización",
+                     "target":  "objetivo",
+                     "success":  "Estabilizado",
+                     "fail":  "Falló",
+                     "roll":  "Estabilizar"
+                   },
+                   "heal":  {
+                     "use":  "Usar",
+                     "heal":  "Curar",
+                     "usesOn":  "usa",
+                     "heals":  "cura {hp} PV",
+                     "noTarget":  "Selecciona un token objetivo para curar o úsalo en ti mismo.",
+                     "empty":  "Este objeto curativo está sin usos.",
+      "emptyHint":  "No hay objetos curativos. Selecciona un aliado derribado para estabilizar.",
+                     "full":  "El objetivo tiene los PV al máximo.",
+                     "badFormula":  "Fórmula de curación inválida en este objeto."
+                   },
                    "armor":  {
                                  "name":  "Nombre",
                                  "type":  "Tipo de Armadura",
@@ -330,12 +357,23 @@
                                  "none":  "Sin Armadura"
                              },
                    "gear":  {
-                                "name":  "Nombre",
-                                "slots":  "Huecos de Inventario",
-                                "depletion":  "Deterioro",
-                                "quantity":  "Cantidad",
-                                "description":  "Descripcion"
-                            },
+                                 "name":  "Nombre",
+                                 "slots":  "Huecos de Inventario",
+                                 "depletion":  "Deterioro",
+                                 "quantity":  "Cantidad",
+                                 "description":  "Descripcion",
+                                 "category":  "Categoria",
+                                 "ammoType":  "Tipo de municion",
+                                 "ammoTypePlaceholder":  "p.ej. 9x19",
+                                 "heal":  "Curación (PV)",
+                                 "healPlaceholder":  "4 o 2d4+2",
+                                 "categories":  {
+                                                 "item":  "Objeto",
+                                                 "ammo":  "Municion",
+                                                 "heal":  "Curacion",
+                                                 "money":  "Dinero"
+                                             }
+                             },
                    "heritage":  {
                                     "trait":  "Rasgo de Linaje",
                                     "startingHealth":  "Salud Inicial",

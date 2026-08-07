@@ -1,4 +1,5 @@
 import * as Dice from "../helpers/dice.js";
+import { openStabilizeDialog, getStabilizeTarget } from "../helpers/death.js";
 
 /* Кастомный HUD токена: убирает нерелевантные для TinyD6 элементы (высота,
  * палитры уровней и движения, сортировка), добавляет HP-степеры, чип состояния
@@ -22,7 +23,9 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
             actions: {
                 weaponAttack: TinyD6TokenHUD._onWeaponAttack,
                 weaponReload: TinyD6TokenHUD._onWeaponReload,
-                hpStep: TinyD6TokenHUD._onHpStep
+                hpStep: TinyD6TokenHUD._onHpStep,
+                stabilize: TinyD6TokenHUD._onStabilize,
+                healUse: TinyD6TokenHUD._onHealUse
             }
         });
     }
@@ -39,12 +42,13 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
 
         // Чип состояния смерти: только финальные/активные статусы.
         let deathChip = null;
+        const homeruleEnabled = game.settings.get('tinyd6v14', 'enableTinyD6Plus');
         const death = actor?.system?.death;
-        if (death?.dead)
+        if (homeruleEnabled && death?.dead)
         {
             deathChip = { state: "dead", label: game.i18n.localize("tinyd6.death.dead"), icon: "fa-skull", tooltip: game.i18n.localize("tinyd6.death.dead") };
         }
-        else if (death?.dying)
+        else if (homeruleEnabled && death?.dying)
         {
             const rounds = Number(death.roundsLeft) || 0;
             deathChip = {
@@ -54,7 +58,7 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
                 tooltip: game.i18n.format("tinyd6.death.dyingHint", { rounds })
             };
         }
-        else if (death?.down)
+        else if (homeruleEnabled && death?.down)
         {
             deathChip = { state: "down", label: game.i18n.localize("tinyd6.death.down"), icon: "fa-skull-crossbones", tooltip: game.i18n.localize("tinyd6.death.down") };
         }
@@ -86,14 +90,36 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
                 };
             });
 
+        const weaponsEnabled = homeruleEnabled;
+
+        // Heal-гиры (gear.category = heal) с количеством для палитры лечения.
+        const healItems = (actor?.items ?? [])
+            .filter(i => i.type === "gear" && i.system?.category === "heal")
+            .map(i => ({
+                id: i.id,
+                name: i.name,
+                img: i.img || "icons/svg/item-bag.svg",
+                heal: Dice.formatHealFormula(i.system?.heal),
+                qty: Number(i.system?.quantity?.value) || 0
+            }));
+
+        const healEnabled = homeruleEnabled;
+        const stabTarget = homeruleEnabled ? getStabilizeTarget(actor) : null;
+
         return foundry.utils.mergeObject(context, {
             armorIcon: "systems/tinyd6v14/assets/icons/armor.svg",
+            healIcon: "systems/tinyd6v14/assets/icons/heal.svg",
             armorTotal,
             armorHpTotal,
             showArmor: actor !== undefined,
             armorEditable: actor?.isOwner ?? false,
             weapons,
-            showWeapons: weapons.length > 0,
+            showWeapons: weaponsEnabled && weapons.length > 0,
+            healItems,
+            showHeal: healEnabled,
+            showStab: healEnabled,
+            stabEnabled: Boolean(stabTarget),
+            hasHealItems: healItems.length > 0,
             hpMax,
             hpEditable,
             deathChip
@@ -163,7 +189,7 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
         const weapon = actor?.items?.get(weaponId);
         if (!weapon) return;
 
-        // Homerule: Reloading — оружие без зарядов из HUD недоступно.
+        // Homerule: TinyD6+ — оружие без зарядов из HUD недоступно.
         if (weapon.system.reload)
         {
             const charges = (weapon.system.charges !== undefined && weapon.system.charges !== null)
@@ -175,8 +201,8 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
             }
         }
 
-        // Homerule: Death — выведенный из строя персонаж не может атаковать.
-        if (game.settings.get('tinyd6v14', 'enableDeathHomerule') && actor.system?.death?.down)
+        // Homerule: TinyD6+ — выведенный из строя персонаж не может атаковать.
+        if (game.settings.get('tinyd6v14', 'enableTinyD6Plus') && actor.system?.death?.down)
         {
             ui.notifications.warn(game.i18n.localize("tinyd6.death.cannotAct"));
             return;
@@ -184,7 +210,8 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
         Dice.openAttackDialog(actor, weapon);
     }
 
-    /** Перезарядка оружия из HUD: сбрасывает заряды до максимума (uses). */
+    /** Перезарядка оружия из HUD: списывает ammo-гир (рожок) и заполняет
+     *  магазин до uses. Если ammo-гира нет — предупреждение, заряды не меняются. */
     static async _onWeaponReload(event, target) {
         event.preventDefault();
         const actor = this.document?.actor;
@@ -193,24 +220,74 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
         const weapon = actor?.items?.get(weaponId);
         if (!weapon) return;
 
-        // Анимация: крутится только иконка, затем сбрасываем заряды.
+        // Анимация: крутится только иконка, затем перезаряжаем.
         target.classList.add("spin");
         await new Promise(resolve => {
             target.addEventListener("animationend", () => resolve(), { once: true });
             setTimeout(resolve, 700);
         });
 
-        await weapon.update({ "system.charges": Number(weapon.system.uses) || 0 }, { render: false });
+        const result = await Dice.reloadWeapon(actor, weapon);
+        if (!result.ok)
+        {
+            const reason = result.reason;
+            const ammoType = weapon.system?.ammoType;
+            const msg = reason === "empty"
+                ? game.i18n.format("tinyd6.reload.emptyMag", { type: ammoType || "" })
+                : (ammoType ? game.i18n.format("tinyd6.reload.noMag", { type: ammoType }) : game.i18n.localize("tinyd6.reload.noMagAny"));
+            ui.notifications.warn(msg);
+            this.render();
+            return;
+        }
 
         const isNpc = actor.type === "npc";
         const showNpcMessages = game.settings.get('tinyd6v14', 'showNpcReloadMessages');
         if (showNpcMessages || !isNpc)
         {
-            const speaker = ChatMessage.getSpeaker({ actor });
-            await ChatMessage.create({
-                speaker,
-                content: `<div class="tinyd6 reload-stub"><i class="fas fa-undo-alt"></i> <b>${actor.name}</b> ${game.i18n.localize("tinyd6.reload.reloaded")} <b>${weapon.name}</b></div>`
-            });
+            await Dice.postReloadMessage(actor, weapon, result.ammo, { showForNpc: showNpcMessages });
+        }
+        this.render();
+    }
+
+    /** Стабилизация поверженного токена-цели из палитры Heal. */
+    static async _onStabilize(event, target) {
+        event.preventDefault();
+        const actor = this.document?.actor;
+        if (!game.settings.get('tinyd6v14', 'enableTinyD6Plus')) return;
+
+        const stabTarget = getStabilizeTarget(actor);
+        if (!stabTarget)
+        {
+            ui.notifications.warn(game.i18n.localize("tinyd6.stabilize.noTarget"));
+            return;
+        }
+        openStabilizeDialog(actor, stabTarget);
+    }
+
+    /** Использование heal-гира из палитры Heal: лечит цель (или себя). */
+    static async _onHealUse(event, target) {
+        event.preventDefault();
+        const actor = this.document?.actor;
+        const card = target?.closest?.("[data-heal-id]");
+        const healId = card?.dataset?.healId;
+        const healItem = actor?.items?.get(healId);
+        if (!actor || !healItem || healItem.system?.category !== "heal") return;
+
+        const targets = Array.from(game.user.targets ?? []).filter(t => t.actor && t.actor.id !== actor.id);
+        const targetActor = targets[0]?.actor ?? actor;
+
+        const result = await Dice.useHealItem(actor, healItem, targetActor);
+        if (!result.ok)
+        {
+            const reason = result.reason;
+            const msg = reason === "empty"
+                ? game.i18n.localize("tinyd6.heal.empty")
+                : reason === "full"
+                    ? game.i18n.localize("tinyd6.heal.full")
+                    : reason === "bad-formula"
+                        ? game.i18n.localize("tinyd6.heal.badFormula")
+                        : game.i18n.localize("tinyd6.heal.noTarget");
+            ui.notifications.warn(msg);
         }
         this.render();
     }

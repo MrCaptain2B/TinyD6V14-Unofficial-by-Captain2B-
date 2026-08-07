@@ -1,5 +1,5 @@
 /* ============================================================
-   Homerule: Death / 0 HP
+   Homerule: TinyD6+ / 0 HP
    ============================================================
    Когда HP персонажа падает до 0:
    - герой и «важный NPC» (галочка Important NPC): токен получает
@@ -91,7 +91,7 @@ export async function clearDeathState(actor) {
 
 /* Основной хендлер попадания HP в 0. */
 export async function handleZeroHp(actor) {
-    if (!actor || !game.settings.get('tinyd6v14', 'enableDeathHomerule')) return;
+    if (!actor || !game.settings.get('tinyd6v14', 'enableTinyD6Plus')) return;
 
     const isHero = actor.type === "hero";
     const importantNpc = actor.type === "npc" && Boolean(actor.system?.important);
@@ -146,7 +146,7 @@ export async function handleZeroHp(actor) {
  * Каждый ход поверженного героя/важного NPC в чат выводится сообщение:
  * «(@actor) умрёт через N ходов», N уменьшается на 1 за ход. */
 export async function tickDeathTimers(combat) {
-    if (!combat || !game.settings.get('tinyd6v14', 'enableDeathHomerule')) return;
+    if (!combat || !game.settings.get('tinyd6v14', 'enableTinyD6Plus')) return;
 
     const combatant = combat.combatant;
     if (!combatant) return;
@@ -181,4 +181,114 @@ export async function tickDeathTimers(combat) {
             content: `<div class="tinyd6 death-stub death-timer death-died"><b>${actor.name}</b> ${game.i18n.localize("tinyd6.death.died")}</div>`
         });
     }
+}
+
+/* ============================================================
+   Стабилизация (Homerule: TinyD6+ / кнопка «Стабилизировать»)
+   ============================================================
+   Персонаж с 0 HP пытается стабилизироваться: кидается спасбросок против
+   deathSaveThreshold (по умолчанию 4). Режим броска — как у атаки:
+   Помеха (1 куб) / Стандарт (2 куба) / Преимущество (3 куба).
+   Успех (хотя бы один куб >= порога) — стабилизирован: dying снимается,
+   счётчик сбрасывается, «потеря сознания» остаётся. Провал — Dying
+   продолжает тикать. Работает только по токенам-целям (не на себя). */
+
+function _stabilizeTargets(stabilizer) {
+    const targets = [];
+    if (game.user.targets?.size)
+    {
+        game.user.targets.forEach(t => {
+            if (!t.actor) return;
+            // На себя нацеливаться нельзя.
+            if (stabilizer && t.actor.id === stabilizer.id) return;
+            if (t.actor.type === "npc" || t.actor.type === "hero") targets.push(t);
+        });
+    }
+    return targets;
+}
+
+/* Токен-цель, которой можно стабилизироваться (0 HP, повержена). */
+export function getStabilizeTarget(stabilizer) {
+    const targets = _stabilizeTargets(stabilizer);
+    return targets.find(t => (Number(t.actor?.system?.wounds?.value) || 0) <= 0) ?? null;
+}
+
+/* Открывает диалог стабилизации: выбор режима броска (помеха/стандарт/
+ * преимущество). Общий для листа актёра и HUD. */
+export function openStabilizeDialog(stabilizer, target) {
+    if (!stabilizer || !target) return;
+    if (stabilizer.id === target.actor?.id)
+    {
+        ui.notifications.warn(game.i18n.localize("tinyd6.stabilize.self"));
+        return;
+    }
+    if ((Number(target.actor?.system?.wounds?.value) || 0) > 0)
+    {
+        ui.notifications.warn(game.i18n.localize("tinyd6.stabilize.notDowned"));
+        return;
+    }
+
+    const name = target.actor?.name ?? "";
+    new Dialog({
+        title: game.i18n.localize("tinyd6.stabilize.title"),
+        content: `<p><b>${name}</b> — ${game.i18n.localize("tinyd6.stabilize.subtitle")}</p>`,
+        buttons: {
+            disadvantage: {
+                label: game.i18n.localize("tinyd6.dice.roll.disadvantage"),
+                callback: () => rollStabilize(stabilizer, target, 1)
+            },
+            standard: {
+                label: game.i18n.localize("tinyd6.dice.roll.standard"),
+                callback: () => rollStabilize(stabilizer, target, 2)
+            },
+            advantage: {
+                label: game.i18n.localize("tinyd6.dice.roll.advantage"),
+                callback: () => rollStabilize(stabilizer, target, 3)
+            }
+        },
+        default: "standard"
+    }).render(true);
+}
+
+/* Бросок стабилизации: dice = 1 (помеха), 2 (стандарт), 3 (преимущество).
+ * Успех — хотя бы один куб >= порога. При успехе стабилизирует цель и
+ * пишет карточку в чат. Возвращает { success, roll }. */
+export async function rollStabilize(stabilizer, target, dice = 2) {
+    if (!target?.actor) return null;
+    const actor = target.actor;
+    if (stabilizer?.id === actor.id) return null;
+
+    const threshold = Number(game.settings.get('tinyd6v14', 'deathSaveThreshold')) || 4;
+    const roll = await new Roll(`${dice}d6cs>=${threshold}`, {}).evaluate();
+    const success = roll.total >= 1;
+    const results = roll.dice?.[0]?.results?.map(r => r.result) ?? [];
+    const faces = results.map(r => _dieFace(r));
+
+    if (success)
+    {
+        // Стабилизирован: повержен, но жив; Dying и счётчик сбрасываются.
+        await actor.update({
+            "system.death.down": true,
+            "system.death.dying": false,
+            "system.death.dead": false,
+            "system.death.roundsLeft": 0
+        }, { render: false });
+        await _setStatus(actor, DEATH_STATUSES.unconscious.id, true);
+        await _setStatus(actor, DEATH_STATUSES.dying.id, false);
+    }
+
+    const speaker = ChatMessage.getSpeaker({ actor: stabilizer });
+    const flavor = `${game.i18n.localize("tinyd6.stabilize.thrown")} — ${game.i18n.localize("tinyd6.stabilize.target")} ${actor.name}`;
+    const facesHtml = faces.map(f => `<span class="death-mini-icon mini"><i class="fas ${f}"></i></span>`).join("");
+    const content = success
+        ? `<div class="tinyd6 death-mini stable"><div class="death-mini-icon"><i class="fas fa-kit-medical"></i></div><div class="death-mini-body"><span class="death-mini-title">${game.i18n.localize("tinyd6.stabilize.success")}</span><span class="death-mini-sub">${actor.name} — ${game.i18n.localize("tinyd6.death.stabilizedHint")}</span></div><div class="death-mini-rolls">${facesHtml}</div></div>`
+        : `<div class="tinyd6 death-mini dying"><div class="death-mini-icon"><i class="fas fa-skull-crossbones"></i></div><div class="death-mini-body"><span class="death-mini-title">${game.i18n.localize("tinyd6.stabilize.fail")}</span><span class="death-mini-sub">${actor.name} — ${game.i18n.localize("tinyd6.death.dyingHint").replace("{rounds}", Number(actor.system?.death?.roundsLeft) || 0)}</span></div><div class="death-mini-rolls">${facesHtml}</div></div>`;
+
+    await ChatMessage.create({
+        speaker,
+        flavor,
+        content,
+        rolls: [roll]
+    });
+    return { success, roll };
 }

@@ -11,7 +11,7 @@ tinyd6.weaponTypes = {
     heavy: "tinyd6.weaponTypes.heavy"
 }
 
-/* Комбинированные типы оружия (Homerule: Reloading): один селект вместо
+/* Комбинированные типы оружия (Homerule: TinyD6+): один селект вместо
  * двух (light/heavy + melee/ranged). */
 tinyd6.weaponCombos = {
     none: "tinyd6.weaponTypes.none",
@@ -65,4 +65,13 @@ tinyd6.corruptionTests = {
     none: "tinyd6.corruptionTests.none",
     disadvantage: "tinyd6.corruptionTests.disadvantage",
     standard: "tinyd6.corruptionTests.standard"
+}
+
+/* Homerule: TinyD6+ — категории снаряжения (gear). ammo = патроны/рожки,
+ * которые перезарядка оружия списывает по одному за клик. */
+tinyd6.gearCategories = {
+    item: "tinyd6.gear.categories.item",
+    ammo: "tinyd6.gear.categories.ammo",
+    heal: "tinyd6.gear.categories.heal",
+    money: "tinyd6.gear.categories.money"
 }

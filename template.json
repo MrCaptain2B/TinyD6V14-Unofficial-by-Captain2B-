@@ -111,6 +111,7 @@
       "reload": false,
       "uses": 0,
       "charges": 0,
+      "ammoType": "",
       "oneAttack": false
     },
     "armor": {
@@ -122,7 +123,10 @@
       }
     },
     "gear": {
-      "templates": [ "slots", "itemDescription", "depletion", "quantity" ]
+      "templates": [ "slots", "itemDescription", "depletion", "quantity" ],
+      "category": "item",
+      "ammoType": "",
+      "heal": ""
     },
     "heritage": {
       "templates": [ "itemDescription" ],

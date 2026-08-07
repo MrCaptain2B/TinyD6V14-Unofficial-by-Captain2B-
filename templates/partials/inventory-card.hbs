@@ -3,8 +3,15 @@
     <img src="{{gearItem.img}}" title="{{gearItem.name}}" width="24" height="24" class="align-middle mr-2"/>
     <h4 class="mr-auto">
         <a class="item-show d-inline-block h-100">{{gearItem.name}}</a>
-    </h4>
-    {{#if (eq gearItem.type "weapon")}}
+        {{#if (eq gearItem.type "gear")}}
+            {{#if (eq gearItem.system.category "ammo")}}
+                <span class="gear-cat ammo">{{gearItem.system.ammoType}} · ×{{gearItem.system.quantity.value}}</span>
+            {{/if}}
+            {{#if (eq gearItem.system.category "heal")}}
+                <span class="gear-cat heal">{{gearItem.system.heal}} HP · ×{{gearItem.system.quantity.value}}</span>
+            {{/if}}
+        {{/if}}
+    </h4>    {{#if (eq gearItem.type "weapon")}}
         <a class="item-control item-equip ml-2 {{#if gearItem.system.equipped}}equipped{{/if}}" data-field="system.equipped" title="{{localize "tinyd6.actor.actions.equipTrait"}}">
             <span class="fas fa-tshirt"></span>
         </a>
@@ -15,6 +22,9 @@
         </a>
     {{/if}}
     <a class="item-chat ml-2" title="{{localize "tinyd6.actor.actions.chatItem"}}"><i class="fas fa-comment-dots"></i></a>
+    {{#if (eq gearItem.system.category "heal")}}
+    <a class="item-control item-use ml-2" data-item-id="{{gearItem._id}}" title="{{localize "tinyd6.heal.use"}}"><i class="fas fa-kit-medical"></i></a>
+    {{/if}}
     <a class="item-control item-delete ml-2" title="{{localize "tinyd6.actor.actions.deleteTrait"}}"><i class="fas fa-times"></i></a>
 </div>
 </{{#if tagName}}{{tagName}}{{^}}li{{/if}}>

@@ -4,6 +4,7 @@
     "TinyD6NpcSheet": "NPC",
     "TokenArmor": "Armor",
     "TokenWeapons": "Weapons",
+    "TokenHeal": "Heal & Stabilize",
     "TokenActions": "Actions",
     "ArmorRestore": "Restore Armor",
     "Attack": "Attack",
@@ -84,9 +85,9 @@
         "name": "Default Actions",
         "hint": "Default maximum number of actions for newly created actors (Tiny D6 stock is 1)."
       },
-      "enableReloadHomerule": {
-        "name": "Homerule: Reloading",
-        "hint": "Enable the Reloading homerule: ranged weapons track charges (Uses) and consume one per attack; heavy weapons can be limited to one attack per round."
+      "enableTinyD6Plus": {
+        "name": "Homerule: TinyD6+",
+        "hint": "Enable the TinyD6+ combat house rules: reloading (ranged weapons track charges (Uses) and consume one per attack; heavy weapons can be limited to one attack per round), death & downed (at 0 HP heroes and important NPCs make a death save, then Dying with a round timer; defeated actors cannot attack), and the token HUD weapon palette (attack/reload from the token)."
       },
       "critAdvantage": {
         "name": "Homerule: Crit Advantage-Normal",
@@ -101,10 +102,6 @@
       "showNpcReloadMessages": {
         "name": "Show NPC Reload Messages",
         "hint": "Also post reload / out-of-ammo messages to chat for NPC actors (off by default to reduce chat noise)."
-      },
-      "enableDeathHomerule": {
-        "name": "Homerule: Death & Downed",
-        "hint": "When HP drops to 0, heroes and important NPCs make a death save (1d6): success — stabilized (Defeated); failure — Dying with a round timer, then Death. Regular NPCs are simply defeated. Defeated actors cannot attack."
       },
       "deathRounds": {
         "name": "Death Save: Rounds to Die",
@@ -319,14 +316,20 @@
       "rangedShort": "R",
       "oneAttack": "Attacks once per round",
       "reload": "Reload",
-      "uses": "Uses"
+      "uses": "Uses",
+      "ammoType": "Ammo type",
+      "ammoAny": "— any ammo"
     },
     "reload": {
       "outOfAmmo": "Out of ammo — reload!",
       "ranOut": "Ammo depleted — reload to continue.",
       "reloadBtn": "Reload (reset to max)",
       "reloaded": "reloaded",
-      "undoResource": "Restore resource"
+      "undoResource": "Restore resource",
+      "noMag": "No magazines of type \"{type}\" in inventory.",
+      "emptyMag": "Magazine \"{type}\" is empty (0 left).",
+      "noMagAny": "No magazines (ammo) in inventory.",
+      "ammoUsed": " (mag {ammo})"
     },
     "death": {
       "down": "Defeated",
@@ -341,6 +344,30 @@
       "defeated": "is defeated.",
       "died": "has died.",
       "turnsLeft": "{actor} will die in {n} turns."
+    },
+    "stabilize": {
+      "title": "Stabilize",
+      "sheetHint": "Target a downed ally (0 HP) and roll a death save.",
+      "subtitle": "roll a death save to stabilize. Any die equal or above the threshold is a success.",
+      "self": "You cannot stabilize yourself.",
+      "noTarget": "Target a downed ally (0 HP) first, then stabilize.",
+      "notDowned": "This target is not downed.",
+      "thrown": "Stabilization",
+      "target": "target",
+      "success": "Stabilized",
+      "fail": "Failed",
+      "roll": "Stabilize"
+    },
+    "heal": {
+      "use": "Use",
+      "heal": "Heal",
+      "usesOn": "uses",
+      "heals": "heals {hp} HP",
+      "noTarget": "Select a target token to heal, or use it on yourself.",
+      "empty": "This heal item is out of uses.",
+      "full": "Target is at full HP.",
+      "badFormula": "Invalid heal formula on this item.",
+      "emptyHint": "No heal items. Target a downed ally to stabilize."
     },
     "armor": {
       "name": "Name",
@@ -357,7 +384,18 @@
       "slots": "Item Slots",
       "depletion": "Depletion",
       "quantity": "Quantity",
-      "description": "Description"
+      "description": "Description",
+      "category": "Category",
+      "ammoType": "Ammo type",
+      "ammoTypePlaceholder": "e.g. 9x19",
+      "heal": "Healing (HP)",
+      "healPlaceholder": "4 or 2d4+2",
+      "categories": {
+        "item": "Item",
+        "ammo": "Ammo",
+        "heal": "Heal",
+        "money": "Money"
+      }
     },
     "heritage": {
       "trait": "Heritage Trait",

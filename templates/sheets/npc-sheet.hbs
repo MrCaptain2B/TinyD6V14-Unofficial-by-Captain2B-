@@ -48,6 +48,18 @@
                     {{#if owner}}
                         <p class="help">{{localize "tinyd6.actor.wounds.help"}}</p>
                     {{/if}}
+                    {{#if config.enableTinyD6Plus}}
+                    <div class="stab-action">
+                        <div class="icon"><i class="fas fa-kit-medical"></i></div>
+                        <div class="stab-action-body">
+                            <div class="t">{{localize "tinyd6.stabilize.title"}}</div>
+                            <div class="d">{{localize "tinyd6.stabilize.sheetHint"}}</div>
+                        </div>
+                        <button type="button" class="stab-btn" data-action="stabilize">
+                            <i class="fas fa-burst"></i> {{localize "tinyd6.stabilize.title"}}
+                        </button>
+                    </div>
+                    {{/if}}
                 </section>
             </div>
             <div class="col-4 npc-side text-center">

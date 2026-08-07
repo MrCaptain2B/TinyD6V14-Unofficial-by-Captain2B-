@@ -6,6 +6,12 @@
             <div class="item-card-type">{{item.type}}</div>
         </div>
     </div>
+    {{#if traitHTML}}
+    <div class="item-card-trait">
+        <div class="item-card-trait-label">{{localize "tinyd6.heritage.trait"}}</div>
+        <div class="item-card-trait-body">{{{traitHTML}}}</div>
+    </div>
+    {{/if}}
     <div class="item-card-body">
         {{{descriptionHTML}}}
     </div>

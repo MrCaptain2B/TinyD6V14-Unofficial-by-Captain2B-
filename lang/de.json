@@ -3,6 +3,7 @@
                    "TinyD6HeroSheet":  "Held",
                    "TinyD6NpcSheet":  "NSC",
                    "TokenWeapons":  "Waffen",
+                   "TokenHeal":  "Heilen & Stabilisieren",
 "TokenActions":  "Aktionen",
                    "system":  {
                                   "name":  "Tiny D6 2E",
@@ -100,10 +101,10 @@
                                                           "name":  "Standard-Aktionen",
                                                           "hint":  "Standard-Anzahl maximaler Aktionen fur neu erstellte Actors (Tiny D6 Standard ist 1)."
                                                       },
-                                    "enableReloadHomerule":  {
-                                                                "name":  "Hausregel: Nachladen",
-                                                                "hint":  "Aktiviert die Nachladen-Hausregel: Fernkampfwaffen verbrauchen Munition (Uses) pro Angriff; schwere Waffen konnen auf einen Angriff pro Runde begrenzt werden."
-                                                            },
+                                     "enableTinyD6Plus":  {
+                                                                 "name":  "Hausregel: TinyD6+",
+                                                                 "hint":  "Aktiviert die TinyD6+-Kampfhausregeln: Nachladen (Munition pro Angriff), Tod & kampfunfahig (Todeswurf, sterbend mit Runden-Zeitgeber) und die Waffen-Palette im Token-HUD."
+                                                             },
                                     "critAdvantage":  {
                                                         "name":  "Hausregel: Kritischer Vorteil",
                                                         "hint":  "Zeigen alle Wurfel beim Angriff gleiche 6er, wird der Waffenschaden verdoppelt (Kritisch). Wahle, ob dies fur 2W6, 3W6 oder beide gilt.",
@@ -118,11 +119,7 @@
                                                                  "name":  "NPC-Nachlade-Meldungen anzeigen",
                                                                  "hint":  "Nachlade-/Munitionsleer-Meldungen auch fur NPCs im Chat posten (Standard: aus, weniger Chat-Rauschen)."
                                                              },
-                                    "enableDeathHomerule":  {
-                                                                 "name":  "Hausregel: Tod & kampfunfahig",
-                                                                 "hint":  "Wenn LP auf 0 fallen, machen Helden und wichtige NPCs einen Todeswurf (1W6): Erfolg - stabilisiert (besiegt); Fehlschlag - sterbend mit Runden-Zeitgeber, dann Tod. Normale NPCs sind einfach besiegt. Besiegte konnen nicht angreifen."
-                                                             },
-                                    "deathRounds":  {
+"deathRounds":  {
                                                                  "name":  "Todeswurf: Runden bis zum Tod",
                                                                  "hint":  "Anzahl der Kampfrunden, die ein Sterbender ohne Heilung uberlebt (Standard 3)."
                                                              },
@@ -296,15 +293,21 @@
                                    "rangedShort":  "F",
                                    "oneAttack":  "Ein Angriff pro Runde",
                                    "reload":  "Nachladen",
-                                   "uses":  "Nutzungen"
-                               },
+"uses":  "Nutzungen",
+                                    "ammoType":  "Munitions-Typ",
+                                    "ammoAny":  "- jede Munition"
+                                },
                     "reload":  {
                                    "outOfAmmo":  "Keine Munition — nachladen!",
                                    "ranOut":  "Munition erschopft — zum Fortfahren nachladen.",
                                    "reloadBtn":  "Nachladen (auf Maximum zurucksetzen)",
-                                   "reloaded":  "hat nachgeladen",
-                                   "undoResource":  "Ressource wiederherstellen"
-                               },
+"reloaded":  "hat nachgeladen",
+                                    "undoResource":  "Ressource wiederherstellen",
+                                    "noMag":  "Keine Magazine des Typs \"{type}\" im Inventar.",
+                                    "emptyMag":  "Magazin \"{type}\" ist leer (0 ubrig).",
+                                    "noMagAny":  "Keine Magazine (Munition) im Inventar.",
+                                    "ammoUsed":  " (Magazin {ammo})"
+                                },
                    "death":  {
                                   "down":  "Besiegt",
                                   "dying":  "Sterbend",
@@ -318,7 +321,31 @@
                                   "defeated":  "ist besiegt.",
                                   "died":  "ist gestorben.",
                                   "turnsLeft":  "{actor} stirbt in {n} Zugen."
-                              },
+                   },
+                   "stabilize":  {
+                     "title":  "Stabilisieren",
+                     "sheetHint":  "Waehle einen besiegten Verbuendeten (0 HP) als Ziel und wirf einen Todeswurf.",
+                     "subtitle":  "wirf einen Todeswurf zum Stabilisieren. Jeder Wuerfel gleich oder ueber dem Schwellenwert ist ein Erfolg.",
+                     "self":  "Du kannst dich nicht selbst stabilisieren.",
+                     "noTarget":  "Waehle zuerst einen besiegten Verbuendeten (0 HP) als Ziel.",
+                     "notDowned":  "Dieses Ziel ist nicht besiegt.",
+                     "thrown":  "Stabilisierung",
+                     "target":  "Ziel",
+                     "success":  "Stabilisiert",
+                     "fail":  "Fehlgeschlagen",
+                     "roll":  "Stabilisieren"
+                   },
+                   "heal":  {
+                     "use":  "Anwenden",
+                     "heal":  "Heilen",
+                     "usesOn":  "verwendet",
+                     "heals":  "heilt {hp} HP",
+                     "noTarget":  "Waehle ein Ziel-Token zum Heilen oder verwende es an dir selbst.",
+                     "empty":  "Dieses Heilmittel ist aufgebraucht.",
+      "emptyHint":  "Keine Heilmittel. Waehle einen besiegten Verbuendeten als Ziel, um zu stabilisieren.",
+                     "full":  "Das Ziel hat volle HP.",
+                     "badFormula":  "Ungueltige Heilformel auf diesem Gegenstand."
+                   },
                    "armor":  {
                                  "name":  "Name",
                                  "type":  "Rustungstyp",
@@ -330,11 +357,22 @@
                                  "none":  "Keine Rustung"
                              },
                    "gear":  {
-                                "name":  "Name",
-                                "slots":  "Gengenstand Slots",
-                                "depletion":  "Verschlei?",
-                                "quantity":  "Anzahl",
-                                "description":  "Beschreibung"
+                                 "name":  "Name",
+                                 "slots":  "Gengenstand Slots",
+                                 "depletion":  "Verschlei?",
+                                 "quantity":  "Anzahl",
+                                 "description":  "Beschreibung",
+                                 "category":  "Kategorie",
+                                 "ammoType":  "Munitions-Typ",
+                                 "ammoTypePlaceholder":  "z.B. 9x19",
+                                 "heal":  "Heilung (HP)",
+                                 "healPlaceholder":  "4 oder 2d4+2",
+                                 "categories":  {
+                                                 "item":  "Gegenstand",
+                                                 "ammo":  "Munition",
+                                                 "heal":  "Heilung",
+                                                 "money":  "Wahrung"
+                                             }
                             },
                    "heritage":  {
                                     "trait":  "Vermachtnis Merkmal",

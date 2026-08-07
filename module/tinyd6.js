@@ -236,7 +236,7 @@ Hooks.on("preUpdateActor", (actor, changes, options, userId) => {
     }
 });
 
-/* Homerule: Reloading — при изменении Uses (или включении Reload) у оружия
+/* Homerule: TinyD6+ — при изменении Uses (или включении Reload) у оружия
  * синхронизируем текущее число зарядов, чтобы они не расходились с максимумом. */
 Hooks.on("preUpdateItem", (item, changes, options, userId) => {
     if (item.type !== "weapon") return;
@@ -251,7 +251,7 @@ Hooks.on("preUpdateItem", (item, changes, options, userId) => {
     }
 });
 
-/* Homerule: Death / 0 HP — отслеживаем переход HP в 0 и обратно.
+/* Homerule: TinyD6+ / 0 HP — отслеживаем переход HP в 0 и обратно.
  * Храним предыдущее HP актёра, чтобы сработать только на реальном переходе
  * (не на повторном 0 → 0), и только если тима смерти включена. */
 const PREV_WOUNDS = new Map();
@@ -262,7 +262,7 @@ Hooks.on("preUpdateActor", (actor, changes, options, userId) => {
     }
 });
 
-/* Homerule: Death tint — слегка затемняем токен только по финальным статусам
+/* Homerule: TinyD6+ tint — слегка затемняем токен только по финальным статусам
  * смерти: tinyd6Down («выведен из строя», обычные НПС) и tinyd6Dead («мёртв»,
  * герои и важные НПС). Промежуточные unconscious/dying не затемняют, чтобы
  * герой не темнел раньше времени (в момент обнуления HP). Оригинальный тинт
@@ -409,7 +409,7 @@ Hooks.on("updateActor", async (actor, changes, options, userId) => {
     }
 });
 
-/* Homerule: Death — тикает таймер смерти на начало хода поверженного
+/* Homerule: TinyD6+ — тикает таймер смерти на начало хода поверженного
  * персонажа (смена активного бойца). Только на клиенте GM. */
 Hooks.on("updateCombat", (combat, changes, options, userId) => {
     if (!game.user.isGM) return;
@@ -418,7 +418,7 @@ Hooks.on("updateCombat", (combat, changes, options, userId) => {
     tickDeathTimers(combat);
 });
 
-/* Homerule: Reloading — после изменения зарядов оружия (выстрел с токена,
+/* Homerule: TinyD6+ — после изменения зарядов оружия (выстрел с токена,
  * возврат ресурса, перезарядка) синхронизируем открытый лист актёра и HUD,
  * чтобы счётчик не расходился с данными. render(false) не пересоздаёт окно,
  * поэтому мерцания нет. */

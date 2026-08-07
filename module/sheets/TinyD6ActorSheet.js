@@ -1,4 +1,5 @@
 import * as Dice from "../helpers/dice.js";
+import { openStabilizeDialog, getStabilizeTarget } from "../helpers/death.js";
 
 export default class TinyD6ActorSheet extends ActorSheet {
     async getData() {
@@ -13,6 +14,7 @@ export default class TinyD6ActorSheet extends ActorSheet {
         // Determine optional element display based on settings
         data.config.enableCorruption = game.settings.get('tinyd6v14', 'enableCorruption');
         data.config.advancementMethod = game.settings.get('tinyd6v14', 'enableAdvancement');
+        data.config.enableTinyD6Plus = game.settings.get('tinyd6v14', 'enableTinyD6Plus');
         
         data.data.system.owner = this.actor.isOwner;
 
@@ -51,6 +53,9 @@ export default class TinyD6ActorSheet extends ActorSheet {
         html.find(".armor-hp-input").on('change', this._onArmorHpEdit.bind(this));
 
         html.find(".health-box").on('click', this._setCurrentDamage.bind(this));
+
+        html.find(".stab-btn").click(this._onStabilize.bind(this));
+        html.find(".item-use").click(this._onUseHeal.bind(this));
 
         html.find(".action-meter .act").on('click', this._setCurrentAction.bind(this));
         html.find(".actions-btns .plus").click(this._onActionPlus.bind(this));
@@ -117,10 +122,9 @@ export default class TinyD6ActorSheet extends ActorSheet {
         Dice.openAttackDialog(this.actor, weapon);
     }
 
-    /* Перезарядка оружия (кнопка ↻): сбрасывает заряды до максимума и
-     * выводит в чат «(actor) перезарядил (weapon)». Не тратит действие.
-     * Для NPC сообщение в чат выводится только если включено в настройках.
-     * Лист обновляется автоматически хуком updateItem. */
+    /* Перезарядка оружия (кнопка ↻): списывает ammo-гир (рожок) и заполняет
+     * магазин до uses. Если ammo-гира нет — предупреждение, заряды не меняются.
+     * Для NPC сообщение в чат выводится только если включено в настройках. */
     async _onWeaponReload(event)
     {
         event.preventDefault();
@@ -129,27 +133,33 @@ export default class TinyD6ActorSheet extends ActorSheet {
         const weapon = this.actor.items.get(weaponId);
         if (!weapon) return;
 
-        const max = Number(weapon.system.uses) || 0;
-
-        // Анимация: крутится только иконка, затем сбрасываем заряды.
+        // Анимация: крутится только иконка, затем перезаряжаем.
         element.classList.add("spin");
         await new Promise(resolve => {
             element.addEventListener("animationend", () => resolve(), { once: true });
             setTimeout(resolve, 700);
         });
 
-        await weapon.update({ "system.charges": max }, { render: false });
+        const result = await Dice.reloadWeapon(this.actor, weapon);
+        if (!result.ok)
+        {
+            const reason = result.reason;
+            const ammoType = weapon.system?.ammoType;
+            const msg = reason === "empty"
+                ? game.i18n.format("tinyd6.reload.emptyMag", { type: ammoType || "" })
+                : (ammoType ? game.i18n.format("tinyd6.reload.noMag", { type: ammoType }) : game.i18n.localize("tinyd6.reload.noMagAny"));
+            ui.notifications.warn(msg);
+            this.render(false);
+            return;
+        }
 
         const isNpc = this.actor.type === "npc";
         const showNpcMessages = game.settings.get('tinyd6v14', 'showNpcReloadMessages');
         if (showNpcMessages || !isNpc)
         {
-            const speaker = ChatMessage.getSpeaker({ actor: this.actor });
-            await ChatMessage.create({
-                speaker,
-                content: `<div class="tinyd6 reload-stub"><i class="fas fa-undo-alt"></i> <b>${this.actor.name}</b> ${game.i18n.localize("tinyd6.reload.reloaded")} <b>${weapon.name}</b></div>`
-            });
+            await Dice.postReloadMessage(this.actor, weapon, result.ammo, { showForNpc: showNpcMessages });
         }
+        this.render(false);
     }
 
     async _onItemChat(event)
@@ -165,14 +175,21 @@ export default class TinyD6ActorSheet extends ActorSheet {
             return;
         }
 
-        const description = item.system?.description || item.system?.trait || "";
+        // Heritage (архетип) кидает в чат ДВЕ отдельные секции: описание и
+        // архетип-способность (trait). Для всех остальных предметов — только
+        // описание, как и раньше.
+        const isHeritage = item.type === "heritage";
+        const enrich = (text) => text
+            ? TextEditor.enrichHTML(text, { secrets: this.actor.isOwner, async: true, rollData: this.actor.getRollData() })
+            : Promise.resolve("");
+
         const cardContent = await renderTemplate("systems/tinyd6v14/templates/partials/item-card.hbs",
         {
             item: item,
             name: item.name,
             img: item.img,
-            descriptionHTML: await TextEditor.enrichHTML(description,
-                { secrets: this.actor.isOwner, async: true, rollData: this.actor.getRollData() })
+            descriptionHTML: await enrich(item.system?.description || ""),
+            traitHTML: (isHeritage ? await enrich(item.system?.trait || "") : "")
         });
 
         const chatData = {
@@ -363,6 +380,58 @@ export default class TinyD6ActorSheet extends ActorSheet {
             delta -= (next - cur);
         }
         if (updates.length) await this.actor.updateEmbeddedDocuments("Item", updates);
+        this.render(false);
+    }
+
+    /* Стабилизация поверженного токена-цели: открывает диалог с режимами
+     * броска (Помеха/Стандарт/Преимущество). Только по токенам-целям,
+     * на себя нацелиться нельзя. */
+    async _onStabilize(event)
+    {
+        event.preventDefault();
+        if (!game.settings.get('tinyd6v14', 'enableTinyD6Plus')) return;
+
+        const target = getStabilizeTarget(this.actor);
+        if (!target)
+        {
+            const downed = Array.from(game.user.targets ?? []).some(t =>
+                t.actor && t.actor.id !== this.actor.id && (Number(t.actor.system?.wounds?.value) || 0) <= 0);
+            ui.notifications.warn(downed
+                ? game.i18n.localize("tinyd6.stabilize.self")
+                : game.i18n.localize("tinyd6.stabilize.noTarget"));
+            return;
+        }
+        openStabilizeDialog(this.actor, target);
+    }
+
+    /* Использование heal-гира из инвентаря: лечит выбранную цель (или себя,
+     * если целей нет), списывает 1 шт. */
+    async _onUseHeal(event)
+    {
+        event.preventDefault();
+        if (!game.settings.get('tinyd6v14', 'enableTinyD6Plus')) return;
+
+        const element = event.currentTarget;
+        const itemId = element.closest("[data-item-id]").dataset.itemId;
+        const healItem = this.actor.items.get(itemId);
+        if (!healItem || healItem.system?.category !== "heal") return;
+
+        const targets = Array.from(game.user.targets ?? []).filter(t => t.actor && t.actor.id !== this.actor.id);
+        const targetActor = targets[0]?.actor ?? this.actor;
+
+        const result = await Dice.useHealItem(this.actor, healItem, targetActor);
+        if (!result.ok)
+        {
+            const reason = result.reason;
+            const msg = reason === "empty"
+                ? game.i18n.localize("tinyd6.heal.empty")
+                : reason === "full"
+                    ? game.i18n.localize("tinyd6.heal.full")
+                    : reason === "bad-formula"
+                        ? game.i18n.localize("tinyd6.heal.badFormula")
+                        : game.i18n.localize("tinyd6.heal.noTarget");
+            ui.notifications.warn(msg);
+        }
         this.render(false);
     }
 }

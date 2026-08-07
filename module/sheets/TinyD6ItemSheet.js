@@ -16,7 +16,25 @@ export default class TinyD6ItemSheet extends ItemSheet {
 
         data.data.traits = {};
         data.config = CONFIG.tinyd6;
-        data.config.enableReloadHomerule = game.settings.get('tinyd6v14', 'enableReloadHomerule');
+        data.config.enableTinyD6Plus = game.settings.get('tinyd6v14', 'enableTinyD6Plus');
+
+        // Список типов патронов для выпадашки в листе оружия: уникальные
+        // ammoType из всех ammo-гиров мира и (если есть) владельца предмета.
+        const ammoTypes = new Set();
+        for (const item of game.items ?? [])
+        {
+            if (item.type === "gear" && item.system?.category === "ammo" && item.system?.ammoType)
+                ammoTypes.add(item.system.ammoType);
+        }
+        if (this.item.parent?.items)
+        {
+            for (const item of this.item.parent.items)
+            {
+                if (item.type === "gear" && item.system?.category === "ammo" && item.system?.ammoType)
+                    ammoTypes.add(item.system.ammoType);
+            }
+        }
+        data.config.ammoTypes = [...ammoTypes].sort();
 
         // Миграция старых оружий: два поля (damageType + group) -> один weaponType.
         if (this.item.type === "weapon")

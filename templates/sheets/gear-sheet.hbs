@@ -1,4 +1,34 @@
 ﻿<form class="{{cssClass}}" autocomplete="off">
     {{> "systems/tinyd6v14/templates/partials/item-header.hbs" placeholder='tinyd6.gear.name'}}
+    {{#if config.enableTinyD6Plus}}
+    <div class="weapon-reload-opts">
+        <div class="field-row">
+            <label>{{localize "tinyd6.gear.category"}}</label>
+            <select name="system.category">
+                {{selectOptions config.gearCategories selected=data.system.category localize="true"}}
+            </select>
+        </div>
+        {{#if (eq data.system.category "ammo")}}
+        <div class="field-row">
+            <label>{{localize "tinyd6.gear.ammoType"}}</label>
+            <input type="text" name="system.ammoType" value="{{data.system.ammoType}}" placeholder="{{localize "tinyd6.gear.ammoTypePlaceholder"}}"/>
+        </div>
+        <div class="field-row">
+            <label>{{localize "tinyd6.gear.quantity"}}</label>
+            <input type="number" class="text-center" name="system.quantity.value" value="{{data.system.quantity.value}}" min="0"/>
+        </div>
+        {{/if}}
+        {{#if (eq data.system.category "heal")}}
+        <div class="field-row">
+            <label>{{localize "tinyd6.gear.heal"}}</label>
+            <input type="text" name="system.heal" value="{{data.system.heal}}" placeholder="{{localize "tinyd6.gear.healPlaceholder"}}"/>
+        </div>
+        <div class="field-row">
+            <label>{{localize "tinyd6.gear.quantity"}}</label>
+            <input type="number" class="text-center" name="system.quantity.value" value="{{data.system.quantity.value}}" min="0"/>
+        </div>
+        {{/if}}
+    </div>
+    {{/if}}
     {{editor descriptionHTML target="system.description" button=true owner=owner editable=editable}}
 </form>

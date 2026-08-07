@@ -97,9 +97,9 @@ export const registerGameSettings = function () {
         type: Number
     });
 
-    game.settings.register(systemName, "enableReloadHomerule", {
-        name: game.i18n.localize("tinyd6.settings.enableReloadHomerule.name"),
-        hint:  game.i18n.localize("tinyd6.settings.enableReloadHomerule.hint"),
+    game.settings.register(systemName, "enableTinyD6Plus", {
+        name: game.i18n.localize("tinyd6.settings.enableTinyD6Plus.name"),
+        hint:  game.i18n.localize("tinyd6.settings.enableTinyD6Plus.hint"),
         scope: "world",
         config: true,
         default: false,
@@ -119,15 +119,6 @@ export const registerGameSettings = function () {
     game.settings.register(systemName, "showNpcReloadMessages", {
         name: game.i18n.localize("tinyd6.settings.showNpcReloadMessages.name"),
         hint:  game.i18n.localize("tinyd6.settings.showNpcReloadMessages.hint"),
-        scope: "world",
-        config: true,
-        default: false,
-        type: Boolean
-    });
-
-    game.settings.register(systemName, "enableDeathHomerule", {
-        name: game.i18n.localize("tinyd6.settings.enableDeathHomerule.name"),
-        hint:  game.i18n.localize("tinyd6.settings.enableDeathHomerule.hint"),
         scope: "world",
         config: true,
         default: false,

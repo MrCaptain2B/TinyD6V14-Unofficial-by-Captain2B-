@@ -8137,6 +8137,88 @@ a.text-dark:hover, a.text-dark:focus {
   margin: 8px 0 0;
 }
 
+/* ===== Homerule: TinyD6+ — кнопка «Стабилизировать» в блоке Combat ===== */
+.tinyd6.sheet.hero form.actor-sheet .stab-action,
+.tinyd6.sheet.npc form.actor-sheet .stab-action {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  border-left: 2px solid var(--td-accent);
+  padding: 8px 12px;
+  margin-top: 12px;
+  background: var(--td-card);
+  border-radius: 8px;
+}
+
+.tinyd6.sheet.hero form.actor-sheet .stab-action .icon,
+.tinyd6.sheet.npc form.actor-sheet .stab-action .icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 7px;
+  flex: none;
+  background: var(--td-field);
+  border: 1px solid var(--td-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--td-accent-soft);
+}
+
+.tinyd6.sheet.hero form.actor-sheet .stab-action .stab-action-body,
+.tinyd6.sheet.npc form.actor-sheet .stab-action .stab-action-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.tinyd6.sheet.hero form.actor-sheet .stab-action .t,
+.tinyd6.sheet.npc form.actor-sheet .stab-action .t {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--td-strong);
+}
+
+.tinyd6.sheet.hero form.actor-sheet .stab-action .d,
+.tinyd6.sheet.npc form.actor-sheet .stab-action .d {
+  font-size: 11px;
+  color: var(--td-muted);
+}
+
+.tinyd6.sheet.hero form.actor-sheet .stab-action .stab-btn,
+.tinyd6.sheet.npc form.actor-sheet .stab-action .stab-btn {
+  flex: none;
+  white-space: nowrap;
+  background: var(--td-accent);
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  padding: 7px 14px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tinyd6.sheet.hero form.actor-sheet .stab-action .stab-btn:hover,
+.tinyd6.sheet.npc form.actor-sheet .stab-action .stab-btn:hover {
+  background: var(--td-accent-soft);
+}
+
+/* Кнопка «Исп.» у heal-гира в инвентаре */
+.tinyd6.sheet.hero form.actor-sheet .actor-item .item-use,
+.tinyd6.sheet.npc form.actor-sheet .actor-item .item-use {
+  color: var(--td-ok);
+}
+
+.tinyd6.sheet.hero form.actor-sheet .actor-item .item-use:hover,
+.tinyd6.sheet.npc form.actor-sheet .actor-item .item-use:hover {
+  color: #3faf4a;
+}
+
 /* ===== Владение оружием ===== */
 .tinyd6.sheet.hero form.actor-sheet .proficiencies label,
 .tinyd6.sheet.npc form.actor-sheet .proficiencies label {
@@ -8638,6 +8720,37 @@ a.text-dark:hover, a.text-dark:focus {
   margin-bottom: 0;
 }
 
+.tinyd6.item-card .item-card-trait {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: #f0ead9;
+  border: 1px solid var(--td-border);
+}
+
+.tinyd6.item-card .item-card-trait-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--td-accent);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.tinyd6.item-card .item-card-trait-body {
+  font-size: 13px;
+  color: #333;
+  font-style: italic;
+}
+
+.tinyd6.item-card .item-card-trait-body p {
+  margin: 0 0 0.5em;
+}
+
+.tinyd6.item-card .item-card-trait-body p:last-child {
+  margin-bottom: 0;
+}
+
 /* Кнопка «в чат» на трейте */
 .tinyd6.sheet.hero form.actor-sheet .actor-item .item-chat,
 .tinyd6.sheet.npc form.actor-sheet .actor-item .item-chat {
@@ -8667,7 +8780,7 @@ a.text-dark:hover, a.text-dark:focus {
   color: var(--td-accent);
 }
 
-/* ===== Homerule: Reloading — заряды и кнопка перезарядки ===== */
+/* ===== Homerule: TinyD6+ — заряды и кнопка перезарядки ===== */
 .tinyd6.sheet.hero form.actor-sheet .equipped-weapon .weapon-charges,
 .tinyd6.sheet.npc form.actor-sheet .equipped-weapon .weapon-charges {
   font-size: 13px;
@@ -8717,6 +8830,48 @@ a.text-dark:hover, a.text-dark:focus {
   font-size: 10px;
   letter-spacing: 0.03em;
   margin-left: auto;
+}
+
+/* ===== Gear: метка категории ammo в инвентаре ===== */
+.tinyd6.sheet.hero form.actor-sheet .owned-items .actor-item h4,
+.tinyd6.sheet.npc form.actor-sheet .owned-items .actor-item h4 {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.2;
+  overflow: hidden;
+  row-gap: 0;
+}
+
+.tinyd6.sheet.hero form.actor-sheet .owned-items .actor-item h4 a,
+.tinyd6.sheet.npc form.actor-sheet .owned-items .actor-item h4 a {
+  height: auto !important;
+  display: block;
+  line-height: 1.2;
+}
+
+.tinyd6.sheet.hero form.actor-sheet .actor-item .gear-cat.ammo,
+.tinyd6.sheet.npc form.actor-sheet .actor-item .gear-cat.ammo {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--td-accent-soft);
+  white-space: nowrap;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.tinyd6.sheet.hero form.actor-sheet .actor-item .gear-cat.heal,
+.tinyd6.sheet.npc form.actor-sheet .actor-item .gear-cat.heal {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--td-ok);
+  white-space: nowrap;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 /* ===== Карточка атаки в чате ===== */
@@ -8880,7 +9035,7 @@ a.text-dark:hover, a.text-dark:focus {
   background: #e6dcc0;
 }
 
-/* Заглушки в чате (Homerule: Reloading) */
+/* Заглушки в чате (Homerule: TinyD6+) */
 .tinyd6.reload-stub {
   padding: 8px 12px;
   border-left: 3px solid #a34a4a;
@@ -8890,7 +9045,7 @@ a.text-dark:hover, a.text-dark:focus {
   color: #333;
 }
 
-/* Сообщения смерти (Homerule: Death / 0 HP) */
+/* Сообщения смерти (Homerule: TinyD6+ / 0 HP) */
 .tinyd6.death-stub {
   padding: 10px 14px;
   border-left: 3px solid #6e1a1a;
@@ -8912,7 +9067,7 @@ a.text-dark:hover, a.text-dark:focus {
   color: #6e1a1a;
 }
 
-/* Минималистичная карточка спасброска смерти (Homerule: Death / 0 HP) */
+/* Минималистичная карточка спасброска смерти (Homerule: TinyD6+ / 0 HP) */
 .tinyd6.death-mini {
   display: flex;
   align-items: center;
@@ -8986,6 +9141,40 @@ a.text-dark:hover, a.text-dark:focus {
 
 .tinyd6.death-mini.stable .death-mini-title {
   color: #2e6b3f;
+}
+
+.tinyd6.death-mini.heal-mini {
+  border-color: #7ba26a;
+  background: linear-gradient(180deg, #f3f8f0, #e9f1e4);
+}
+
+.tinyd6.death-mini.heal-mini .death-mini-title {
+  color: #2e6b3f;
+}
+
+.tinyd6.death-mini.heal-mini .death-mini-sub b {
+  color: #2e6b3f;
+}
+
+.tinyd6.death-mini .death-mini-rolls {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.tinyd6.death-mini .death-mini-icon.mini {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  border-radius: 7px;
+  font-size: 13px;
+  flex-direction: column;
+  gap: 1px;
+  line-height: 1;
+}
+
+.tinyd6.death-mini .death-mini-icon.mini b {
+  font-size: 11px;
 }
 
 /* Крупный заголовок «умрёт через N ходов» — на каждом ходу поверженного. */
@@ -9465,6 +9654,137 @@ a.text-dark:hover, a.text-dark:focus {
   animation: td-icon-spin 0.6s ease-in-out;
 }
 
+/* ===== Палитра Heal: стабилизация + heal-гиры (Homerule: TinyD6+) ===== */
+#token-hud .palette.palette-heal {
+  width: 185px;
+  gap: 3px;
+  padding: 3px;
+}
+
+#token-hud .palette-heal .hcard {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 3px 4px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: rgba(30, 30, 30, 0.55);
+}
+
+#token-hud .palette-heal .hcard:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(40, 40, 40, 0.6);
+}
+
+#token-hud .palette-heal .hcard.stab {
+  border-color: rgba(110, 168, 254, 0.4);
+  background: rgba(50, 58, 90, 0.6);
+}
+
+#token-hud .palette-heal .whead {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 15px;
+  width: 100%;
+}
+
+#token-hud .palette-heal .whead img {
+  width: 15px;
+  height: 15px;
+  border-radius: 2px;
+  flex: none;
+}
+
+#token-hud .palette-heal .wname {
+  font-weight: 700;
+  font-size: 10.5px;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+}
+
+#token-hud .palette-heal .charges {
+  margin-left: auto;
+  font-size: 9px;
+  font-weight: 700;
+  color: #6aa84f;
+  white-space: nowrap;
+  flex: none;
+}
+
+#token-hud .palette-heal .charges.empty {
+  color: #e05b5b;
+}
+
+#token-hud .palette-heal .wbtn {
+  flex: 1;
+  height: auto;
+  min-height: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 3px 5px;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 3px;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  background: rgba(20, 20, 20, 0.8);
+  font-family: inherit;
+}
+
+#token-hud .palette-heal .wbtn.disabled,
+#token-hud .palette-heal .wbtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+#token-hud .palette-heal .wbtn.disabled:hover,
+#token-hud .palette-heal .wbtn:disabled:hover {
+  background: inherit;
+}
+
+#token-hud .palette-heal .wbtn.stab {
+  border-color: #3d5a8a;
+  background: #22344a;
+  color: #a0b6e2;
+}
+
+#token-hud .palette-heal .wbtn.stab:hover {
+  background: #2e4a6b;
+}
+
+#token-hud .palette-heal .wbtn.heal {
+  border-color: #3d5a2a;
+  background: #22341a;
+  color: #b6e2a0;
+}
+
+#token-hud .palette-heal .wbtn.heal:hover {
+  background: #2e4a20;
+}
+
+#token-hud .palette-heal .wbtn.empty,
+#token-hud .palette-heal .wbtn.heal:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+#token-hud .palette-heal .wbtn.empty:hover,
+#token-hud .palette-heal .wbtn.heal:disabled:hover {
+  background: #22341a;
+}
+
+#token-hud .control-icon.heal-icon {
+  color: #8fe0ad;
+}
+
 /* ===== Счётчик действий в шапке листа ===== */
 .tinyd6.sheet.hero form.actor-sheet .td-actions,
 .tinyd6.sheet.npc form.actor-sheet .td-actions {
@@ -9616,7 +9936,7 @@ a.text-dark:hover, a.text-dark:focus {
   color: var(--td-danger);
 }
 
-/* ===== Homerule: Reloading — опции в листе оружия (item sheet) ===== */
+/* ===== Homerule: TinyD6+ — опции в листе оружия (item sheet) ===== */
 .tinyd6.sheet.item .weapon-reload-opts {
   margin: 4px 0 12px;
   padding: 10px 12px;

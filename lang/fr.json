@@ -3,6 +3,7 @@
                    "TinyD6HeroSheet":  "PJ",
                    "TinyD6NpcSheet":  "PNJ",
                    "TokenWeapons":  "Armes",
+                   "TokenHeal":  "Soigner et stabiliser",
 "TokenActions":  "Actions",
                    "system":  {
                                   "name":  "Tiny D6 2e",
@@ -100,10 +101,10 @@
                                                           "name":  "Actions par defaut",
                                                           "hint":  "Nombre maximal d'actions par defaut pour les nouveaux acteurs (Tiny D6 standard est 1)."
                                                       },
-                                    "enableReloadHomerule":  {
-                                                                "name":  "Homerule : Rechargement",
-                                                                "hint":  "Active la homerule de rechargement : les armes a distance consomment des munitions (Uses) par attaque ; les armes lourdes peuvent etre limitees a une attaque par tour."
-                                                            },
+                                     "enableTinyD6Plus":  {
+                                                                 "name":  "Homerule : TinyD6+",
+                                                                 "hint":  "Active les homerules de combat TinyD6+ : rechargement (munitions par attaque), mort et neutralise (jet de survie, agonisant avec minuterie) et la palette d'armes dans le HUD du jeton."
+                                                             },
                                     "critAdvantage":  {
                                                         "name":  "Homerule : Avantage critique",
                                                         "hint":  "Lorsque tous les des affichent des 6 identiques lors d'une attaque, les degats de l'arme sont doubles (Critique). Choisissez si cela s'applique aux 2d6, 3d6 ou aux deux.",
@@ -118,11 +119,7 @@
                                                                  "name":  "Afficher les messages de rechargement NPC",
                                                                  "hint":  "Publier les messages de rechargement/munitions epuisees des PNJ dans le chat (desactive par defaut pour reduire le bruit)."
                                                              },
-                                    "enableDeathHomerule":  {
-                                                                 "name":  "Homerule: Mort et neutralise",
-                                                                 "hint":  "Quand les PV tombent a 0, les heros et PNJ importants font un jet de survie (1d6): succes - stabilise (Vaincu); echec - Agonisant avec minuterie de rounds, puis Mort. Les PNJ normaux sont simplement vaincus. Les neutralises ne peuvent pas attaquer."
-                                                             },
-                                    "deathRounds":  {
+"deathRounds":  {
                                                                  "name":  "Jet de survie: rounds avant la mort",
                                                                  "hint":  "Rounds de combat qu'un agonisant survit sans soin (standard 3)."
                                                              },
@@ -296,14 +293,20 @@
                                    "rangedShort":  "D",
                                    "oneAttack":  "Une attaque par tour",
                                    "reload":  "Recharger",
-                                   "uses":  "Utilisations"
-                               },
-                    "reload":  {
+                                    "uses":  "Utilisations",
+                                    "ammoType":  "Type de munition",
+                                    "ammoAny":  "- toutes munitions"
+                                },
+                     "reload":  {
                                    "outOfAmmo":  "Plus de munitions — rechargez!",
                                    "ranOut":  "Munitions epuisees — rechargez pour continuer.",
                                    "reloadBtn":  "Recharger (reinitialiser au max)",
                                    "reloaded":  "a recharge",
-                                   "undoResource":  "Restaurer la ressource"
+                                   "undoResource":  "Restaurer la ressource",
+                                    "noMag":  "Aucun chargeur de type \"{type}\" dans l'inventaire.",
+                                    "emptyMag":  "Le chargeur \"{type}\" est vide (0 restant).",
+                                    "noMagAny":  "Aucun chargeur (munitions) dans l'inventaire.",
+                                    "ammoUsed":  " (chargeur {ammo})"
                                },
                    "death":  {
                                   "down":  "Vaincu",
@@ -318,7 +321,31 @@
                                   "defeated":  "est vaincu.",
                                   "died":  "est mort.",
                                   "turnsLeft":  "{actor} mourra dans {n} tours."
-                              },
+                   },
+                   "stabilize":  {
+                     "title":  "Stabiliser",
+                     "sheetHint":  "Ciblez un allié à terre (0 PV) et lancez un jet de mort.",
+                     "subtitle":  "lancez un jet de mort pour stabiliser. Tout dé égal ou supérieur au seuil est un succès.",
+                     "self":  "Vous ne pouvez pas vous stabiliser vous-même.",
+                     "noTarget":  "Ciblez d'abord un allié à terre (0 PV).",
+                     "notDowned":  "Cette cible n'est pas à terre.",
+                     "thrown":  "Stabilisation",
+                     "target":  "cible",
+                     "success":  "Stabilisé",
+                     "fail":  "Échec",
+                     "roll":  "Stabiliser"
+                   },
+                   "heal":  {
+                     "use":  "Utiliser",
+                     "heal":  "Soigner",
+                     "usesOn":  "utilise",
+                     "heals":  "soigne {hp} PV",
+                     "noTarget":  "Sélectionnez un token cible à soigner ou utilisez-le sur vous-même.",
+                     "empty":  "Cet objet de soin est épuisé.",
+      "emptyHint":  "Aucun objet de soin. Ciblez un allié à terre pour stabiliser.",
+                     "full":  "La cible a tous ses PV.",
+                     "badFormula":  "Formule de soin invalide sur cet objet."
+                   },
                    "armor":  {
                                  "name":  "Nom",
                                  "type":  "Type d\u0027armure",
@@ -334,7 +361,18 @@
                                 "slots":  "Emplacements d\u0027Objet",
                                 "depletion":  "Usure",
                                 "quantity":  "Quantite",
-                                "description":  "Description"
+                                "description":  "Description",
+                                "category":  "Categorie",
+                                "ammoType":  "Type de munition",
+                                "ammoTypePlaceholder":  "p.ex. 9x19",
+                                "heal":  "Soins (PV)",
+                                "healPlaceholder":  "4 ou 2d4+2",
+                                "categories":  {
+                                                "item":  "Objet",
+                                                "ammo":  "Munitions",
+                                                "heal":  "Soin",
+                                                "money":  "Argent"
+                                            }
                             },
                    "heritage":  {
                                     "trait":  "Trait d\u0027Heritage",
