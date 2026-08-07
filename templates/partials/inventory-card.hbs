@@ -2,14 +2,30 @@
 <div class="d-flex justify-content-between">
     <img src="{{gearItem.img}}" title="{{gearItem.name}}" width="24" height="24" class="align-middle mr-2"/>
     <h4 class="mr-auto">
-        <a class="item-show d-inline-block h-100">{{gearItem.name}}</a>
         {{#if (eq gearItem.type "gear")}}
-            {{#if (eq gearItem.system.category "ammo")}}
-                <span class="gear-cat ammo">{{gearItem.system.ammoType}} · ×{{gearItem.system.quantity.value}}</span>
+            {{#if (eq gearItem.system.category "money")}}
+                <div class="gear-money">
+                    <div class="money-value-row">
+                        <i class="fas fa-coins"></i>
+                        {{#if owner}}
+                            <input class="money-input" type="number" min="0" step="1" value="{{gearItem.system.quantity.value}}" data-item-id="{{gearItem._id}}"/>
+                        {{^}}
+                            <span class="money-value">{{gearItem.system.quantity.value}}</span>
+                        {{/if}}
+                    </div>
+                    <a class="money-name item-show d-inline-block">{{gearItem.name}}</a>
+                </div>
+            {{^}}
+                <a class="item-show d-inline-block h-100">{{gearItem.name}}</a>
+                {{#if (eq gearItem.system.category "ammo")}}
+                    <span class="gear-cat ammo">{{gearItem.system.ammoType}} · ×{{gearItem.system.quantity.value}}</span>
+                {{/if}}
+                {{#if (eq gearItem.system.category "heal")}}
+                    <span class="gear-cat heal">{{gearItem.system.heal}} HP · ×{{gearItem.system.quantity.value}}</span>
+                {{/if}}
             {{/if}}
-            {{#if (eq gearItem.system.category "heal")}}
-                <span class="gear-cat heal">{{gearItem.system.heal}} HP · ×{{gearItem.system.quantity.value}}</span>
-            {{/if}}
+        {{^}}
+            <a class="item-show d-inline-block h-100">{{gearItem.name}}</a>
         {{/if}}
     </h4>    {{#if (eq gearItem.type "weapon")}}
         <a class="item-control item-equip ml-2 {{#if gearItem.system.equipped}}equipped{{/if}}" data-field="system.equipped" title="{{localize "tinyd6.actor.actions.equipTrait"}}">

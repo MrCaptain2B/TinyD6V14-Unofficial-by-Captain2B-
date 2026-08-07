@@ -8874,6 +8874,84 @@ a.text-dark:hover, a.text-dark:focus {
   overflow: hidden;
 }
 
+.tinyd6.sheet.hero form.actor-sheet .actor-item .gear-money,
+.tinyd6.sheet.npc form.actor-sheet .actor-item .gear-money {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.tinyd6.sheet.hero form.actor-sheet .actor-item .gear-money .money-value-row,
+.tinyd6.sheet.npc form.actor-sheet .actor-item .gear-money .money-value-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #d4b06a;
+}
+
+.tinyd6.sheet.hero form.actor-sheet .actor-item .gear-money .money-value-row i,
+.tinyd6.sheet.npc form.actor-sheet .actor-item .gear-money .money-value-row i {
+  color: #c9a24b;
+  font-size: 15px;
+}
+
+.tinyd6.sheet.hero form.actor-sheet .actor-item .gear-money .money-value-row .money-value,
+.tinyd6.sheet.npc form.actor-sheet .actor-item .gear-money .money-value-row .money-value {
+  font-size: 17px;
+  font-weight: 800;
+  color: #d4b06a;
+}
+
+.tinyd6.sheet.hero form.actor-sheet .actor-item .gear-money .money-input,
+.tinyd6.sheet.npc form.actor-sheet .actor-item .gear-money .money-input {
+  width: 64px;
+  font-size: 17px;
+  font-weight: 800;
+  color: #d4b06a;
+  text-align: center;
+  background: transparent;
+  height: auto;
+  line-height: 1.2;
+  border: 1px solid rgba(212, 176, 106, 0.25);
+  border-radius: 4px;
+  padding: 0 3px;
+}
+
+.tinyd6.sheet.hero form.actor-sheet .actor-item .gear-money .money-input:focus,
+.tinyd6.sheet.npc form.actor-sheet .actor-item .gear-money .money-input:focus {
+  border-color: rgba(212, 176, 106, 0.6);
+  box-shadow: none;
+  background: rgba(212, 176, 106, 0.06);
+}
+
+.tinyd6.sheet.hero form.actor-sheet .actor-item .gear-money .money-name,
+.tinyd6.sheet.npc form.actor-sheet .actor-item .gear-money .money-name {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--td-muted);
+  white-space: nowrap;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.tinyd6.sheet.hero form.actor-sheet .actor-item .gear-cat.money,
+.tinyd6.sheet.npc form.actor-sheet .actor-item .gear-cat.money {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #d4b06a;
+  white-space: nowrap;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
 /* ===== Карточка атаки в чате ===== */
 .tinyd6.attack-card {
   --td-accent: #8a6d3b;
@@ -9154,6 +9232,13 @@ a.text-dark:hover, a.text-dark:focus {
 
 .tinyd6.death-mini.heal-mini .death-mini-sub b {
   color: #2e6b3f;
+}
+
+.tinyd6.death-mini.heal-mini .heal-wasted {
+  color: #9a6b2a;
+  font-size: 12px;
+  font-style: italic;
+  white-space: nowrap;
 }
 
 .tinyd6.death-mini .death-mini-rolls {

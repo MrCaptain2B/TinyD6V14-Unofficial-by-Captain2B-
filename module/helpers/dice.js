@@ -491,6 +491,7 @@ export async function useHealItem(healer, healItem, target, { showForNpc = false
     // Списываем гир только при реальном лечении.
     await healItem.update({ "system.quantity.value": Math.max(0, qty - 1) }, { render: false });
     const applied = Math.min(max - current, healed);
+    const wasted = Math.max(0, healed - applied);
     await target.update({ "system.wounds.value": current + applied });
 
     const isNpc = healer?.type === "npc";
@@ -500,16 +501,17 @@ export async function useHealItem(healer, healItem, target, { showForNpc = false
         await postHealMessage(healer, healItem, target, {
             applied,
             healed,
+            wasted,
             rolls,
             roll,
             faces: _healRollFaces(parsed)
         });
     }
-    return { ok: true, healed, applied, target, item: healItem };
+    return { ok: true, healed, applied, wasted, target, item: healItem };
 }
 
 /* Карточка лечения в чат (death-mini в «зелёном» варианте). */
-export async function postHealMessage(healer, healItem, target, { applied, healed, rolls = [], roll = null, faces = [] } = {}) {
+export async function postHealMessage(healer, healItem, target, { applied, healed, wasted = 0, rolls = [], roll = null, faces = [] } = {}) {
     const speaker = ChatMessage.getSpeaker({ actor: healer });
     const formula = formatHealFormula(healItem.system?.heal);
 
@@ -519,10 +521,14 @@ export async function postHealMessage(healer, healItem, target, { applied, heale
         return `<span class="death-mini-icon mini"><i class="fas ${face}"></i><b>${result}</b></span>`;
     }).join("");
 
+    const wastage = wasted > 0
+        ? ` <span class="heal-wasted">${game.i18n.format("tinyd6.heal.wasted", { wasted })}</span>`
+        : "";
+
     const content = `<div class="tinyd6 death-mini heal-mini">
         <div class="death-mini-body">
             <span class="death-mini-title">${game.i18n.localize("tinyd6.heal.heal")} — <b>${healItem.name}</b></span>
-            <span class="death-mini-sub"><b>${healer.name}</b> ${game.i18n.localize("tinyd6.heal.usesOn")} <b>${target.name}</b>: ${applied} HP (${formula || ""})</span>
+            <span class="death-mini-sub"><b>${healer.name}</b> ${game.i18n.localize("tinyd6.heal.usesOn")} <b>${target.name}</b>: +${applied} HP (${formula || ""})${wastage}</span>
         </div>
     </div>`;
 

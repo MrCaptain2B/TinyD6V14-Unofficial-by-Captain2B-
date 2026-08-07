@@ -1,387 +1,390 @@
-﻿{
-    "tinyd6":  {
-                   "TinyD6HeroSheet":  "PJ",
-                   "TinyD6NpcSheet":  "PNJ",
-                   "TokenWeapons":  "Armes",
-                   "TokenHeal":  "Soigner et stabiliser",
-"TokenActions":  "Actions",
-                   "system":  {
-                                  "name":  "Tiny D6 2e",
-"dieRoller":  "Lanceur de des",
-"actions":  "Actions",
-"actionAdd":  "Ajouter une action",
-"actionRemove":  "Retirer une action",
-"collapse":  "Reduire",
-                                  "expand":  "Agrandir"
-                              },
-                   "settings":  {
-                                    "title":  "Parametres du systeme",
-                                    "label":  "Parametres du systeme",
-                                    "description":  "Choisissez les regles et mecaniques optionnelles que vous souhaitez activer parmi les options suivantes.",
-                                    "theme":  {
-                                                  "name":  "Theme",
-                                                  "hint":  "Ce parametre permet de thematiser votre monde pour un jeu Tiny D6 specifique.",
-                                                  "choices":  {
-                                                                  "cthulhu":  "Tiny Cthulhu",
-                                                                  "dungeon":  "Tiny Dungeon 2e"
-                                                              }
-                                              },
-                                    "sheetStyle":  {
-                                                    "name":  "Style de feuille",
-                                                    "hint":  "Choisissez le style visuel des fiches de personnage",
-                                                    "choices":  {
-                                                                    "default":  "Sombre (par defaut)",
-                                                                    "perkament":  "Parchemin пїЅ Folklore",
-                                                                    "noir":  "Noir пїЅ Cuivre",
-                                                                    "minimal":  "Minimal пїЅ Clair"
-                                                                }
-                                                },
-                                    "rollerInCharsheet":  {
-                                                              "name":  "Lanceur de des dans la fiche de personnage",
-                                                              "hint":  "Activez pour avoir un lanceur de des dans la fiche de personnage."
-                                                          },
-                                    "enableCorruption":  {
-                                                             "name":  "Activer la Corruption",
-                                                             "hint":  "Ajoutez une piste a la fiche de personnage pour marquer la Corruption."
-                                                         },
-                                    "enableAdvancement":  {
-                                                              "name":  "Progression du personnage",
-                                                              "hint":  "Les personnages progressent soit en fonction du nombre de sessions, soit en attribuant des points d\u0027experience.",
-                                                              "choices":  {
-                                                                              "none":  "Pas de progression",
-                                                                              "minimalist":  "Avancement minimaliste",
-                                                                              "xp":  "Points d\u0027experience"
-                                                                          }
-                                                          },
-                                    "enableItemTracking":  {
-                                                               "name":  "Activer le suivi des objets",
-                                                               "hint":  "Affichez l\u0027utilisation des emplacements pour les objets et calculez les emplacements d\u0027inventaire restants."
-                                                           },
-                                    "enableDepletionPoints":  {
-                                                                  "name":  "Activer les points d\u0027usure",
-                                                                  "hint":  "Lorsque les objets utilisent des points d\u0027usures, suivez-les pour les objets des personnages."
-                                                              },
-                                    "enableCriticalHits":  {
-                                                               "name":  "Activer les coups critiques",
-                                                               "hint":  "Marquez un test comme un \u0027succes critique\u0027 lorsque tous les des sont a 6."
-                                                           },
-                                    "enableCriticalFailure":  {
-                                                                  "name":  "Activer les echecs critiques",
-                                                                  "hint":  "Marquez un test comme un \u0027echec critique\u0027 lorsque tous les des sont a 1."
-                                                              },
-                                    "enableVariableWeaponDamage":  {
-                                                                       "name":  "Degats d\u0027arme variables",
-                                                                       "hint":  "Calculez les degats variables des armes pour les jets d\u0027attaque."
-                                                                   },
-                                    "enablePowerOrigin":  {
-                                                              "name":  "Activer l\u0027origine du pouvoir",
-                                                              "hint":  "Ajoute un champ de texte pour l\u0027origine de votre Super Pouvoir."
-                                                          },
-                                    "enableWeakness":  {
-                                                           "name":  "Activer la faiblesse",
-                                                           "hint":  "Ajoute un champ de texte pour votre Super Faiblesse."
-                                                       },
-                                    "enablePanic":  {
-                                                        "name":  "Activer la panique",
-                                                        "hint":  "Ajoute un compteur pour suivre la panique."
-                                                    },
-                                    "enableRadiation":  {
-                                                            "name":  "Activer la radiation",
-                                                            "hint":  "Ajoute un compteur pour suivre la radiation."
-                                                        },
-                                    "enableGrit":  {
-                                                       "name":  "Activer le courage",
-                                                       "hint":  "Ajoute un compteur pour suivre le courage."
-                                                   },
-                                    "independentNpcTokens":  {
-                                                                 "name":  "Tokens PNJ independants",
-                                                                 "hint":  "Les tokens places sur la scene depuis un PNJ deviennent des copies independantes avec leurs propres PV et armure."
-                                                             },
-                                    "defaultActions":  {
-                                                          "name":  "Actions par defaut",
-                                                          "hint":  "Nombre maximal d'actions par defaut pour les nouveaux acteurs (Tiny D6 standard est 1)."
-                                                      },
-                                     "enableTinyD6Plus":  {
-                                                                 "name":  "Homerule : TinyD6+",
-                                                                 "hint":  "Active les homerules de combat TinyD6+ : rechargement (munitions par attaque), mort et neutralise (jet de survie, agonisant avec minuterie) et la palette d'armes dans le HUD du jeton."
-                                                             },
-                                    "critAdvantage":  {
-                                                        "name":  "Homerule : Avantage critique",
-                                                        "hint":  "Lorsque tous les des affichent des 6 identiques lors d'une attaque, les degats de l'arme sont doubles (Critique). Choisissez si cela s'applique aux 2d6, 3d6 ou aux deux.",
-                                                        "choices":  {
-                                                                      "off":  "Desactive",
-                                                                      "two":  "2d6 uniquement",
-                                                                      "three":  "3d6 uniquement",
-                                                                      "both":  "2d6 et 3d6"
-                                                                  }
-                                                    },
-"showNpcReloadMessages":  {
-                                                                 "name":  "Afficher les messages de rechargement NPC",
-                                                                 "hint":  "Publier les messages de rechargement/munitions epuisees des PNJ dans le chat (desactive par defaut pour reduire le bruit)."
-                                                             },
-"deathRounds":  {
-                                                                 "name":  "Jet de survie: rounds avant la mort",
-                                                                 "hint":  "Rounds de combat qu'un agonisant survit sans soin (standard 3)."
-                                                             },
-                                    "deathSaveThreshold":  {
-                                                                 "name":  "Jet de survie: seuil de reussite",
-                                                                 "hint":  "Un jet de survie (1d6) reussit si le resultat est au moins cette valeur (standard 4)."
-                                                             },
-                                    "showNpcDeathMessages":  {
-                                                                 "name":  "Afficher les messages de defaite NPC",
-                                                                 "hint":  "Publier aussi un message quand un PNJ normal est vaincu (desactive par defaut pour reduire le bruit)."
-                                                             }
-                                 },
-                   "dice":  {
-                                "modifier":  {
-                                                 "focus":  "Focus",
-                                                 "marksman":  "Tireur d\u0027elite"
-                                             },
-                                "roll":  {
-                                             "disadvantage":  "Desavantage",
-                                             "standard":  "Test Standard",
-                                             "advantage":  "Avantage",
-                                             "success":  "Succes!",
-                                             "failure":  "Echec",
-                                             "critical":  "Succes Critique!!",
-                                             "botch":  "Echec Critique!!"
-                                         }
-                            },
-                   "sheet":  {
-                                 "tab":  {
-                                             "main":  "Main"
-                                         },
-                                 "combat":  "Combat",
-                                 "weaponProficiency":  "Weapon Proficiency",
-                                 "wounds":  "Wounds",
-                                 "armor":  "Armor",
-                                 "corruption":  "Corruption",
-                                 "xp":  "XP",
-                                 "actions":  {
-                                                 "name":  "Actions",
-                                                 "spend":  "Depenser une action",
-                                                 "restore":  "Restaurer une action",
-                                                 "plus":  "Ajouter une action max (+1)",
-                                                 "minus":  "Retirer une action max (-1)"
-                                             },
-                                 "newItem":  "Nouvel Objet",
-                                 "description":  "Description",
-                                 "none":  "None"
-                             },
-                   "actor":  {
-                                 "name":  "Nom",
-                                 "npc":  "PNJ",
-                                 "people":  "Personnage",
-                                 "traits":  "Traits",
-                                 "description":  "Description",
-                                 "tiny-cthulhu":  {
-                                                      "character":  "Bio",
-                                                      "heritage":  {
-                                                                       "header":  "Archetype",
-                                                                       "traits":  "Traits d\u0027Archetype",
-                                                                       "delete":  "Retirer Archetype"
-                                                                   }
-                                                  },
-                                 "tiny-dungeon":  {
-                                                      "character":  "Personnage",
-                                                      "heritage":  {
-                                                                       "header":  "Heritage",
-                                                                       "traits":  "Trait d\u0027Heritage",
-                                                                       "delete":  "Retirer Heritage"
-                                                                   }
-                                                  },
-                                 "homeland":  "Pays d\u0027origine",
-                                 "age":  "Age",
-                                 "eyes":  "Yeux",
-                                 "hair":  "Cheveux",
-                                 "familyTrade":  "Apprentissage de Famille",
-                                 "powerOrigin":  "Origine du Pouvoir",
-                                 "weakness":  "Faiblesse",
-                                 "belief":  "Croyance",
-                                 "xp":  {
-                                            "header":  "Experience",
-                                            "progression":  "Progression",
-                                            "total":  "Total",
-                                            "spent":  "Depense",
-                                            "remaining":  "Restant"
-                                        },
-                                 "wounds":  {
-                                                "header":  "Sante",
-                                                "current":  "Actuel",
-                                                "max":  "Max:",
-                                                "increaseMax":  "Augmenter Sante Max",
-                                                "help":  "Cochez une case lorsque vous subissez des degats. Decochez lorsque vous etes soigne."
-                                            },
-                                 "radiation":  {
-                                                   "header":  "Radiation",
-                                                   "current":  "Actuel",
-                                                   "max":  "Max:",
-                                                   "increaseMax":  "Augmenter Radiation Max",
-                                                   "help":  "Cochez une case lorsque vous subissez de la radiation."
-                                               },
-                                 "corruption":  {
-                                                    "test":  "Test de Corruption",
-                                                    "header":  "Corruption",
-                                                    "current":  "Actuel",
-                                                    "max":  "Max:",
-                                                    "increaseMax":  "Augmenter Seuil de Corruption",
-                                                    "help":  "Cochez une case lorsque vous subissez de la corruption. Decochez si vous recuperez."
-                                                },
-                                 "panic":  {
-                                               "test":  "Test de Panique",
-                                               "header":  "Panique",
-                                               "current":  "Actuel",
-                                               "help":  "Decochez une case lorsque vous subissez de la panique. Cochez si vous recuperez. Test de panique lorsque la panique est a 1."
-                                           },
-                                 "grit":  {
-                                              "header":  "Courage",
-                                              "current":  "Actuel",
-                                              "help":  "Decochez une case lorsque vous depensez du Courage."
-                                          },
-                                 "proficiencies":  {
-                                                       "header":  "Maitrise",
-                                                       "mastered":  "Expertise"
-                                                   },
-                                 "gear":  "Inventaire",
-                                 "equipped":  "Equipe",
-                                 "weaponry":  "Armement",
-                                 "wearing":  "Vetements",
-                                 "important":  "PNJ important",
-                                 "actions":  {
-                                                 "editTrait":  "Editer le Trait",
-                                                 "chatTrait":  "",
-                                                 "chatItem":  "",
-                                                 "deleteTrait":  "Supprimer le Trait"
-                                             }
-                             },
-                   "weaponCategories":  {
-                                            "melee":  "Melee",
-                                            "ranged":  "Distance"
-                                        },
-                   "weaponTypes":  {
-                                       "none":  "",
-                                       "light":  "Legere",
-                                       "heavy":  "Lourde"
-                                   },
-                   "armorTypes":  {
-                                      "none":  "",
-                                      "light":  "Legere",
-                                      "medium":  "Moyenne",
-                                      "heavy":  "Lourde"
-                                  },
-                   "corruptionTests":  {
-                                           "none":  "Non",
-                                           "disadvantage":  "Desavantage",
-                                           "standard":  "Normal"
-                                       },
-                   "weapon":  {
-                                  "name":  "Nom",
-                                  "type":  "Type d\u0027Arme",
-                                  "damage":  "Degats",
-                                  "slots":  "Emplacements d\u0027Objet",
-                                  "description":  "Description",
-                                  "light":  "Legere",
-                                  "heavy":  "Lourde",
-                                  "ranged":  "Distance",
-                                  "lightMelee":  "l. Melee",
-                                  "heavyMelee":  "L. Melee",
-                                  "lightRanged":  "l. Distance",
-                                  "heavyRanged":  "L. Distance",
-                                   "lightShort":  "l",
-                                   "heavyShort":  "L",
-                                   "meleeShort":  "M",
-                                   "rangedShort":  "D",
-                                   "oneAttack":  "Une attaque par tour",
-                                   "reload":  "Recharger",
-                                    "uses":  "Utilisations",
-                                    "ammoType":  "Type de munition",
-                                    "ammoAny":  "- toutes munitions"
-                                },
-                     "reload":  {
-                                   "outOfAmmo":  "Plus de munitions — rechargez!",
-                                   "ranOut":  "Munitions epuisees — rechargez pour continuer.",
-                                   "reloadBtn":  "Recharger (reinitialiser au max)",
-                                   "reloaded":  "a recharge",
-                                   "undoResource":  "Restaurer la ressource",
-                                    "noMag":  "Aucun chargeur de type \"{type}\" dans l'inventaire.",
-                                    "emptyMag":  "Le chargeur \"{type}\" est vide (0 restant).",
-                                    "noMagAny":  "Aucun chargeur (munitions) dans l'inventaire.",
-                                    "ammoUsed":  " (chargeur {ammo})"
-                               },
-                   "death":  {
-                                  "down":  "Vaincu",
-                                  "dying":  "Agonisant",
-                                  "dead":  "Mort",
-                                  "cannotAct":  "Les personnages neutralises ne peuvent pas attaquer.",
-                                  "thrown":  "Jet de survie",
-                                  "self":  "son propre jet de survie",
-                                  "stabilized":  "Stabilise",
-                                  "stabilizedHint":  "Le personnage est a terre mais vivant et stabilise.",
-                                  "dyingHint":  "Le personnage agonise et mourra dans {rounds} rounds s'il n'est pas soigne.",
-                                  "defeated":  "est vaincu.",
-                                  "died":  "est mort.",
-                                  "turnsLeft":  "{actor} mourra dans {n} tours."
-                   },
-                   "stabilize":  {
-                     "title":  "Stabiliser",
-                     "sheetHint":  "Ciblez un allié à terre (0 PV) et lancez un jet de mort.",
-                     "subtitle":  "lancez un jet de mort pour stabiliser. Tout dé égal ou supérieur au seuil est un succès.",
-                     "self":  "Vous ne pouvez pas vous stabiliser vous-même.",
-                     "noTarget":  "Ciblez d'abord un allié à terre (0 PV).",
-                     "notDowned":  "Cette cible n'est pas à terre.",
-                     "thrown":  "Stabilisation",
-                     "target":  "cible",
-                     "success":  "Stabilisé",
-                     "fail":  "Échec",
-                     "roll":  "Stabiliser"
-                   },
-                   "heal":  {
-                     "use":  "Utiliser",
-                     "heal":  "Soigner",
-                     "usesOn":  "utilise",
-                     "heals":  "soigne {hp} PV",
-                     "noTarget":  "Sélectionnez un token cible à soigner ou utilisez-le sur vous-même.",
-                     "empty":  "Cet objet de soin est épuisé.",
-      "emptyHint":  "Aucun objet de soin. Ciblez un allié à terre pour stabiliser.",
-                     "full":  "La cible a tous ses PV.",
-                     "badFormula":  "Formule de soin invalide sur cet objet."
-                   },
-                   "armor":  {
-                                 "name":  "Nom",
-                                 "type":  "Type d\u0027armure",
-                                 "damageReduction":  "RD",
-                                 "armorHp":  "PV Armure",
-                                 "slots":  "Emplacements d\u0027Objet",
-                                 "depletion":  "Usure",
-                                 "description":  "Description",
-                                 "none":  "Aucune"
-                             },
-                   "gear":  {
-                                "name":  "Nom",
-                                "slots":  "Emplacements d\u0027Objet",
-                                "depletion":  "Usure",
-                                "quantity":  "Quantite",
-                                "description":  "Description",
-                                "category":  "Categorie",
-                                "ammoType":  "Type de munition",
-                                "ammoTypePlaceholder":  "p.ex. 9x19",
-                                "heal":  "Soins (PV)",
-                                "healPlaceholder":  "4 ou 2d4+2",
-                                "categories":  {
-                                                "item":  "Objet",
-                                                "ammo":  "Munitions",
-                                                "heal":  "Soin",
-                                                "money":  "Argent"
-                                            }
-                            },
-                   "heritage":  {
-                                    "trait":  "Trait d\u0027Heritage",
-                                    "startingHealth":  "Points de Vie de Depart",
-                                    "corruptionThreshold":  "Sueil de Corruption"
-                                },
-                   "trait":  {
-                                 "name":  "Nom",
-                                 "description":  "Description"
-                             }
-               }
+{
+    "tinyd6": {
+        "TinyD6HeroSheet": "PJ",
+        "TinyD6NpcSheet": "PNJ",
+        "TokenWeapons": "Armes",
+        "TokenHeal": "Soigner et stabiliser",
+        "TokenActions": "Actions",
+        "system": {
+            "name": "Tiny D6 2e",
+            "dieRoller": "Lanceur de des",
+            "actions": "Actions",
+            "actionAdd": "Ajouter une action",
+            "actionRemove": "Retirer une action",
+            "collapse": "Reduire",
+            "expand": "Agrandir"
+        },
+        "settings": {
+            "title": "Parametres du systeme",
+            "label": "Parametres du systeme",
+            "description": "Choisissez les regles et mecaniques optionnelles que vous souhaitez activer parmi les options suivantes.",
+            "theme": {
+                "name": "Theme",
+                "hint": "Ce parametre permet de thematiser votre monde pour un jeu Tiny D6 specifique.",
+                "choices": {
+                    "cthulhu": "Tiny Cthulhu",
+                    "dungeon": "Tiny Dungeon 2e"
+                }
+            },
+            "sheetStyle": {
+                "name": "Style de feuille",
+                "hint": "Choisissez le style visuel des fiches de personnage",
+                "choices": {
+                    "default": "Sombre (par defaut)",
+                    "perkament": "Parchemin пїЅ Folklore",
+                    "noir": "Noir пїЅ Cuivre",
+                    "minimal": "Minimal пїЅ Clair"
+                }
+            },
+            "rollerInCharsheet": {
+                "name": "Lanceur de des dans la fiche de personnage",
+                "hint": "Activez pour avoir un lanceur de des dans la fiche de personnage."
+            },
+            "enableCorruption": {
+                "name": "Activer la Corruption",
+                "hint": "Ajoutez une piste a la fiche de personnage pour marquer la Corruption."
+            },
+            "enableAdvancement": {
+                "name": "Progression du personnage",
+                "hint": "Les personnages progressent soit en fonction du nombre de sessions, soit en attribuant des points d'experience.",
+                "choices": {
+                    "none": "Pas de progression",
+                    "minimalist": "Avancement minimaliste",
+                    "xp": "Points d'experience"
+                }
+            },
+            "enableItemTracking": {
+                "name": "Activer le suivi des objets",
+                "hint": "Affichez l'utilisation des emplacements pour les objets et calculez les emplacements d'inventaire restants."
+            },
+            "enableDepletionPoints": {
+                "name": "Activer les points d'usure",
+                "hint": "Lorsque les objets utilisent des points d'usures, suivez-les pour les objets des personnages."
+            },
+            "enableCriticalHits": {
+                "name": "Activer les coups critiques",
+                "hint": "Marquez un test comme un 'succes critique' lorsque tous les des sont a 6."
+            },
+            "enableCriticalFailure": {
+                "name": "Activer les echecs critiques",
+                "hint": "Marquez un test comme un 'echec critique' lorsque tous les des sont a 1."
+            },
+            "enableVariableWeaponDamage": {
+                "name": "Degats d'arme variables",
+                "hint": "Calculez les degats variables des armes pour les jets d'attaque."
+            },
+            "enablePowerOrigin": {
+                "name": "Activer l'origine du pouvoir",
+                "hint": "Ajoute un champ de texte pour l'origine de votre Super Pouvoir."
+            },
+            "enableWeakness": {
+                "name": "Activer la faiblesse",
+                "hint": "Ajoute un champ de texte pour votre Super Faiblesse."
+            },
+            "enablePanic": {
+                "name": "Activer la panique",
+                "hint": "Ajoute un compteur pour suivre la panique."
+            },
+            "enableRadiation": {
+                "name": "Activer la radiation",
+                "hint": "Ajoute un compteur pour suivre la radiation."
+            },
+            "enableGrit": {
+                "name": "Activer le courage",
+                "hint": "Ajoute un compteur pour suivre le courage."
+            },
+            "independentNpcTokens": {
+                "name": "Tokens PNJ independants",
+                "hint": "Les tokens places sur la scene depuis un PNJ deviennent des copies independantes avec leurs propres PV et armure."
+            },
+            "defaultActions": {
+                "name": "Actions par defaut",
+                "hint": "Nombre maximal d'actions par defaut pour les nouveaux acteurs (Tiny D6 standard est 1)."
+            },
+            "enableTinyD6Plus": {
+                "name": "Homerule : TinyD6+",
+                "hint": "Active les homerules de combat TinyD6+ : rechargement (munitions par attaque), mort et neutralise (jet de survie, agonisant avec minuterie) et la palette d'armes dans le HUD du jeton."
+            },
+            "critAdvantage": {
+                "name": "Homerule : Avantage critique",
+                "hint": "Lorsque tous les des affichent des 6 identiques lors d'une attaque, les degats de l'arme sont doubles (Critique). Choisissez si cela s'applique aux 2d6, 3d6 ou aux deux.",
+                "choices": {
+                    "off": "Desactive",
+                    "two": "2d6 uniquement",
+                    "three": "3d6 uniquement",
+                    "both": "2d6 et 3d6"
+                }
+            },
+            "showNpcReloadMessages": {
+                "name": "Afficher les messages de rechargement NPC",
+                "hint": "Publier les messages de rechargement/munitions epuisees des PNJ dans le chat (desactive par defaut pour reduire le bruit)."
+            },
+            "deathRounds": {
+                "name": "Jet de survie: rounds avant la mort",
+                "hint": "Rounds de combat qu'un agonisant survit sans soin (standard 3)."
+            },
+            "deathSaveThreshold": {
+                "name": "Jet de survie: seuil de reussite",
+                "hint": "Un jet de survie (1d6) reussit si le resultat est au moins cette valeur (standard 4)."
+            },
+            "showNpcDeathMessages": {
+                "name": "Afficher les messages de defaite NPC",
+                "hint": "Publier aussi un message quand un PNJ normal est vaincu (desactive par defaut pour reduire le bruit)."
+            }
+        },
+        "dice": {
+            "modifier": {
+                "focus": "Focus",
+                "marksman": "Tireur d'elite"
+            },
+            "roll": {
+                "disadvantage": "Desavantage",
+                "standard": "Test Standard",
+                "advantage": "Avantage",
+                "success": "Succes!",
+                "failure": "Echec",
+                "critical": "Succes Critique!!",
+                "botch": "Echec Critique!!"
+            }
+        },
+        "sheet": {
+            "tab": {
+                "main": "Main"
+            },
+            "combat": "Combat",
+            "weaponProficiency": "Weapon Proficiency",
+            "wounds": "Wounds",
+            "armor": "Armor",
+            "corruption": "Corruption",
+            "xp": "XP",
+            "actions": {
+                "name": "Actions",
+                "spend": "Depenser une action",
+                "restore": "Restaurer une action",
+                "plus": "Ajouter une action max (+1)",
+                "minus": "Retirer une action max (-1)"
+            },
+            "newItem": "Nouvel Objet",
+            "description": "Description",
+            "none": "None"
+        },
+        "actor": {
+            "name": "Nom",
+            "npc": "PNJ",
+            "people": "Personnage",
+            "traits": "Traits",
+            "description": "Description",
+            "tiny-cthulhu": {
+                "character": "Bio",
+                "heritage": {
+                    "header": "Archetype",
+                    "traits": "Traits d'Archetype",
+                    "delete": "Retirer Archetype"
+                }
+            },
+            "tiny-dungeon": {
+                "character": "Personnage",
+                "heritage": {
+                    "header": "Heritage",
+                    "traits": "Trait d'Heritage",
+                    "delete": "Retirer Heritage"
+                }
+            },
+            "homeland": "Pays d'origine",
+            "age": "Age",
+            "eyes": "Yeux",
+            "hair": "Cheveux",
+            "familyTrade": "Apprentissage de Famille",
+            "powerOrigin": "Origine du Pouvoir",
+            "weakness": "Faiblesse",
+            "belief": "Croyance",
+            "xp": {
+                "header": "Experience",
+                "progression": "Progression",
+                "total": "Total",
+                "spent": "Depense",
+                "remaining": "Restant"
+            },
+            "wounds": {
+                "header": "Sante",
+                "current": "Actuel",
+                "max": "Max:",
+                "increaseMax": "Augmenter Sante Max",
+                "help": "Cochez une case lorsque vous subissez des degats. Decochez lorsque vous etes soigne."
+            },
+            "radiation": {
+                "header": "Radiation",
+                "current": "Actuel",
+                "max": "Max:",
+                "increaseMax": "Augmenter Radiation Max",
+                "help": "Cochez une case lorsque vous subissez de la radiation."
+            },
+            "corruption": {
+                "test": "Test de Corruption",
+                "header": "Corruption",
+                "current": "Actuel",
+                "max": "Max:",
+                "increaseMax": "Augmenter Seuil de Corruption",
+                "help": "Cochez une case lorsque vous subissez de la corruption. Decochez si vous recuperez."
+            },
+            "panic": {
+                "test": "Test de Panique",
+                "header": "Panique",
+                "current": "Actuel",
+                "help": "Decochez une case lorsque vous subissez de la panique. Cochez si vous recuperez. Test de panique lorsque la panique est a 1."
+            },
+            "grit": {
+                "header": "Courage",
+                "current": "Actuel",
+                "help": "Decochez une case lorsque vous depensez du Courage."
+            },
+            "proficiencies": {
+                "header": "Maitrise",
+                "mastered": "Expertise"
+            },
+            "gear": "Inventaire",
+            "equipped": "Equipe",
+            "weaponry": "Armement",
+            "wearing": "Vetements",
+            "important": "PNJ important",
+            "actions": {
+                "editTrait": "Editer le Trait",
+                "chatTrait": "",
+                "chatItem": "",
+                "deleteTrait": "Supprimer le Trait"
+            }
+        },
+        "weaponCategories": {
+            "melee": "Melee",
+            "ranged": "Distance"
+        },
+        "weaponTypes": {
+            "none": "",
+            "light": "Legere",
+            "heavy": "Lourde"
+        },
+        "armorTypes": {
+            "none": "",
+            "light": "Legere",
+            "medium": "Moyenne",
+            "heavy": "Lourde"
+        },
+        "corruptionTests": {
+            "none": "Non",
+            "disadvantage": "Desavantage",
+            "standard": "Normal"
+        },
+        "weapon": {
+            "name": "Nom",
+            "type": "Type d'Arme",
+            "damage": "Degats",
+            "slots": "Emplacements d'Objet",
+            "description": "Description",
+            "light": "Legere",
+            "heavy": "Lourde",
+            "ranged": "Distance",
+            "lightMelee": "l. Melee",
+            "heavyMelee": "L. Melee",
+            "lightRanged": "l. Distance",
+            "heavyRanged": "L. Distance",
+            "lightShort": "l",
+            "heavyShort": "L",
+            "meleeShort": "M",
+            "rangedShort": "D",
+            "oneAttack": "Une attaque par tour",
+            "reload": "Recharger",
+            "uses": "Utilisations",
+            "ammoType": "Type de munition",
+            "ammoAny": "- toutes munitions"
+        },
+        "reload": {
+            "outOfAmmo": "Plus de munitions — rechargez!",
+            "ranOut": "Munitions epuisees — rechargez pour continuer.",
+            "reloadBtn": "Recharger (reinitialiser au max)",
+            "reloaded": "a recharge",
+            "undoResource": "Restaurer la ressource",
+            "noMag": "Aucun chargeur de type \"{type}\" dans l'inventaire.",
+            "emptyMag": "Le chargeur \"{type}\" est vide (0 restant).",
+            "noMagAny": "Aucun chargeur (munitions) dans l'inventaire.",
+            "ammoUsed": " (chargeur {ammo})"
+        },
+        "death": {
+            "down": "Vaincu",
+            "dying": "Agonisant",
+            "dead": "Mort",
+            "cannotAct": "Les personnages neutralises ne peuvent pas attaquer.",
+            "thrown": "Jet de survie",
+            "self": "son propre jet de survie",
+            "stabilized": "Stabilise",
+            "stabilizedHint": "Le personnage est a terre mais vivant et stabilise.",
+            "dyingHint": "Le personnage agonise et mourra dans {rounds} rounds s'il n'est pas soigne.",
+            "defeated": "est vaincu.",
+            "died": "est mort.",
+            "turnsLeft": "{actor} mourra dans {n} tours."
+        },
+        "stabilize": {
+            "title": "Stabiliser",
+            "sheetHint": "Ciblez un allié à terre (0 PV) et lancez un jet de mort.",
+            "subtitle": "lancez un jet de mort pour stabiliser. Tout dé égal ou supérieur au seuil est un succès.",
+            "self": "Vous ne pouvez pas vous stabiliser vous-même.",
+            "noTarget": "Ciblez d'abord un allié à terre (0 PV).",
+            "notDowned": "Cette cible n'est pas à terre.",
+            "thrown": "Stabilisation",
+            "target": "cible",
+            "success": "Stabilisé",
+            "fail": "Échec",
+            "roll": "Stabiliser"
+        },
+        "heal": {
+            "use": "Utiliser",
+            "heal": "Soigner",
+            "usesOn": "utilise",
+            "heals": "soigne {hp} PV",
+            "noTarget": "Sélectionnez un token cible à soigner ou utilisez-le sur vous-même.",
+            "empty": "Cet objet de soin est épuisé.",
+            "emptyHint": "Aucun objet de soin. Ciblez un allié à terre pour stabiliser.",
+            "full": "La cible a tous ses PV.",
+            "badFormula": "Formule de soin invalide sur cet objet.",
+            "wasted": "(perdu: {wasted} PV)",
+            "useTooltip": "Soigne la cible de ce montant (1 utilisation)."
+        },
+        "armor": {
+            "name": "Nom",
+            "type": "Type d'armure",
+            "damageReduction": "RD",
+            "armorHp": "PV Armure",
+            "slots": "Emplacements d'Objet",
+            "depletion": "Usure",
+            "description": "Description",
+            "none": "Aucune"
+        },
+        "gear": {
+            "name": "Nom",
+            "slots": "Emplacements d'Objet",
+            "depletion": "Usure",
+            "quantity": "Quantite",
+            "description": "Description",
+            "category": "Categorie",
+            "ammoType": "Type de munition",
+            "ammoTypePlaceholder": "p.ex. 9x19",
+            "heal": "Soins (PV)",
+            "healPlaceholder": "4 ou 2d4+2",
+            "categories": {
+                "item": "Objet",
+                "ammo": "Munitions",
+                "heal": "Soin",
+                "money": "Argent"
+            },
+            "moneyTotal": "Argent"
+        },
+        "heritage": {
+            "trait": "Trait d'Heritage",
+            "startingHealth": "Points de Vie de Depart",
+            "corruptionThreshold": "Sueil de Corruption"
+        },
+        "trait": {
+            "name": "Nom",
+            "description": "Description"
+        }
+    }
 }

@@ -303,7 +303,7 @@
             <section class="owned-items">
                 <div class="row">
                     {{#each data.system.gear as |gearItem id|}}
-                        {{> "systems/tinyd6v14/templates/partials/inventory-card.hbs" gearItem=gearItem tagName="div" classes="col-4" }}
+                        {{> "systems/tinyd6v14/templates/partials/inventory-card.hbs" gearItem=gearItem tagName="div" classes="col-4" owner=@root.owner }}
                     {{/each}}
                 </div>
             </section>

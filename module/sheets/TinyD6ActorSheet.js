@@ -57,6 +57,8 @@ export default class TinyD6ActorSheet extends ActorSheet {
         html.find(".stab-btn").click(this._onStabilize.bind(this));
         html.find(".item-use").click(this._onUseHeal.bind(this));
 
+        html.find(".money-input").on('change', this._onMoneyEdit.bind(this));
+
         html.find(".action-meter .act").on('click', this._setCurrentAction.bind(this));
         html.find(".actions-btns .plus").click(this._onActionPlus.bind(this));
         html.find(".actions-btns .minus").click(this._onActionMinus.bind(this));
@@ -432,6 +434,21 @@ export default class TinyD6ActorSheet extends ActorSheet {
                         : game.i18n.localize("tinyd6.heal.noTarget");
             ui.notifications.warn(msg);
         }
+        this.render(false);
+    }
+
+    /* Inline-редактирование количества денег (money-гир) прямо в инвентаре. */
+    async _onMoneyEdit(event)
+    {
+        const input = event.currentTarget;
+        const itemId = input.dataset.itemId;
+        const value = Math.max(0, Number(input.value) || 0);
+        const item = this.actor.items.get(itemId);
+        if (!item || item.system?.category !== "money") { this.render(false); return; }
+        if (Number(item.system?.quantity?.value) === value) return;
+        await this.actor.updateEmbeddedDocuments("Item", [
+            { _id: itemId, "system.quantity.value": value }
+        ]);
         this.render(false);
     }
 }

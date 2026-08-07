@@ -1,222 +1,283 @@
-﻿{
-    "tinyd6":  {
-                   "TinyD6HeroSheet":  "Bohater",
-                   "TinyD6NpcSheet":  "BN",
-                   "TokenWeapons":  "Bron",
-"TokenActions":  "Akcje",
-                   "system":  {
-                                  "name":  "Tiny D6 2e",
-"dieRoller":  "Rzut Koscia",
-"actions":  "Akcje",
-"actionAdd":  "Dodaj akcje",
-"actionRemove":  "Usun akcje",
-"collapse":  "Zwin",
-                                  "expand":  "Rozwin"
-                              },
-                   "settings":  {
-                                    "title":  "Ustawienia systemu",
-                                    "label":  "Ustawienia systemu",
-                                    "description":  "Wybierz opcjonalne zasady i mechaniki, ktore chcesz wlaczyc sposrod ponizszych opcji.",
-                                    "theme":  {
-                                                  "name":  "Motyw",
-                                                  "hint":  "Wybierz motyw odpowiedni dla twojej gry Tiny D6",
-                                                  "choices":  {
-                                                                  "cthulhu":  "Tiny Cthulhu",
-                                                                  "dungeon":  "Tiny Dungeon 2e"
-                                                              }
-                                              },
-                                    "sheetStyle":  {
-                                                    "name":  "Styl karty",
-                                                    "hint":  "Wybierz styl wizualny kart postaci",
-                                                    "choices":  {
-                                                                    "default":  "Ciemny (domyslny)",
-                                                                    "perkament":  "Pergamin пїЅ Folklor",
-                                                                    "noir":  "Noir пїЅ Miedz",
-                                                                    "minimal":  "Minimalny пїЅ Jasny"
-                                                                }
-                                                },
-                                    "rollerInCharsheet":  {
-                                                              "name":  "Rzut koscia w Karcie Postaci",
-                                                              "hint":  "Wlacz, aby miec dostep do rzutu koscia bezposrednio w Karcie Postaci."
-                                                          },
-                                    "enableCorruption":  {
-                                                             "name":  "Wlacz tor Skazenia",
-                                                             "hint":  "Dodaje do Karty Postaci tor Skazenia."
-                                                         },
-                                    "enableAdvancement":  {
-                                                              "name":  "Rozwoj postaci",
-                                                              "hint":  "Postacie rozwijaja sie na podstawie sesji lub zdobywajac punkty doswiadczenia.",
-                                                              "choices":  {
-                                                                              "none":  "Brak",
-                                                                              "minimalist":  "Minimalistyczny rozwoj",
-                                                                              "xp":  "Punkty doswiadczenia"
-                                                                          }
-                                                          },
-                                    "enableItemTracking":  {
-                                                               "name":  "Sledzenie przedmiotow",
-                                                               "hint":  "Pokazuje wykorzystane sloty przedmiotow i oblicza pozostale."
-                                                           },
-                                    "enableDepletionPoints":  {
-                                                                  "name":  "Zuzycie/Wyczerpanie przedmiotow",
-                                                                  "hint":  "Sledzi punkty zuzycia przedmiotow na karcie postaci."
-                                                              },
-                                    "enableCriticalHits":  {
-                                                               "name":  "Trafienia krytyczne",
-                                                               "hint":  "Oznacza test jako \u0027Krytyczny Sukces\u0027, gdy wszystkie kosci pokaza 6."
-                                                           },
-                                    "enableCriticalFailure":  {
-                                                                  "name":  "Krytyczne porazki",
-                                                                  "hint":  "Oznacza test jako \u0027Krytyczna Porazka\u0027, gdy wszystkie kosci pokaza 1."
-                                                              },
-                                    "enableVariableWeaponDamage":  {
-                                                                       "name":  "Zmienna obrazenia broni",
-                                                                       "hint":  "Oblicza zmienne obrazenia broni przy ataku."
-                                                                   },
-                                    "enablePowerOrigin":  {
-                                                              "name":  "Pochodzenie mocy",
-                                                              "hint":  "Dodaje pole tekstowe do wpisania pochodzenia Super Mocy."
-                                                          },
-                                    "enableWeakness":  {
-                                                           "name":  "Slabosc",
-                                                           "hint":  "Dodaje pole tekstowe do wpisania Super Slabosci."
-                                                       },
-                                    "enablePanic":  {
-                                                        "name":  "Panika",
-                                                        "hint":  "Dodaje licznik do sledzenia Paniki."
-                                                    },
-                                    "enableRadiation":  {
-                                                            "name":  "Promieniowanie",
-                                                            "hint":  "Dodaje licznik do sledzenia Promieniowania."
-                                                        },
-                                    "enableGrit":  {
-                                                       "name":  "Hart ducha",
-                                                       "hint":  "Dodaje licznik do sledzenia Hartu ducha."
-                                                   },
-                                    "independentNpcTokens":  {
-                                                                 "name":  "Niezalezne tokeny BN",
-                                                                 "hint":  "Tokeny umieszczane na scenie z aktora BN staja sie niezaleznymi kopiami z wlasnymi HP i pancerzem."
-                                                             },
-                                    "defaultActions":  {
-                                                          "name":  "Domyslne akcje",
-                                                          "hint":  "Domyslna maksymalna liczba akcji dla nowych aktorow (standard Tiny D6 to 1)."
-                                                      },
-                                     "enableTinyD6Plus":  {
-                                                                 "name":  "Homerule: TinyD6+",
-                                                                 "hint":  "Wlacza homerules walki TinyD6+: przeladowanie (amunicja na atak), smierc i obalenie (rzut na smierc, umierajacy z licznikiem) oraz palete broni w HUD tokena."
-                                                             },
-                                    "critAdvantage":  {
-                                                        "name":  "Homerule: Krytyczna przewaga",
-                                                        "hint":  "Gdy wszystkie kosci w ataku pokazuja identyczne szesci (6), obrazenia broni sa podwojone (Krytyczne). Wybierz, czy dziala dla 2k6, 3k6, czy obu.",
-                                                        "choices":  {
-                                                                      "off":  "Wylaczone",
-                                                                      "two":  "tylko 2k6",
-                                                                      "three":  "tylko 3k6",
-                                                                      "both":  "2k6 i 3k6"
-                                                                  }
-                                                    },
-"showNpcReloadMessages":  {
-                                                                 "name":  "Pokazuj wiadomosci przeladowania NPC",
-                                                                 "hint":  "Publikuj wiadomosci o przeladowaniu/braku amunicji NPC w czacie (domyslnie wylaczone, mniej szumu)."
-                                                             },
-"deathRounds":  {
-                                                                 "name":  "Rzut na smierc: rundy do smierci",
-                                                                 "hint":  "Liczba rund walki, ktore Umierajacy przezyje bez leczenia (standard 3)."
-                                                             },
-                                    "deathSaveThreshold":  {
-                                                                 "name":  "Rzut na smierc: prog sukcesu",
-                                                                 "hint":  "Rzut na smierc (1k6) udaje sie, gdy wynik wynosi co najmniej tyle (standard 4)."
-                                                             },
-                                    "showNpcDeathMessages":  {
-                                                                 "name":  "Pokazuj wiadomosci obalenia NPC",
-                                                                 "hint":  "Publikuj tez wiadomosc, gdy zwykly NPC zostaje obalony (domyslnie wylaczone, mniej szumu)."
-                                                             }
-                                 },
-                   "dice":  {
-                                "modifier":  {
-                                                 "focus":  "Skupienie",
-                                                 "marksman":  "Strzelec wyborowy"
-                                             },
-                                "roll":  {
-                                             "disadvantage":  "Utrudnienie",
-                                             "standard":  "Zwykly Test",
-                                             "advantage":  "Ulatwienie",
-                                             "success":  "Sukces!",
-                                             "failure":  "Porazka",
-                                             "critical":  "Krytyczny Sukces!!",
-                                             "botch":  "Krytyczna Porazka!!"
-                                         }
-                            },
-                   "sheet":  {
-                                 "tab":  {
-                                             "main":  "Main"
-                                         },
-                                 "combat":  "Combat",
-                                 "weaponProficiency":  "Weapon Proficiency",
-                                 "wounds":  "Wounds",
-                                 "armor":  "Armor",
-                                 "corruption":  "Corruption",
-                                 "xp":  "XP",
-                                 "actions":  {
-                                                 "name":  "Akcje",
-                                                 "spend":  "Wydaj akcje",
-                                                 "restore":  "Przywroc akcje",
-                                                 "plus":  "Dodaj max akcje (+1)",
-                                                 "minus":  "Usun max akcje (-1)"
-                                             },
-                                 "newItem":  "Nowy przedmiot",
-                                 "description":  "Opis",
-                                 "none":  "Brak"
-                             },
-                   "actor":  {
-                                 "name":  "Imie",
-                                 "npc":  "BN",
-                                 "people":  "Ludzie",
-                                 "traits":  "Cechy",
-                                 "description":  "Opis",
-                                 "actions":  {
-                                                 "editTrait":  "Edytuj ceche",
-                                                 "chatTrait":  "Udostepnij ceche",
-                                                 "chatItem":  "Udostepnij przedmiot",
-                                                 "deleteTrait":  "Usun ceche"
-                                             },
-                                 "tiny-cthulhu":  {
-                                                      "character":  "Bio",
-                                                      "heritage":  {
-                                                                       "header":  "Archetyp",
-                                                                       "traits":  "Cecha Archetypu",
-                                                                       "delete":  "Usun Archetyp"
-                                                                   }
-                                                  },
-                                 "tiny-dungeon":  {
-                                                      "character":  "Postac",
-                                                      "heritage":  {
-                                                                       "header":  "Pochodzenie",
-                                                                       "traits":  "Cecha Pochodzenia",
-                                                                       "delete":  "Usun Pochodzenie"
-                                                                   }
-                                                  },
-                                 "homeland":  "Ojczyzna",
-                                 "age":  "Wiek",
-                                 "eyes":  "Oczy",
-                                 "hair":  "Wlosy",
-                                 "familyTrade":  "Zawod rodzinny",
-                                 "powerOrigin":  "Pochodzenie mocy",
-                                 "weakness":  "Slabosc",
-                                 "belief":  "Wiara",
-                                 "xp":  {
-                                            "header":  "Doswiadczenie",
-                                            "progression":  "Progresja",
-                                            "total":  "Razem",
-                                            "spent":  "Wydane",
-                                            "remaining":  "Pozostalo"
-                                        },
-                                 "wounds":  {
-                                                "header":  "Zdrowie",
-                                                "current":  "Obecne",
-                                                "max":  "Maks:",
-                                                "increaseMax":  "Zwieksz maks. HP",
-                                                "help":  "Zaznacz, gdy otrzymasz obrazenia. Odznacz, gdy wyzdrowiejesz."
-                                            }
-                             }
-               }
+{
+    "tinyd6": {
+        "TinyD6HeroSheet": "Bohater",
+        "TinyD6NpcSheet": "BN",
+        "TokenWeapons": "Bron",
+        "TokenActions": "Akcje",
+        "system": {
+            "name": "Tiny D6 2e",
+            "dieRoller": "Rzut Koscia",
+            "actions": "Akcje",
+            "actionAdd": "Dodaj akcje",
+            "actionRemove": "Usun akcje",
+            "collapse": "Zwin",
+            "expand": "Rozwin"
+        },
+        "settings": {
+            "title": "Ustawienia systemu",
+            "label": "Ustawienia systemu",
+            "description": "Wybierz opcjonalne zasady i mechaniki, ktore chcesz wlaczyc sposrod ponizszych opcji.",
+            "theme": {
+                "name": "Motyw",
+                "hint": "Wybierz motyw odpowiedni dla twojej gry Tiny D6",
+                "choices": {
+                    "cthulhu": "Tiny Cthulhu",
+                    "dungeon": "Tiny Dungeon 2e"
+                }
+            },
+            "sheetStyle": {
+                "name": "Styl karty",
+                "hint": "Wybierz styl wizualny kart postaci",
+                "choices": {
+                    "default": "Ciemny (domyslny)",
+                    "perkament": "Pergamin пїЅ Folklor",
+                    "noir": "Noir пїЅ Miedz",
+                    "minimal": "Minimalny пїЅ Jasny"
+                }
+            },
+            "rollerInCharsheet": {
+                "name": "Rzut koscia w Karcie Postaci",
+                "hint": "Wlacz, aby miec dostep do rzutu koscia bezposrednio w Karcie Postaci."
+            },
+            "enableCorruption": {
+                "name": "Wlacz tor Skazenia",
+                "hint": "Dodaje do Karty Postaci tor Skazenia."
+            },
+            "enableAdvancement": {
+                "name": "Rozwoj postaci",
+                "hint": "Postacie rozwijaja sie na podstawie sesji lub zdobywajac punkty doswiadczenia.",
+                "choices": {
+                    "none": "Brak",
+                    "minimalist": "Minimalistyczny rozwoj",
+                    "xp": "Punkty doswiadczenia"
+                }
+            },
+            "enableItemTracking": {
+                "name": "Sledzenie przedmiotow",
+                "hint": "Pokazuje wykorzystane sloty przedmiotow i oblicza pozostale."
+            },
+            "enableDepletionPoints": {
+                "name": "Zuzycie/Wyczerpanie przedmiotow",
+                "hint": "Sledzi punkty zuzycia przedmiotow na karcie postaci."
+            },
+            "enableCriticalHits": {
+                "name": "Trafienia krytyczne",
+                "hint": "Oznacza test jako 'Krytyczny Sukces', gdy wszystkie kosci pokaza 6."
+            },
+            "enableCriticalFailure": {
+                "name": "Krytyczne porazki",
+                "hint": "Oznacza test jako 'Krytyczna Porazka', gdy wszystkie kosci pokaza 1."
+            },
+            "enableVariableWeaponDamage": {
+                "name": "Zmienna obrazenia broni",
+                "hint": "Oblicza zmienne obrazenia broni przy ataku."
+            },
+            "enablePowerOrigin": {
+                "name": "Pochodzenie mocy",
+                "hint": "Dodaje pole tekstowe do wpisania pochodzenia Super Mocy."
+            },
+            "enableWeakness": {
+                "name": "Slabosc",
+                "hint": "Dodaje pole tekstowe do wpisania Super Slabosci."
+            },
+            "enablePanic": {
+                "name": "Panika",
+                "hint": "Dodaje licznik do sledzenia Paniki."
+            },
+            "enableRadiation": {
+                "name": "Promieniowanie",
+                "hint": "Dodaje licznik do sledzenia Promieniowania."
+            },
+            "enableGrit": {
+                "name": "Hart ducha",
+                "hint": "Dodaje licznik do sledzenia Hartu ducha."
+            },
+            "independentNpcTokens": {
+                "name": "Niezalezne tokeny BN",
+                "hint": "Tokeny umieszczane na scenie z aktora BN staja sie niezaleznymi kopiami z wlasnymi HP i pancerzem."
+            },
+            "defaultActions": {
+                "name": "Domyslne akcje",
+                "hint": "Domyslna maksymalna liczba akcji dla nowych aktorow (standard Tiny D6 to 1)."
+            },
+            "enableTinyD6Plus": {
+                "name": "Homerule: TinyD6+",
+                "hint": "Wlacza homerules walki TinyD6+: przeladowanie (amunicja na atak), smierc i obalenie (rzut na smierc, umierajacy z licznikiem) oraz palete broni w HUD tokena."
+            },
+            "critAdvantage": {
+                "name": "Homerule: Krytyczna przewaga",
+                "hint": "Gdy wszystkie kosci w ataku pokazuja identyczne szesci (6), obrazenia broni sa podwojone (Krytyczne). Wybierz, czy dziala dla 2k6, 3k6, czy obu.",
+                "choices": {
+                    "off": "Wylaczone",
+                    "two": "tylko 2k6",
+                    "three": "tylko 3k6",
+                    "both": "2k6 i 3k6"
+                }
+            },
+            "showNpcReloadMessages": {
+                "name": "Pokazuj wiadomosci przeladowania NPC",
+                "hint": "Publikuj wiadomosci o przeladowaniu/braku amunicji NPC w czacie (domyslnie wylaczone, mniej szumu)."
+            },
+            "deathRounds": {
+                "name": "Rzut na smierc: rundy do smierci",
+                "hint": "Liczba rund walki, ktore Umierajacy przezyje bez leczenia (standard 3)."
+            },
+            "deathSaveThreshold": {
+                "name": "Rzut na smierc: prog sukcesu",
+                "hint": "Rzut na smierc (1k6) udaje sie, gdy wynik wynosi co najmniej tyle (standard 4)."
+            },
+            "showNpcDeathMessages": {
+                "name": "Pokazuj wiadomosci obalenia NPC",
+                "hint": "Publikuj tez wiadomosc, gdy zwykly NPC zostaje obalony (domyslnie wylaczone, mniej szumu)."
+            }
+        },
+        "dice": {
+            "modifier": {
+                "focus": "Skupienie",
+                "marksman": "Strzelec wyborowy"
+            },
+            "roll": {
+                "disadvantage": "Utrudnienie",
+                "standard": "Zwykly Test",
+                "advantage": "Ulatwienie",
+                "success": "Sukces!",
+                "failure": "Porazka",
+                "critical": "Krytyczny Sukces!!",
+                "botch": "Krytyczna Porazka!!"
+            }
+        },
+        "sheet": {
+            "tab": {
+                "main": "Main"
+            },
+            "combat": "Combat",
+            "weaponProficiency": "Weapon Proficiency",
+            "wounds": "Wounds",
+            "armor": "Armor",
+            "corruption": "Corruption",
+            "xp": "XP",
+            "actions": {
+                "name": "Akcje",
+                "spend": "Wydaj akcje",
+                "restore": "Przywroc akcje",
+                "plus": "Dodaj max akcje (+1)",
+                "minus": "Usun max akcje (-1)"
+            },
+            "newItem": "Nowy przedmiot",
+            "description": "Opis",
+            "none": "Brak"
+        },
+        "actor": {
+            "name": "Imie",
+            "npc": "BN",
+            "people": "Ludzie",
+            "traits": "Cechy",
+            "description": "Opis",
+            "actions": {
+                "editTrait": "Edytuj ceche",
+                "chatTrait": "Udostepnij ceche",
+                "chatItem": "Udostepnij przedmiot",
+                "deleteTrait": "Usun ceche"
+            },
+            "tiny-cthulhu": {
+                "character": "Bio",
+                "heritage": {
+                    "header": "Archetyp",
+                    "traits": "Cecha Archetypu",
+                    "delete": "Usun Archetyp"
+                }
+            },
+            "tiny-dungeon": {
+                "character": "Postac",
+                "heritage": {
+                    "header": "Pochodzenie",
+                    "traits": "Cecha Pochodzenia",
+                    "delete": "Usun Pochodzenie"
+                }
+            },
+            "homeland": "Ojczyzna",
+            "age": "Wiek",
+            "eyes": "Oczy",
+            "hair": "Wlosy",
+            "familyTrade": "Zawod rodzinny",
+            "powerOrigin": "Pochodzenie mocy",
+            "weakness": "Slabosc",
+            "belief": "Wiara",
+            "xp": {
+                "header": "Doswiadczenie",
+                "progression": "Progresja",
+                "total": "Razem",
+                "spent": "Wydane",
+                "remaining": "Pozostalo"
+            },
+            "wounds": {
+                "header": "Zdrowie",
+                "current": "Obecne",
+                "max": "Maks:",
+                "increaseMax": "Zwieksz maks. HP",
+                "help": "Zaznacz, gdy otrzymasz obrazenia. Odznacz, gdy wyzdrowiejesz."
+            }
+        },
+        "gear": {
+            "name": "Nazwa",
+            "category": "Kategoria",
+            "quantity": "Ilość",
+            "moneyTotal": "Pieniądze",
+            "heal": "Leczenie (HP)",
+            "healPlaceholder": "np. 4 lub 2d4+2",
+            "slots": "Sloty",
+            "depletion": "Zuzycie",
+            "description": "Opis",
+            "ammoType": "Typ amunicji",
+            "ammoTypePlaceholder": "np. strzala, kula",
+            "categories": {
+                "item": "Przedmiot",
+                "ammo": "Amunicja",
+                "heal": "Leczenie",
+                "money": "Pieniadze"
+            }
+        },
+        "TokenHeal": "Leczenie",
+        "TokenArmor": "Pancerz",
+        "death": {
+            "down": "Obalony",
+            "dying": "Umierajacy",
+            "dead": "Martwy",
+            "cannotAct": "Nie moze dzialac",
+            "thrown": "Rzut na smierc",
+            "self": "Nie mozesz stabilizowac siebie.",
+            "stabilized": "Ustabilizowany",
+            "stabilizedHint": "Cel jest ustabilizowany i nie umiera.",
+            "dyingHint": "Umierajacy: za N rund umrze bez leczenia.",
+            "defeated": "Pokonany",
+            "died": "Zmarl",
+            "turnsLeft": "rundy do smierci"
+        },
+        "stabilize": {
+            "title": "Stabilizacja",
+            "sheetHint": "Wskaz obalonego sojusznika (0 HP) i rzuc rzut na smierc.",
+            "subtitle": "rzuc rzut na smierc, aby ustabilizowac. Kazda koscia o wyniku co najmniej progu to sukces.",
+            "self": "Nie mozesz ustabilizowac siebie.",
+            "noTarget": "Najpierw wskaz obalonego sojusznika (0 HP).",
+            "notDowned": "Ten cel nie jest obalony.",
+            "thrown": "Stabilizacja",
+            "target": "cel",
+            "success": "Ustabilizowano",
+            "fail": "Porazka",
+            "roll": "Stabilizuj"
+        },
+        "heal": {
+            "use": "Uzyj",
+            "heal": "Leczenie",
+            "usesOn": "uzywa na",
+            "heals": "leczy {hp} HP",
+            "noTarget": "Wskaz cel, ktory chcesz wyleczyc, lub uzyj na sobie.",
+            "empty": "Ten przedmiot leczenia nie ma uzytkow.",
+            "full": "Cel ma pelne HP.",
+            "badFormula": "Nieprawidlowa formula leczenia na tym przedmiocie.",
+            "emptyHint": "Brak przedmiotow leczenia. Wskaz obalonego sojusznika, aby ustabilizowac.",
+            "wasted": "(zmarnowano: {wasted} HP)",
+            "useTooltip": "Leczy cel o ta wartosc (1 uzycie)."
+        }
+    }
 }

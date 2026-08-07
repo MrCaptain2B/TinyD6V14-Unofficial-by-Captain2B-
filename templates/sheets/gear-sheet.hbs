@@ -28,6 +28,12 @@
             <input type="number" class="text-center" name="system.quantity.value" value="{{data.system.quantity.value}}" min="0"/>
         </div>
         {{/if}}
+        {{#if (eq data.system.category "money")}}
+        <div class="field-row">
+            <label>{{localize "tinyd6.gear.moneyTotal"}}</label>
+            <input type="number" class="text-center" name="system.quantity.value" value="{{data.system.quantity.value}}" min="0"/>
+        </div>
+        {{/if}}
     </div>
     {{/if}}
     {{editor descriptionHTML target="system.description" button=true owner=owner editable=editable}}
