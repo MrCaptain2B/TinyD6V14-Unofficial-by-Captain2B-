@@ -196,7 +196,6 @@ export default class DieRoller extends FormApplication {
             marksmanTrait: element.dataset.enableMarksman
         };
 
-        //TinyD6System.emit('dieRoll', rollData);
         Dice.RollTest(rollData);
     }
 

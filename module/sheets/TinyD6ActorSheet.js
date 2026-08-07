@@ -25,8 +25,10 @@ export default class TinyD6ActorSheet extends ActorSheet {
             data.data.system.actions = { value: 0, max: Number.isNaN(def) ? 1 : Math.max(0, def) };
         }
         data.data.system.traits = data.data.items.filter(item => { return item.type === "trait" });
-        data.data.system.weapons = data.data.items.filter(item => { return item.type === "weapon" && item.system.equipped });
-        data.data.system.armor = data.data.items.filter(item => { return item.type === "armor" && item.system.equipped });
+        // У NPC вся броня и всё оружие всегда считаются экипированными.
+        const npcAll = this.actor.type === "npc";
+        data.data.system.weapons = data.data.items.filter(item => { return item.type === "weapon" && (npcAll || item.system.equipped) });
+        data.data.system.armor = data.data.items.filter(item => { return item.type === "armor" && (npcAll || item.system.equipped) });
         data.data.system.gear = data.data.items.filter(item => { return item.type !== "trait" && item.type !== "heritage" });
         data.data.system.heritage = data.data.items.find(item => { return item.type === "heritage" }) ?? null;
 
@@ -76,7 +78,6 @@ export default class TinyD6ActorSheet extends ActorSheet {
             marksmanTrait: element.dataset.enableMarksman
         };
 
-        //TinyD6System.emit('dieRoll', rollData);
         Dice.RollTest(rollData);
     }
 
@@ -211,12 +212,6 @@ export default class TinyD6ActorSheet extends ActorSheet {
         let item = this.actor.items.get(itemId);
 
         item.update({ "system.equipped": !item.system.equipped });
-    }
-
-    _toggleActionButton(event)
-    {
-        const element = event.element;
-        element.getElementsByClassName('.hidden').toggleClass('hidden');
     }
 
     async _setCurrentDamage(event)
@@ -419,9 +414,15 @@ export default class TinyD6ActorSheet extends ActorSheet {
         if (!healItem || healItem.system?.category !== "heal") return;
 
         const targets = Array.from(game.user.targets ?? []).filter(t => t.actor && t.actor.id !== this.actor.id);
-        const targetActor = targets[0]?.actor ?? this.actor;
+        const targetToken = targets[0] ?? null;
+        const targetActor = targetToken?.actor ?? this.actor;
 
-        const result = await Dice.useHealItem(this.actor, healItem, targetActor);
+        const healerRef = { actorId: this.actor.id };
+        const targetRef = targetToken
+            ? { sceneId: game.canvas?.scene?.id ?? null, tokenId: targetToken.id ?? null, actorId: targetActor.id }
+            : { actorId: targetActor.id };
+
+        const result = await Dice.useHealItem(this.actor, healItem, targetActor, { healerRef, targetRef });
         if (!result.ok)
         {
             const reason = result.reason;

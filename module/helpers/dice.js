@@ -1,4 +1,5 @@
 import { isDowned } from "./death.js";
+import { gmProxy, broadcastFx } from "./socket.js";
 
 /* Включены ли анимации боя (настройка мира animFx). */
 export function isAnimFxEnabled() {
@@ -119,8 +120,12 @@ function _attackTargets(attacker) {
     return targets;
 }
 
+/* Экипированная броня. У NPC вся броня всегда считается экипированной:
+ * NPC не «переодевается», и без этого броня, добавленная в лист NPC, не давала
+ * бы DR и не показывалась в HUD. Для героев по-прежнему важен флаг equipped. */
 function _equippedArmor(actor) {
-    return (actor?.items ?? []).filter(i => i.type === "armor" && i.system?.equipped);
+    const npcAll = actor?.type === "npc";
+    return (actor?.items ?? []).filter(i => i.type === "armor" && (npcAll || i.system?.equipped));
 }
 
 /* Только «живая» броня: экипированная и с ненулевым запасом прочности. */
@@ -174,11 +179,66 @@ function _diceFace(result) {
 
 /* Открывает диалог атаки оружием: выбор режима броска (помеха/стандарт/
  * преимущество) и модификаторов Focus/Marksman. Общий для листа актёра и HUD. */
+/* Определяет рекомендуемый уровень броска атаки по профишенси актёра
+ * (Homerule: TinyD6+ + enableAttackProficiency):
+ *  - оружие, имя которого есть в masteredWeapons → преимущество (3d6);
+ *  - владелец обучен типу оружия → стандарт (2d6);
+ *  - необучен → помеха (1d6);
+ *  - NPC без заполненных профишенси → стандарт.
+ * Возвращает 1 | 2 | 3. Используется только как «подсказка» в диалоге —
+ * игрок может выбрать любой уровень вручную. */
+export function suggestAttackDice(actor, weapon) {
+    if (!actor || !weapon) return 2;
+    if (actor.type === "npc")
+    {
+        const prof = actor.system?.proficiencies ?? {};
+        if (!prof.lightMelee && !prof.heavyMelee && !prof.lightRanged && !prof.heavyRanged && !(prof.masteredWeapons || "").trim())
+            return 2;
+    }
+
+    const mastered = (actor.system?.proficiencies?.masteredWeapons || "").split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
+    if (mastered.includes((weapon.name || "").trim().toLowerCase())) return 3;
+
+    const prof = actor.system?.proficiencies ?? {};
+    const type = _weaponProficiencyKey(weapon);
+    if (type && prof[type]) return 2;
+    return 1;
+}
+
+/* Ключ профишенси для оружия: по weaponType (TinyD6+) или по
+ * группе/типу урона (базовый режим). Возвращает ключ или null. */
+function _weaponProficiencyKey(weapon) {
+    const s = weapon.system ?? {};
+    const wt = s.weaponType;
+    if (wt === "lightMelee" || wt === "heavyMelee" || wt === "lightRanged" || wt === "heavyRanged") return wt;
+    const group = s.group;
+    const type = s.damageType;
+    if (group === "melee") return type === "heavy" ? "heavyMelee" : "lightMelee";
+    if (group === "ranged") return type === "heavy" ? "heavyRanged" : "lightRanged";
+    return null;
+}
+
 export function openAttackDialog(actor, weapon) {
     if (!actor || !weapon) return;
 
     const focusLabel = game.i18n.localize("tinyd6.dice.modifier.focus");
     const marksmanLabel = game.i18n.localize("tinyd6.dice.modifier.marksman");
+
+    // Homerule: TinyD6+ + Auto weapon proficiency — рекомендуемый уровень
+    // подсвечивается в диалоге, но все кнопки остаются активными, чтобы
+    // игрок мог переопределить под ситуацию (НРИ, а не авто-игра).
+    let suggested = 2;
+    if (game.settings.get('tinyd6v14', 'enableTinyD6Plus')
+        && game.settings.get('tinyd6v14', 'enableAttackProficiency'))
+    {
+        suggested = suggestAttackDice(actor, weapon);
+    }
+
+    const btnClass = (dice) => {
+        if (!game.settings.get('tinyd6v14', 'enableTinyD6Plus')
+            || !game.settings.get('tinyd6v14', 'enableAttackProficiency')) return "";
+        return suggested === dice ? " attack-suggest" : "";
+    };
 
     new Dialog({
         title: game.i18n.localize("tinyd6.attack.attack"),
@@ -202,6 +262,7 @@ export function openAttackDialog(actor, weapon) {
         buttons: {
             disadvantage: {
                 label: game.i18n.localize("tinyd6.dice.roll.disadvantage"),
+                className: btnClass(1),
                 callback: (html) => {
                     const focusAction = html.find(".toggle-focus").prop("checked");
                     const marksmanTrait = html.find(".toggle-marksman").prop("checked");
@@ -210,6 +271,7 @@ export function openAttackDialog(actor, weapon) {
             },
             standard: {
                 label: game.i18n.localize("tinyd6.dice.roll.standard"),
+                className: btnClass(2),
                 callback: (html) => {
                     const focusAction = html.find(".toggle-focus").prop("checked");
                     const marksmanTrait = html.find(".toggle-marksman").prop("checked");
@@ -218,6 +280,7 @@ export function openAttackDialog(actor, weapon) {
             },
             advantage: {
                 label: game.i18n.localize("tinyd6.dice.roll.advantage"),
+                className: btnClass(3),
                 callback: (html) => {
                     const focusAction = html.find(".toggle-focus").prop("checked");
                     const marksmanTrait = html.find(".toggle-marksman").prop("checked");
@@ -452,12 +515,29 @@ function _healRollFaces(parsed) {
     return faces;
 }
 
+/* Может ли текущий пользователь менять актёра (игроки — только своих, GM — всех). */
+function _canEditActor(target) {
+    if (game.user?.isGM) return true;
+    try { return Boolean(target?.testUserPermission?.(game.user, CONST.DOCUMENT_PERMISSION_LEVELS.OWNER)); }
+    catch (err) { return false; }
+}
+
+/* Экранирует JSON для атрибута data-* карточки. */
+function _jsonAttr(value) {
+    let s = JSON.stringify(value ?? {});
+    s = s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    return s;
+}
+
 /* Применяет heal-гир к цели: бросает формулу (если кубовая), восстанавливает
- * HP (не выше max), списывает 1 шт. и постит карточку в чат. Возвращает
- * { ok, reason, healed, applied, target }. */
-export async function useHealItem(healer, healItem, target, { showForNpc = false } = {}) {
+ * HP (не выше max), списывает 1 шт. и постит карточку в чат. Если у текущего
+ * игрока нет прав на цель — применяет через GM-прокси (socketlib, настройка
+ * enableHealStabProxy), а если прокси недоступен — постит карточку-подтверждение
+ * для GM. Возвращает { ok, reason, healed, applied, target, item, needConfirm }. */
+export async function useHealItem(healer, healItem, target, { showForNpc = false, healerRef = null, targetRef = null } = {}) {
     const homerule = game.settings.get('tinyd6v14', 'enableTinyD6Plus');
     if (!homerule) return { ok: false, reason: "disabled" };
+    const healProxy = game.settings.get('tinyd6v14', 'enableHealStabProxy');
     if (!healer || !healItem || !target) return { ok: false, reason: "no-target" };
     if (healItem.type !== "gear" || healItem.system?.category !== "heal") return { ok: false, reason: "not-heal" };
 
@@ -488,6 +568,31 @@ export async function useHealItem(healer, healItem, target, { showForNpc = false
     }
     healed = Math.max(0, Math.floor(healed));
 
+    // Цель чужая и у игрока нет прав — применяем через GM-прокси (socketlib),
+    // если включена настройка enableHealStabProxy. Иначе — fallback на
+    // карточку-подтверждение, которую применяет владелец/GM вручную.
+    if (!_canEditActor(target))
+    {
+        const refs = {
+            healerRef: healerRef ?? { actorId: healer.id },
+            targetRef: targetRef ?? { actorId: target.id },
+            healItemId: healItem.id,
+            healed
+        };
+        if (healProxy)
+        {
+            const proxyResult = await gmProxy("applyHeal", refs);
+            if (proxyResult && proxyResult.ok)
+            {
+                return { ok: true, needConfirm: false, proxy: true, healed, target, item: healItem };
+            }
+        }
+        await postHealConfirmation(healer, healItem, target, refs, {
+            healed, rolls, roll, faces: _healRollFaces(parsed)
+        });
+        return { ok: true, needConfirm: true, healed, target, item: healItem };
+    }
+
     // Списываем гир только при реальном лечении.
     await healItem.update({ "system.quantity.value": Math.max(0, qty - 1) }, { render: false });
     const applied = Math.min(max - current, healed);
@@ -508,6 +613,90 @@ export async function useHealItem(healer, healItem, target, { showForNpc = false
         });
     }
     return { ok: true, healed, applied, wasted, target, item: healItem };
+}
+
+/* Карточка-подтверждение хила для GM: игрок без прав на цель инициирует
+ * лечение, а мастер кликает «Применить», чтобы списать HP и заряд. */
+export async function postHealConfirmation(healer, healItem, target, { healerRef = null, targetRef = null } = {}, { healed, rolls = [], roll = null, faces = [] } = {}) {
+    const speaker = ChatMessage.getSpeaker({ actor: healer });
+    const formula = formatHealFormula(healItem.system?.heal);
+
+    const facesHtml = faces.map((f, i) => {
+        const result = rolls[i] ?? f.result;
+        const face = rolls[i] ? _diceFace(rolls[i]) : "";
+        return `<span class="death-mini-icon mini"><i class="fas ${face}"></i><b>${result}</b></span>`;
+    }).join("");
+
+    const content = `<div class="tinyd6 death-mini heal-mini heal-confirm"
+        data-healer='${_jsonAttr(healerRef)}'
+        data-target='${_jsonAttr(targetRef)}'
+        data-heal-item-id="${healItem.id}"
+        data-healed="${healed}">
+        <div class="death-mini-body">
+            <span class="death-mini-title">${game.i18n.localize("tinyd6.heal.confirmTitle")} — <b>${healItem.name}</b></span>
+            <span class="death-mini-sub"><b>${healer.name}</b> ${game.i18n.localize("tinyd6.heal.usesOn")} <b>${target.name}</b>: +${healed} HP (${formula || ""})</span>
+            ${facesHtml ? `<div class="death-mini-rolls">${facesHtml}</div>` : ""}
+            <button type="button" class="heal-apply" data-action="confirm-heal">
+                <i class="fas fa-kit-medical"></i>
+                ${game.i18n.localize("tinyd6.heal.applyConfirm")}
+            </button>
+        </div>
+    </div>`;
+
+    const chatData = { speaker, content };
+    if (roll) chatData.rolls = [roll];
+    await ChatMessage.create(chatData);
+}
+
+/* Применяет подтверждённый GM хил: списывает заряд гира и HP цели.
+ * Работает по референсам (healerRef/targetRef) — вызывает и GM-кнопка
+ * подтверждения, и socket-обработчик (GM-прокси). */
+export async function applyHealRefs({ healerRef, targetRef, healItemId, healed }) {
+    if (!healerRef || !targetRef || !healItemId) return null;
+
+    const healer = _resolveRefActor(healerRef);
+    const target = _resolveRefActor(targetRef);
+    const healItem = healer?.items?.get(healItemId) ?? null;
+    if (!healer || !target || !healItem) return null;
+
+    const qty = Number(healItem.system?.quantity?.value) || 0;
+    const current = Number(target.system?.wounds?.value) || 0;
+    const max = Number(target.system?.wounds?.max) || current;
+    if (current >= max) return { ok: false, reason: "full" };
+
+    await healItem.update({ "system.quantity.value": Math.max(0, qty - 1) }, { render: false });
+    const applied = Math.min(max - current, healed);
+    const wasted = Math.max(0, healed - applied);
+    await target.update({ "system.wounds.value": current + applied });
+
+    await postHealMessage(healer, healItem, target, {
+        applied, healed, wasted, rolls: [], roll: null, faces: []
+    });
+    return { ok: true, applied, healed, wasted, target, item: healItem };
+}
+
+/* Применяет подтверждённый GM хил с карточки-подтверждения (fallback,
+ * когда GM-прокси через socket недоступен). */
+export async function applyHealConfirmation(card) {
+    const healerRef = card.dataset.healer ? JSON.parse(card.dataset.healer) : null;
+    const targetRef = card.dataset.target ? JSON.parse(card.dataset.target) : null;
+    const healItemId = card.dataset.healItemId;
+    const healed = Number(card.dataset.healed) || 0;
+    return applyHealRefs({ healerRef, targetRef, healItemId, healed });
+}
+
+/* Находит актёра по референсу из карточки: сначала через токен сцены
+ * (для unlinked NPC-копий), потом по id актёра в директории. */
+function _resolveRefActor(ref) {
+    if (!ref) return null;
+    if (ref.sceneId && ref.tokenId)
+    {
+        const scene = game.scenes.get(ref.sceneId);
+        const token = scene?.tokens.get(ref.tokenId) ?? null;
+        if (token?.actor) return token.actor;
+    }
+    if (ref.actorId) return game.actors.get(ref.actorId) ?? null;
+    return null;
 }
 
 /* Карточка лечения в чат (death-mini в «зелёном» варианте). */
@@ -551,6 +740,11 @@ export function findHealItem(actor, itemId) {
 export async function applyAttackDamage({ actorId, targetIds, damage, isCrit = false }) {
     const applied = [];
     const reported = [];
+    const proxyTargets = [];
+    const proxyEnabled = game.settings.get('tinyd6v14', 'enableTinyD6Plus')
+        && game.settings.get('tinyd6v14', 'enablePlayerDamageProxy');
+    const fxEvents = [];
+
     for (const ref of targetIds)
     {
         let targetActor = null;
@@ -573,6 +767,17 @@ export async function applyAttackDamage({ actorId, targetIds, damage, isCrit = f
 
         const finalDamage = computeDamage(damage, targetActor);
 
+        // Игрок может менять только своих акторов; GM — всех.
+        // Для токена права берём из токена (важно для unlinked копий).
+        const canApply = game.user.isGM || (targetToken ? targetToken.isOwner : targetActor.testUserPermission(game.user, CONST.DOCUMENT_PERMISSION_LEVELS.OWNER));
+        if (!canApply)
+        {
+            // Чужая цель: применяем через GM-прокси (socketlib, настройка
+            // enablePlayerDamageProxy), иначе — только отчитываемся.
+            proxyTargets.push({ ref, name: targetActor.name, finalDamage });
+            continue;
+        }
+
         // Блок брони: серое всплывающее число поглощённого урона (DR).
         const absorbed = Math.max(0, Number(damage) - finalDamage);
         if (absorbed > 0 && isAnimFxEnabled())
@@ -580,6 +785,8 @@ export async function applyAttackDamage({ actorId, targetIds, damage, isCrit = f
             const refTokenId = targetToken?.id ?? ref?.tokenId ?? null;
             const tok = refTokenId ? (game.canvas?.scene ? canvas.tokens.get(refTokenId) ?? null : null) : null;
             if (tok) spawnFloatingNumber(tok, targetActor, `<i class="fas fa-shield-alt"></i> ${absorbed}`, "block", { html: true });
+            const sceneId = ref?.sceneId ?? game.canvas?.scene?.id ?? null;
+            if (sceneId) fxEvents.push({ kind: "float", sceneId, tokenId: refTokenId, text: `<i class="fas fa-shield-alt"></i> ${absorbed}`, type: "block", html: true });
         }
 
         // Крит на сцене: золотая вспышка над токеном цели.
@@ -587,35 +794,47 @@ export async function applyAttackDamage({ actorId, targetIds, damage, isCrit = f
         {
             const tok = game.canvas?.scene ? canvas.tokens.get(ref.tokenId) ?? null : null;
             if (tok) spawnTokenFlash(tok, "crit");
+            const sceneId = ref?.sceneId ?? game.canvas?.scene?.id ?? null;
+            fxEvents.push({ kind: "flash", sceneId, tokenId: ref?.tokenId, type: "crit" });
         }
 
-        // Игрок может менять только своих акторов; GM — всех.
-        // Для токена права берём из токена (важно для unlinked копий).
-        const canApply = game.user.isGM || (targetToken ? targetToken.isOwner : targetActor.testUserPermission(game.user, CONST.DOCUMENT_PERMISSION_LEVELS.OWNER));
-        if (canApply)
-        {
-            const current = Number(targetActor.system?.wounds?.value) || 0;
-            const newValue = Math.max(0, current - finalDamage);
+        const current = Number(targetActor.system?.wounds?.value) || 0;
+        const newValue = Math.max(0, current - finalDamage);
 
-            // Привязываем всплывающее число к КОНКРЕТНОМУ токену-цели: для
-            // unlinked NPC у всех копий actor.id одинаковый, поэтому без явного
-            // токена число показалось бы над всеми копиями сразу.
-            const refTokenId = targetToken?.id ?? ref?.tokenId ?? null;
-            if (refTokenId) _setPendingFloat(targetActor.id, refTokenId);
+        // Привязываем всплывающее число к КОНКРЕТНОМУ токену-цели: для
+        // unlinked NPC у всех копий actor.id одинаковый, поэтому без явного
+        // токена число показалось бы над всеми копиями сразу.
+        const refTokenId = targetToken?.id ?? ref?.tokenId ?? null;
+        if (refTokenId) _setPendingFloat(targetActor.id, refTokenId);
 
-            await targetActor.update({ "system.wounds.value": newValue });
+        await targetActor.update({ "system.wounds.value": newValue });
 
-            // Снять 1 запас прочности брони (если она была и защитила/пострадала).
-            const hadArmor = _actorArmorTotal(targetActor) > 0;
-            if (hadArmor) await _reduceArmorHp(targetActor);
+        // Снять 1 запас прочности брони (если она была и защитила/пострадала).
+        const hadArmor = _actorArmorTotal(targetActor) > 0;
+        if (hadArmor) await _reduceArmorHp(targetActor);
 
-            applied.push({ name: targetActor.name, damage: finalDamage });
-        }
-        else
-        {
-            reported.push({ name: targetActor.name, damage: finalDamage });
-        }
+        applied.push({ name: targetActor.name, damage: finalDamage });
     }
+
+    // Чужие цели: GM-прокси применяет их урон за игрока.
+    if (proxyTargets.length && proxyEnabled)
+    {
+        const result = await gmProxy("applyDamage", {
+            actorId,
+            targetIds: proxyTargets.map(p => p.ref),
+            damage,
+            isCrit
+        });
+        if (result?.applied?.length) applied.push(...result.applied);
+        if (result?.reported?.length) reported.push(...result.reported);
+    }
+    else
+    {
+        reported.push(...proxyTargets.map(p => ({ name: p.name, damage: p.finalDamage })));
+    }
+
+    broadcastFx(fxEvents);
+
     return { applied, reported };
 }
 

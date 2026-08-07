@@ -130,6 +130,18 @@
             "showNpcDeathMessages": {
                 "name": "Mostrar mensagens de derrota NPC",
                 "hint": "Tambem postar mensagem quando um NPC normal e derrotado (desativado por padrao para reduzir ruido)."
+            },
+            "enableHealStabProxy": {
+                "name": "Proxy de Mestre: curar e estabilizar",
+                "hint": "Permite que jogadores curem ou estabilizem personagens/NPCs que não possuem. A mudança é aplicada pelo Mestre via socketlib (sem necessidade de posse)."
+            },
+            "enablePlayerDamageProxy": {
+                "name": "Proxy de Mestre: dano do jogador",
+                "hint": "Permite que jogadores apliquem dano de ataque em personagens/NPCs que não possuem. O dano é aplicado pelo Mestre via socketlib (sem necessidade de posse)."
+            },
+            "enableAttackProficiency": {
+                "name": "Proficiência de arma automática",
+                "hint": "TinyD6+: sugere automaticamente os dados de ataque conforme a proficiência da arma (arma dominada = vantagem, sem treino = desvantagem). O jogador pode escolher qualquer nível manualmente."
             }
         },
         "dice": {
@@ -333,7 +345,8 @@
             "target": "alvo",
             "success": "Estabilizado",
             "fail": "Falhou",
-            "roll": "Estabilizar"
+            "roll": "Estabilizar",
+            "applyConfirm": "Aplicar"
         },
         "heal": {
             "use": "Usar",
@@ -346,7 +359,10 @@
             "full": "O alvo está com PV cheios.",
             "badFormula": "Fórmula de cura inválida neste item.",
             "wasted": "(perdido: {wasted} PV)",
-            "useTooltip": "Cura o alvo por este valor (1 uso)."
+            "useTooltip": "Cura o alvo por este valor (1 uso).",
+            "confirmTitle": "Confirmação de cura",
+            "applyConfirm": "Aplicar",
+            "confirmed": "Confirmado"
         },
         "armor": {
             "name": "Nome",

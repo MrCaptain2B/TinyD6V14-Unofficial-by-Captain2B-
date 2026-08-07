@@ -130,6 +130,18 @@
             "showNpcDeathMessages": {
                 "name": "Afficher les messages de defaite NPC",
                 "hint": "Publier aussi un message quand un PNJ normal est vaincu (desactive par defaut pour reduire le bruit)."
+            },
+            "enableHealStabProxy": {
+                "name": "Proxy MJ : soin et stabilisation",
+                "hint": "Permet aux joueurs de soigner ou stabiliser des personnages/PNJ qu'ils ne possèdent pas. La modification est appliquée via le MJ avec socketlib (aucune possession requise)."
+            },
+            "enablePlayerDamageProxy": {
+                "name": "Proxy MJ : dégâts de joueur",
+                "hint": "Permet aux joueurs d'appliquer des dégâts d'attaque à des personnages/PNJ qu'ils ne possèdent pas. Les dégâts sont appliqués via le MJ avec socketlib (aucune possession requise)."
+            },
+            "enableAttackProficiency": {
+                "name": "Compétence d'arme auto",
+                "hint": "TinyD6+ : suggère automatiquement le nombre de dés d'attaque selon la compétence de l'arme (arme maîtrisée = avantage, non entraîné = désavantage). Le joueur peut choisir chaque niveau manuellement."
             }
         },
         "dice": {
@@ -333,7 +345,8 @@
             "target": "cible",
             "success": "Stabilisé",
             "fail": "Échec",
-            "roll": "Stabiliser"
+            "roll": "Stabiliser",
+            "applyConfirm": "Appliquer"
         },
         "heal": {
             "use": "Utiliser",
@@ -346,7 +359,10 @@
             "full": "La cible a tous ses PV.",
             "badFormula": "Formule de soin invalide sur cet objet.",
             "wasted": "(perdu: {wasted} PV)",
-            "useTooltip": "Soigne la cible de ce montant (1 utilisation)."
+            "useTooltip": "Soigne la cible de ce montant (1 utilisation).",
+            "confirmTitle": "Confirmation de soin",
+            "applyConfirm": "Appliquer",
+            "confirmed": "Confirmé"
         },
         "armor": {
             "name": "Nom",

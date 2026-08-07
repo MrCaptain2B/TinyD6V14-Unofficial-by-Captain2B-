@@ -878,6 +878,16 @@
 .tinyd6.death-mini.heal-mini .death-mini-title { color: #2e6b3f; }
 .tinyd6.death-mini.heal-mini .death-mini-sub b { color: #2e6b3f; }
 .tinyd6.death-mini.heal-mini .heal-wasted { color: #9a6b2a; font-size: 12px; font-style: italic; white-space: nowrap; }
+.tinyd6.death-mini.heal-mini .heal-confirm-done {
+    margin-top: 8px; padding: 4px 10px; border-radius: 6px; display: inline-block;
+    background: rgba(123,162,106,.15); color: #2e6b3f; font-size: 12px; font-weight: 600;
+}
+.tinyd6.death-mini .heal-apply, .tinyd6.death-mini .stab-apply {
+    margin-top: 8px; padding: 5px 12px; border: 1px solid #7ba26a; border-radius: 6px;
+    background: linear-gradient(180deg, #7ba26a, #5d874c); color: #fff; cursor: pointer;
+    font-size: 13px; font-weight: 600;
+}
+.tinyd6.death-mini .heal-apply:hover, .tinyd6.death-mini .stab-apply:hover { filter: brightness(1.1); }
 .tinyd6.death-mini .death-mini-rolls { display: flex; gap: 6px; margin-left: auto; }
 .tinyd6.death-mini .death-mini-icon.mini {
     width: 30px; height: 30px; flex: 0 0 30px; border-radius: 7px;
@@ -932,6 +942,18 @@
 }
 .tinyd6.attack-dialog .attack-roll {
     background: var(--td-accent, #8a6d3b); color: #fff;
+}
+
+/* Рекомендуемый уровень броска (Auto weapon proficiency): подсвечиваем
+ * кнопку, но не блокируем — игрок может выбрать любую (НРИ). */
+.dialog-button.attack-suggest {
+    background: var(--td-accent, #8a6d3b);
+    color: #fff;
+    border-color: var(--td-accent, #8a6d3b);
+}
+.dialog-button.attack-suggest:hover {
+    background: var(--td-accent-soft, #a9845a);
+    color: #fff;
 }
 
 /* ============================================================

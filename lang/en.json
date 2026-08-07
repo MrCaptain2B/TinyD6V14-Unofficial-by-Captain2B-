@@ -138,6 +138,18 @@
             "enableGrit": {
                 "name": "Enable Grit",
                 "hint": "Adds a counter for keeping track of Grit."
+            },
+            "enableHealStabProxy": {
+                "name": "GM proxy: heal & stabilize",
+                "hint": "Allows players to heal or stabilize characters/NPCs they do not own. The change is applied through the GM via socketlib (no ownership required)."
+            },
+            "enablePlayerDamageProxy": {
+                "name": "GM proxy: player damage",
+                "hint": "Allows players to apply attack damage to characters/NPCs they do not own. The damage is applied through the GM via socketlib (no ownership required)."
+            },
+            "enableAttackProficiency": {
+                "name": "Auto weapon proficiency",
+                "hint": "TinyD6+: automatically suggests the attack dice based on weapon proficiency (mastered weapon = advantage, untrained = disadvantage). The player can still pick any dice level manually."
             }
         },
         "dice": {
@@ -355,7 +367,8 @@
             "target": "target",
             "success": "Stabilized",
             "fail": "Failed",
-            "roll": "Stabilize"
+            "roll": "Stabilize",
+            "applyConfirm": "Apply"
         },
         "heal": {
             "use": "Use",
@@ -368,7 +381,10 @@
             "badFormula": "Invalid heal formula on this item.",
             "emptyHint": "No heal items. Target a downed ally to stabilize.",
             "wasted": "(wasted: {wasted} HP)",
-            "useTooltip": "Heal the target token for this amount (1 use)."
+            "useTooltip": "Heal the target token for this amount (1 use).",
+            "confirmTitle": "Heal confirmation",
+            "applyConfirm": "Apply",
+            "confirmed": "Confirmed"
         },
         "armor": {
             "name": "Name",

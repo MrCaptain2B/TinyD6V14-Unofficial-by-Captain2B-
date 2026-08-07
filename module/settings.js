@@ -106,6 +106,33 @@ export const registerGameSettings = function () {
         type: Boolean
     });
 
+    game.settings.register(systemName, "enableHealStabProxy", {
+        name: game.i18n.localize("tinyd6.settings.enableHealStabProxy.name"),
+        hint:  game.i18n.localize("tinyd6.settings.enableHealStabProxy.hint"),
+        scope: "world",
+        config: true,
+        default: false,
+        type: Boolean
+    });
+
+    game.settings.register(systemName, "enablePlayerDamageProxy", {
+        name: game.i18n.localize("tinyd6.settings.enablePlayerDamageProxy.name"),
+        hint:  game.i18n.localize("tinyd6.settings.enablePlayerDamageProxy.hint"),
+        scope: "world",
+        config: true,
+        default: false,
+        type: Boolean
+    });
+
+    game.settings.register(systemName, "enableAttackProficiency", {
+        name: game.i18n.localize("tinyd6.settings.enableAttackProficiency.name"),
+        hint:  game.i18n.localize("tinyd6.settings.enableAttackProficiency.hint"),
+        scope: "world",
+        config: true,
+        default: false,
+        type: Boolean
+    });
+
     game.settings.register(systemName, "critAdvantage", {
         name: game.i18n.localize("tinyd6.settings.critAdvantage.name"),
         hint:  game.i18n.localize("tinyd6.settings.critAdvantage.hint"),

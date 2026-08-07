@@ -6,11 +6,11 @@ import TinyD6NpcSheet from "./sheets/TinyD6NpcSheet.js";
 import TinyD6TokenHUD from "./applications/TinyD6TokenHUD.js";
 import DieRoller from "./applications/DieRoller.js";
 import * as Dice from "./helpers/dice.js";
-import { registerDeathStatusEffects, handleZeroHp, clearDeathState, tickDeathTimers } from "./helpers/death.js";
+import { registerDeathStatusEffects, handleZeroHp, clearDeathState, tickDeathTimers, applyStabilizeConfirmation } from "./helpers/death.js";
+import { registerSystemSocket, broadcastFx, gmProxy } from "./helpers/socket.js";
 
 export class TinyD6System {
     static SYSTEM = "tinyd6v14";
-    static SOCKET = "system.tinyd6v14";
 
     static init() {
         console.log("tinyd6 | Initializing Tiny D6 system");
@@ -104,7 +104,7 @@ export class TinyD6System {
 
     static ready() {
         console.log("tinyd6 | ready");
-        //game.socket.on(TinyD6System.SOCKET, TinyD6System.onMessage);
+        registerSystemSocket();
         TinyD6System.displayFloatingDieRollerApplication();
 
         // Применяем выключатель анимаций к текущему клиенту при старте.
@@ -120,6 +120,24 @@ export class TinyD6System {
             if (!html.find(".tinyd6").length) return;
             const sheetStyle = game.settings.get(TinyD6System.SYSTEM, "sheetStyle");
             html.addClass(sheetStyle);
+
+            // Идентификатор сообщения на карточке: чтобы её синхронно
+            // обновлять через ChatMessage.update() (кнопка применения урона,
+            // отчёт и т.п.) — тогда Foundry перерисует сразу у всех клиентов.
+            const card = html.find(".attack-card, .heal-confirm, .stab-confirm").first();
+            if (card.length) card.attr("data-message-id", message.id);
+
+            // Применение урона — только GM, либо игроки, если включён
+            // GM-прокси урона (enablePlayerDamageProxy). Подтверждение
+            // хила/стабилизации (fallback без socket) — только GM.
+            if (!game.user.isGM)
+            {
+                const damageProxy = game.settings.get('tinyd6v14', 'enableTinyD6Plus')
+                    && game.settings.get('tinyd6v14', 'enablePlayerDamageProxy');
+                if (!damageProxy) html.find(".attack-apply").remove();
+                html.find(".heal-apply").remove();
+                html.find(".stab-apply").remove();
+            }
         });
     }
 
@@ -139,22 +157,6 @@ export class TinyD6System {
         ];
     
         return loadTemplates(templatePaths);
-    }
-
-    static emit(action, args = {}) {
-        console.log(action, TinyD6System.SOCKET);
-        args.action = action;
-        args.senderId = game.user.id;
-        game.socket.emit(TinyD6System.SOCKET, args, (resp) => { console.log(resp); });
-    }
-
-    static onMessage(data) {
-        switch (data.action) {
-            case 'dieRoll': {
-                Dice.RollTest(data);
-            } 
-            break;
-        }
     }
 }
 
@@ -366,6 +368,7 @@ Hooks.on("updateActor", async (actor, changes, options, userId) => {
         {
             const type = delta < 0 ? "dmg" : "heal";
             const sign = delta < 0 ? "" : "+";
+            const sceneId = game.canvas?.scene?.id ?? null;
             if (pending?.tokenId)
             {
                 const tok = game.canvas?.scene ? canvas.tokens.get(pending.tokenId) ?? null : null;
@@ -373,17 +376,21 @@ Hooks.on("updateActor", async (actor, changes, options, userId) => {
                 {
                     Dice.spawnFloatingNumber(tok, actor, `${sign}${delta}`, type);
                     Dice.spawnTokenFlash(tok, type);
+                    if (sceneId) broadcastFx([{ kind: "float", sceneId, tokenId: pending.tokenId, text: `${sign}${delta}`, type }]);
                 }
             }
             else
             {
                 Dice.spawnFloatingNumber(null, actor, `${sign}${delta}`, type);
+                // Без привязки к токену — транслируем по токенам цели, если она одна.
             }
         }
 
         if (deathEntered) {
             const tok = _findTokenForActor(actor, pending?.tokenId);
             if (tok) Dice.spawnTokenDeath(tok);
+            const sceneId = game.canvas?.scene?.id ?? null;
+            if (tok && sceneId) broadcastFx([{ kind: "death", sceneId, tokenId: tok.id }]);
             await handleZeroHp(actor);
             return;
         }
@@ -445,11 +452,6 @@ Hooks.on("updateItem", (item, changes, options, userId) => {
 });
 
 Hooks.on("createItem", (item, temporary) => {
-    console.log("tinyd6 | handling owned item");
-
-    console.log("ACTOR:", item.actor);
-    console.log("ITEM:", item);
-
     if (item.actor && item.type === "heritage")
     {
         const others = item.actor.items.filter(i => i.type === "heritage" && i.id !== item.id);
@@ -518,6 +520,7 @@ Hooks.on("renderChatLog", (chatLog, html) => {
                 ? Number(weapon.system.charges) : max;
             await weapon.update({ "system.charges": Math.min(max, current + 1) }, { render: false });
             undo.closest(".attack-card-undo")?.remove();
+            _syncCardToMessage(card, card);
             return;
         }
 
@@ -539,16 +542,22 @@ Hooks.on("renderChatLog", (chatLog, html) => {
 
         card.querySelector(".attack-apply")?.remove();
         const footer = card.querySelector(".attack-card-footer");
-        if (!footer) return;
 
         const parts = [];
         if (applied.length) parts.push(applied.map(u => `${u.name} -${u.damage}`).join(", "));
         if (reported.length) parts.push(reported.map(u => `${u.name} -${u.damage} (урон не списан)`).join(", "));
 
-        const report = document.createElement("span");
-        report.className = "attack-report";
-        report.textContent = parts.join("; ");
-        footer.appendChild(report);
+        if (footer && parts.length)
+        {
+            const report = document.createElement("span");
+            report.className = "attack-report";
+            report.textContent = parts.join("; ");
+            footer.appendChild(report);
+        }
+
+        // Синхронизируем карточку на всех клиентах: убираем кнопку и
+        // показываем отчёт у каждого, а не только у нажавшего.
+        _syncCardToMessage(card, card);
 
         // Для чужих героев (урон не списан) — выводим отдельное сообщение в чат.
         if (reported.length)
@@ -561,5 +570,91 @@ Hooks.on("renderChatLog", (chatLog, html) => {
                 ).join("")
             });
         }
+    });
+});
+
+// Обновляет содержимое сообщения карточки (chat card) у ВСЕХ клиентов.
+// Мутации в tinyd6 меняют только локальный DOM нажавшего; чтобы Foundry
+// перерисовал карточку у всех, обновляем сам ChatMessage через GM-прокси
+// (т.к. у игрока может не быть прав на чужое сообщение).
+function _syncCardToMessage(card, sourceCard) {
+    const cardEl = card ?? sourceCard;
+    const messageId = cardEl?.dataset?.messageId;
+    if (!messageId) return;
+    const content = sourceCard?.outerHTML ?? card?.outerHTML;
+    if (!content) return;
+    gmProxy("syncCard", { messageId, content });
+}
+
+// Подтверждение хила из карточки heal-confirm: применяет только GM
+// (кнопка скрыта у игроков через renderChatMessage).
+Hooks.on("renderChatLog", (chatLog, html) => {
+    const log = html instanceof HTMLElement ? html : html[0] || html;
+    log.addEventListener("click", async (event) => {
+        const button = event.target.closest(".heal-apply");
+        if (!button) return;
+        event.preventDefault();
+        if (!game.user.isGM) return;
+
+        const card = button.closest(".heal-confirm");
+        if (!card) return;
+
+        const result = await Dice.applyHealConfirmation(card);
+        if (!result)
+        {
+            ui.notifications.warn(game.i18n.localize("tinyd6.heal.noTarget"));
+            return;
+        }
+        if (!result.ok)
+        {
+            const msg = result.reason === "full"
+                ? game.i18n.localize("tinyd6.heal.full")
+                : game.i18n.localize("tinyd6.heal.noTarget");
+            ui.notifications.warn(msg);
+            return;
+        }
+
+        button.remove();
+        const body = card.querySelector(".death-mini-body");
+        if (body)
+        {
+            const done = document.createElement("div");
+            done.className = "heal-confirm-done";
+            done.textContent = game.i18n.localize("tinyd6.heal.confirmed");
+            body.appendChild(done);
+        }
+        _syncCardToMessage(card, card);
+    });
+});
+
+// Подтверждение стабилизации из карточки stab-confirm: применяет только GM.
+Hooks.on("renderChatLog", (chatLog, html) => {
+    const log = html instanceof HTMLElement ? html : html[0] || html;
+    log.addEventListener("click", async (event) => {
+        const button = event.target.closest(".stab-apply");
+        if (!button) return;
+        event.preventDefault();
+        if (!game.user.isGM) return;
+
+        const card = button.closest(".stab-confirm");
+        if (!card) return;
+
+        const result = await applyStabilizeConfirmation(card);
+        if (!result || !result.ok)
+        {
+            ui.notifications.warn(game.i18n.localize("tinyd6.stabilize.noTarget"));
+            return;
+        }
+
+        button.remove();
+        const body = card.querySelector(".death-mini-body");
+        if (body)
+        {
+            const done = document.createElement("div");
+            done.className = "heal-confirm-done";
+            done.textContent = game.i18n.localize("tinyd6.heal.confirmed");
+            body.appendChild(done);
+        }
+        _syncCardToMessage(card, card);
     });
 });

@@ -129,6 +129,18 @@
             "showNpcDeathMessages": {
                 "name": "Pokazuj wiadomosci obalenia NPC",
                 "hint": "Publikuj tez wiadomosc, gdy zwykly NPC zostaje obalony (domyslnie wylaczone, mniej szumu)."
+            },
+            "enableHealStabProxy": {
+                "name": "Proxy GM: leczenie i stabilizacja",
+                "hint": "Pozwala graczom leczyc lub stabilizowac postacie/BN, ktorych nie posiadaja. Zmiana jest stosowana przez GM przez socketlib (bez prawa wlasnosci)."
+            },
+            "enablePlayerDamageProxy": {
+                "name": "Proxy GM: obrazenia gracza",
+                "hint": "Pozwala graczom zadawac obrazenia postaciami/BN, ktorych nie posiadaja. Obrazenia sa stosowane przez GM przez socketlib (bez prawa wlasnosci)."
+            },
+            "enableAttackProficiency": {
+                "name": "Auto biegłosc w broni",
+                "hint": "TinyD6+: automatycznie proponuje liczbe kosci ataku na podstawie biegłosci w broni (opanowana bron = przewaga, niewytresowana = utrudnienie). Gracz moze recznie wybrac dowolny poziom."
             }
         },
         "dice": {
@@ -264,7 +276,8 @@
             "target": "cel",
             "success": "Ustabilizowano",
             "fail": "Porazka",
-            "roll": "Stabilizuj"
+            "roll": "Stabilizuj",
+            "applyConfirm": "Zastosuj"
         },
         "heal": {
             "use": "Uzyj",
@@ -277,7 +290,10 @@
             "badFormula": "Nieprawidlowa formula leczenia na tym przedmiocie.",
             "emptyHint": "Brak przedmiotow leczenia. Wskaz obalonego sojusznika, aby ustabilizowac.",
             "wasted": "(zmarnowano: {wasted} HP)",
-            "useTooltip": "Leczy cel o ta wartosc (1 uzycie)."
+            "useTooltip": "Leczy cel o ta wartosc (1 uzycie).",
+            "confirmTitle": "Potwierdzenie leczenia",
+            "applyConfirm": "Zastosuj",
+            "confirmed": "Potwierdzono"
         }
     }
 }

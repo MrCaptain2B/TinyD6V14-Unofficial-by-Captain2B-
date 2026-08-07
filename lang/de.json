@@ -130,6 +130,18 @@
             "showNpcDeathMessages": {
                 "name": "NPC-Besiegt-Meldungen anzeigen",
                 "hint": "Auch beim Besiegen normaler NPCs eine Chat-Meldung posten (Standard: aus, weniger Chat-Rauschen)."
+            },
+            "enableHealStabProxy": {
+                "name": "GM-Proxy: Heilen & Stabilisieren",
+                "hint": "Erlaubt Spielern, Charaktere/NPCs zu heilen oder zu stabilisieren, die ihnen nicht gehören. Die Änderung wird über socketlib durch den GM angewendet (kein Besitz nötig)."
+            },
+            "enablePlayerDamageProxy": {
+                "name": "GM-Proxy: Spieler-Schaden",
+                "hint": "Erlaubt Spielern, Angriffsschaden an Charakteren/NPCs anzuwenden, die ihnen nicht gehören. Der Schaden wird über socketlib durch den GM angewendet (kein Besitz nötig)."
+            },
+            "enableAttackProficiency": {
+                "name": "Auto-Waffenfertigkeit",
+                "hint": "TinyD6+: schlägt automatisch die Würfelzahl für den Angriff basierend auf der Waffenfertigkeit vor (Meisterwaffe = Vorteil, untrainiert = Nachteil). Der Spieler kann jede Stufe manuell wählen."
             }
         },
         "dice": {
@@ -333,7 +345,8 @@
             "target": "Ziel",
             "success": "Stabilisiert",
             "fail": "Fehlgeschlagen",
-            "roll": "Stabilisieren"
+            "roll": "Stabilisieren",
+            "applyConfirm": "Anwenden"
         },
         "heal": {
             "use": "Anwenden",
@@ -346,7 +359,10 @@
             "full": "Das Ziel hat volle HP.",
             "badFormula": "Ungueltige Heilformel auf diesem Gegenstand.",
             "wasted": "(verpufft: {wasted} HP)",
-            "useTooltip": "Heile das Ziel um diesen Betrag (1 Verbrauch)."
+            "useTooltip": "Heile das Ziel um diesen Betrag (1 Verbrauch).",
+            "confirmTitle": "Heilbestätigung",
+            "applyConfirm": "Anwenden",
+            "confirmed": "Bestätigt"
         },
         "armor": {
             "name": "Name",

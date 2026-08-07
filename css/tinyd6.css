@@ -9241,6 +9241,33 @@ a.text-dark:hover, a.text-dark:focus {
   white-space: nowrap;
 }
 
+.tinyd6.death-mini.heal-mini .heal-confirm-done {
+  margin-top: 8px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  display: inline-block;
+  background: rgba(123, 162, 106, 0.15);
+  color: #2e6b3f;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.tinyd6.death-mini .heal-apply, .tinyd6.death-mini .stab-apply {
+  margin-top: 8px;
+  padding: 5px 12px;
+  border: 1px solid #7ba26a;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #7ba26a, #5d874c);
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.tinyd6.death-mini .heal-apply:hover, .tinyd6.death-mini .stab-apply:hover {
+  filter: brightness(1.1);
+}
+
 .tinyd6.death-mini .death-mini-rolls {
   display: flex;
   gap: 6px;
@@ -9358,6 +9385,19 @@ a.text-dark:hover, a.text-dark:focus {
 
 .tinyd6.attack-dialog .attack-roll {
   background: var(--td-accent, #8a6d3b);
+  color: #fff;
+}
+
+/* Рекомендуемый уровень броска (Auto weapon proficiency): подсвечиваем
+ * кнопку, но не блокируем — игрок может выбрать любую (НРИ). */
+.dialog-button.attack-suggest {
+  background: var(--td-accent, #8a6d3b);
+  color: #fff;
+  border-color: var(--td-accent, #8a6d3b);
+}
+
+.dialog-button.attack-suggest:hover {
+  background: var(--td-accent-soft, #a9845a);
   color: #fff;
 }
 

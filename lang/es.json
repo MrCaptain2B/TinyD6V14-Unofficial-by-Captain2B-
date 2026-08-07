@@ -130,6 +130,18 @@
             "showNpcDeathMessages": {
                 "name": "Mostrar mensajes de derrota NPC",
                 "hint": "Tambien publicar mensaje cuando un NPC normal es derrotado (por defecto off para reducir ruido)."
+            },
+            "enableHealStabProxy": {
+                "name": "Proxy de GM: curar y estabilizar",
+                "hint": "Permite a los jugadores curar o estabilizar personajes/PNJs que no poseen. El cambio se aplica a través del GM mediante socketlib (no se requiere propiedad)."
+            },
+            "enablePlayerDamageProxy": {
+                "name": "Proxy de GM: daño de jugador",
+                "hint": "Permite a los jugadores aplicar daño de ataque a personajes/PNJs que no poseen. El daño se aplica a través del GM mediante socketlib (no se requiere propiedad)."
+            },
+            "enableAttackProficiency": {
+                "name": "Competencia de arma automática",
+                "hint": "TinyD6+: sugiere automáticamente los dados de ataque según la competencia del arma (arma dominada = ventaja, no entrenada = desventaja). El jugador puede elegir cualquier nivel manualmente."
             }
         },
         "dice": {
@@ -333,7 +345,8 @@
             "target": "objetivo",
             "success": "Estabilizado",
             "fail": "Falló",
-            "roll": "Estabilizar"
+            "roll": "Estabilizar",
+            "applyConfirm": "Aplicar"
         },
         "heal": {
             "use": "Usar",
@@ -346,7 +359,10 @@
             "full": "El objetivo tiene los PV al máximo.",
             "badFormula": "Fórmula de curación inválida en este objeto.",
             "wasted": "(perdido: {wasted} PV)",
-            "useTooltip": "Cura al objetivo por esta cantidad (1 uso)."
+            "useTooltip": "Cura al objetivo por esta cantidad (1 uso).",
+            "confirmTitle": "Confirmación de curación",
+            "applyConfirm": "Aplicar",
+            "confirmed": "Confirmado"
         },
         "armor": {
             "name": "Nombre",
