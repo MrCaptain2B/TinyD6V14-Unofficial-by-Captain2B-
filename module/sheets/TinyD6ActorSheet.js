@@ -1,5 +1,6 @@
 import * as Dice from "../helpers/dice.js";
 import { openStabilizeDialog, getStabilizeTarget } from "../helpers/death.js";
+import MasteredWeaponSelector from "../applications/MasteredWeaponSelector.js";
 
 export default class TinyD6ActorSheet extends ActorSheet {
     async getData() {
@@ -29,6 +30,14 @@ export default class TinyD6ActorSheet extends ActorSheet {
         const npcAll = this.actor.type === "npc";
         data.data.system.weapons = data.data.items.filter(item => { return item.type === "weapon" && (npcAll || item.system.equipped) });
         data.data.system.armor = data.data.items.filter(item => { return item.type === "armor" && (npcAll || item.system.equipped) });
+
+        // Мастерство оружия — кнопка открывает окно выбора (в стиле dnd5e).
+        // Список оружий собирается из директории мира (game.items), а не из
+        // инвентаря актёра. Храним id оружия мира; на листе показываем его имя.
+        const masteredId = data.data.system.proficiencies?.masteredWeapons ?? "";
+        const masteredItem = game.items.get(masteredId);
+        data.data.system.masteredWeaponId = masteredId;
+        data.data.system.masteredWeaponName = masteredItem?.name ?? "";
         data.data.system.gear = data.data.items.filter(item => { return item.type !== "trait" && item.type !== "heritage" });
         data.data.system.heritage = data.data.items.find(item => { return item.type === "heritage" }) ?? null;
 
@@ -64,6 +73,16 @@ export default class TinyD6ActorSheet extends ActorSheet {
         html.find(".action-meter .act").on('click', this._setCurrentAction.bind(this));
         html.find(".actions-btns .plus").click(this._onActionPlus.bind(this));
         html.find(".actions-btns .minus").click(this._onActionMinus.bind(this));
+
+        html.find(".mastered-weapon-picker").click(this._onMasteredWeaponPicker.bind(this));
+    }
+
+    /* Кнопка «мастерское оружие» открывает окно выбора из директории мира. */
+    _onMasteredWeaponPicker(event)
+    {
+        event.preventDefault();
+        const app = new MasteredWeaponSelector(this.actor);
+        app.render(true);
     }
 
     async _onDieRoll(event)

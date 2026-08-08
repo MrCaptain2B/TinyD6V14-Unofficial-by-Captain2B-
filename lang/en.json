@@ -185,6 +185,7 @@
             "newItem": "New Item",
             "description": "Description",
             "none": "None",
+            "noWeapons": "No weapons found in the world's Item directory.",
             "tab": {
                 "main": "Main"
             },

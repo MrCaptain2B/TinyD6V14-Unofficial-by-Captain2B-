@@ -177,7 +177,8 @@
             },
             "newItem": "Nowy przedmiot",
             "description": "Opis",
-            "none": "Brak"
+            "none": "Brak",
+            "noWeapons": "Nie znaleziono broni w katalogu przedmiotów świata."
         },
         "actor": {
             "name": "Imie",

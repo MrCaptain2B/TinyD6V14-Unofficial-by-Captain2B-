@@ -178,7 +178,8 @@
             },
             "newItem": "Novo Item",
             "description": "Descricao",
-            "none": "Nenhum"
+            "none": "Nenhum",
+            "noWeapons": "Nenhuma arma encontrada no diretório de itens do mundo."
         },
         "actor": {
             "name": "Nome",

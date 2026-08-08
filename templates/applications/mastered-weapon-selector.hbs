@@ -1,0 +1,25 @@
+<section class="mastered-selector-body">
+    {{#unless weapons.[0]}}
+        <p class="mastered-empty">{{localize "tinyd6.sheet.noWeapons"}}</p>
+    {{else}}
+        <ul class="mastered-list">
+            <li>
+                <label class="mastered-row">
+                    <input type="radio" name="masteredWeapons" value="" {{#unless current}}checked{{/unless}}/>
+                    <span>{{localize "tinyd6.sheet.none"}}</span>
+                </label>
+            </li>
+            {{#each weapons}}
+                <li>
+                    <label class="mastered-row">
+                        <input type="radio" name="masteredWeapons" value="{{this.id}}" {{checked (eq ../current this.id)}}/>
+                        <span>{{this.name}}</span>
+                    </label>
+                </li>
+            {{/each}}
+        </ul>
+        <button type="submit" class="mastered-save">
+            <i class="fas fa-check"></i> {{localize "SETTINGS.Save"}}
+        </button>
+    {{/unless}}
+</section>

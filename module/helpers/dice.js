@@ -196,8 +196,25 @@ export function suggestAttackDice(actor, weapon) {
             return 2;
     }
 
-    const mastered = (actor.system?.proficiencies?.masteredWeapons || "").split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
-    if (mastered.includes((weapon.name || "").trim().toLowerCase())) return 3;
+    const masteredRaw = (actor.system?.proficiencies?.masteredWeapons || "").trim();
+    // Мастерство хранится как ID оружия из директории мира (game.items),
+    // выбранного в окне (кнопка на листе). У инвентарной копии оружия свой
+    // id, поэтому сравниваем по имени: имя оружия директории (по id) должно
+    // совпасть с именем атакующего оружия. Старый textbox-формат хранил
+    // имена через запятую — матчим по именам напрямую.
+    const weaponName = (weapon.name || "").trim().toLowerCase();
+    const weaponId = (weapon.id || "").toLowerCase();
+    if (weaponId === masteredRaw.toLowerCase()) return 3;
+    // Новый формат: id оружия директории → берём его имя.
+    const dirItem = game.items.get(masteredRaw);
+    if (dirItem) {
+        if (dirItem.name.trim().toLowerCase() === weaponName) return 3;
+    }
+    // Старый формат: имена через запятую.
+    else {
+        const names = masteredRaw.split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
+        if (names.includes(weaponName)) return 3;
+    }
 
     const prof = actor.system?.proficiencies ?? {};
     const type = _weaponProficiencyKey(weapon);
@@ -234,11 +251,11 @@ export function openAttackDialog(actor, weapon) {
         suggested = suggestAttackDice(actor, weapon);
     }
 
-    const btnClass = (dice) => {
-        if (!game.settings.get('tinyd6v14', 'enableTinyD6Plus')
-            || !game.settings.get('tinyd6v14', 'enableAttackProficiency')) return "";
-        return suggested === dice ? " attack-suggest" : "";
-    };
+    // Кнопки диалога в Foundry v14 получают cssClass из key/default, а не из
+    // переданного className — поэтому рекомендуемую кнопку подсвечиваем
+    // вручную через render-колбэк (класс attack-suggest).
+    const suggestButtons = { 1: "disadvantage", 2: "standard", 3: "advantage" };
+    const suggestKey = suggestButtons[suggested] ?? null;
 
     new Dialog({
         title: game.i18n.localize("tinyd6.attack.attack"),
@@ -262,7 +279,6 @@ export function openAttackDialog(actor, weapon) {
         buttons: {
             disadvantage: {
                 label: game.i18n.localize("tinyd6.dice.roll.disadvantage"),
-                className: btnClass(1),
                 callback: (html) => {
                     const focusAction = html.find(".toggle-focus").prop("checked");
                     const marksmanTrait = html.find(".toggle-marksman").prop("checked");
@@ -271,7 +287,6 @@ export function openAttackDialog(actor, weapon) {
             },
             standard: {
                 label: game.i18n.localize("tinyd6.dice.roll.standard"),
-                className: btnClass(2),
                 callback: (html) => {
                     const focusAction = html.find(".toggle-focus").prop("checked");
                     const marksmanTrait = html.find(".toggle-marksman").prop("checked");
@@ -280,7 +295,6 @@ export function openAttackDialog(actor, weapon) {
             },
             advantage: {
                 label: game.i18n.localize("tinyd6.dice.roll.advantage"),
-                className: btnClass(3),
                 callback: (html) => {
                     const focusAction = html.find(".toggle-focus").prop("checked");
                     const marksmanTrait = html.find(".toggle-marksman").prop("checked");
@@ -289,13 +303,17 @@ export function openAttackDialog(actor, weapon) {
             }
         },
         render: (html) => {
+            // Подсветка рекомендуемого уровня броска (если включено).
+            if (suggestKey && game.settings.get('tinyd6v14', 'enableTinyD6Plus')
+                && game.settings.get('tinyd6v14', 'enableAttackProficiency')) {
+                html.find(`.dialog-button[data-button="${suggestKey}"]`).addClass("attack-suggest");
+            }
             html.find(".toggle-focus").on("change", (ev) => {
                 const enabled = ev.currentTarget.checked;
                 html.find(".toggle-marksman").prop("disabled", !enabled);
                 if (!enabled) html.find(".toggle-marksman").prop("checked", false);
             });
-        },
-        default: "standard"
+        }
     }).render(true);
 }
 

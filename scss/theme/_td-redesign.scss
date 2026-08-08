@@ -425,6 +425,20 @@
 .tinyd6.sheet.npc form.actor-sheet .proficiencies .border-bottom input:focus {
     background: var(--td-field); border-radius: 4px; box-shadow: none;
 }
+/* Мастерство оружия — кнопка, открывающая окно выбора из директории мира. */
+.tinyd6.sheet.hero form.actor-sheet .proficiencies button.mastered-weapon-picker,
+.tinyd6.sheet.npc form.actor-sheet .proficiencies button.mastered-weapon-picker {
+    background: var(--td-field); color: var(--td-text);
+    border: 1px solid var(--td-border, rgba(0,0,0,.15));
+    border-radius: 5px; font-family: inherit; font-size: 13px;
+    padding: 3px 10px; height: auto; box-shadow: none; cursor: pointer;
+    text-align: left; flex: 1 1 auto; white-space: nowrap; overflow: hidden;
+    text-overflow: ellipsis;
+}
+.tinyd6.sheet.hero form.actor-sheet .proficiencies button.mastered-weapon-picker:hover,
+.tinyd6.sheet.npc form.actor-sheet .proficiencies button.mastered-weapon-picker:hover {
+    border-color: var(--td-accent, #d1a760);
+}
 /* Линия заголовка Mastery совпадает с линией поля ввода ниже */
 .tinyd6.sheet.hero form.actor-sheet .proficiencies .section-header,
 .tinyd6.sheet.npc form.actor-sheet .proficiencies .section-header {
@@ -954,6 +968,39 @@
 .dialog-button.attack-suggest:hover {
     background: var(--td-accent-soft, #a9845a);
     color: #fff;
+}
+
+/* ============================================================
+   Окно выбора мастерского оружия (кнопка на листе, стиль dnd5e).
+*/
+.tinyd6.mastered-selector .mastered-selector-body {
+    padding: 8px 4px 4px;
+}
+.tinyd6.mastered-selector .mastered-list {
+    list-style: none; margin: 0; padding: 0;
+    max-height: 320px; overflow-y: auto;
+}
+.tinyd6.mastered-selector .mastered-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 4px 8px; cursor: pointer; border-radius: 4px;
+}
+.tinyd6.mastered-selector .mastered-row:hover {
+    background: var(--td-field, rgba(0,0,0,.06));
+}
+.tinyd6.mastered-selector .mastered-row input[type="radio"] {
+    margin: 0; flex: 0 0 auto;
+}
+.tinyd6.mastered-selector .mastered-empty {
+    color: var(--td-muted, #888); font-style: italic;
+}
+.tinyd6.mastered-selector button.mastered-save {
+    margin: 8px 0 0; width: 100%;
+    background: var(--td-accent, #8a6d3b); color: #fff;
+    border: 1px solid var(--td-accent, #8a6d3b);
+    border-radius: 5px; padding: 5px 10px; cursor: pointer;
+}
+.tinyd6.mastered-selector button.mastered-save:hover {
+    background: var(--td-accent-soft, #a9845a);
 }
 
 /* ============================================================

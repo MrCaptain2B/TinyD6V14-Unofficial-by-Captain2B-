@@ -178,7 +178,8 @@
             },
             "newItem": "Neuer Gegenstand",
             "description": "Beschreibung",
-            "none": "nichts"
+            "none": "nichts",
+            "noWeapons": "Keine Waffen im Item-Verzeichnis der Welt gefunden."
         },
         "actor": {
             "name": "Name",
