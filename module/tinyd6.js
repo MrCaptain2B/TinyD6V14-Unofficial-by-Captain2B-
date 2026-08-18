@@ -106,6 +106,7 @@ export class TinyD6System {
         console.log("tinyd6 | ready");
         registerSystemSocket();
         TinyD6System.displayFloatingDieRollerApplication();
+        TinyD6System.patchCoinTexture();
 
         // Применяем выключатель анимаций к текущему клиенту при старте.
         const animFx = game.settings.get('tinyd6v14', 'animFx');
@@ -137,6 +138,34 @@ export class TinyD6System {
                 if (!damageProxy) html.find(".attack-apply").remove();
                 html.find(".heal-apply").remove();
                 html.find(".stab-apply").remove();
+            }
+        });
+    }
+
+    /* Кастомная текстура монеты для модуля «Dice So Nice!». Спрайт-атлас
+     * лежит в системном каталоге assets/dice и переживает обновления DSN,
+     * потому что правим не файлы модуля, а регистрируем свой пресет монеты
+     * в уже готовой фабрике 3D-кубов через хук diceSoNiceReady. */
+    static patchCoinTexture() {
+        Hooks.once("diceSoNiceReady", (dice3d) => {
+            try {
+                const factory = dice3d.DiceFactory;
+                if (!factory) return;
+                const preset = factory.systems.get("standard")?.dice.get("dc");
+                if (!preset) return;
+
+                preset.setAtlas("systems/tinyd6v14/assets/dice/coin-atlas.json");
+                preset.loadTextures().then(() => {
+                    /* Сбрасываем собранные материалы кубов, чтобы монета
+                     * взяла новые текстуры без перезагрузки страницы. */
+                    const factory2 = dice3d.box?.dicefactory;
+                    if (factory2?.disposeCachedMaterials) factory2.disposeCachedMaterials();
+                }).catch(err => {
+                    console.warn("tinyd6 | coin atlas load failed:", err);
+                });
+            }
+            catch (err) {
+                console.warn("tinyd6 | coin texture patch skipped:", err);
             }
         });
     }
