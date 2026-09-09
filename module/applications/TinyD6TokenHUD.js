@@ -1,12 +1,12 @@
 import * as Dice from "../helpers/dice.js";
-import { openStabilizeDialog, getStabilizeTarget } from "../helpers/death.js";
+import { openStabilizeDialog, getStabilizeTarget, roundsWord } from "../helpers/death.js";
 
-/* Кастомный HUD токена: убирает нерелевантные для TinyD6 элементы (высота,
- * палитры уровней и движения, сортировка), добавляет HP-степеры, чип состояния
- * смерти и широкую палитру оружия с кнопками Атака / Перезарядить. Наследует
- * стоковый TokenHUD (класс берём из CONFIG.Token.hudClass — внутренний алиас
- * @client не доступен из системных модулей), поэтому стандартные кнопки и
- * обработчики сохраняются. */
+/* РљР°СЃС‚РѕРјРЅС‹Р№ HUD С‚РѕРєРµРЅР°: СѓР±РёСЂР°РµС‚ РЅРµСЂРµР»РµРІР°РЅС‚РЅС‹Рµ РґР»СЏ TinyD6 СЌР»РµРјРµРЅС‚С‹ (РІС‹СЃРѕС‚Р°,
+ * РїР°Р»РёС‚СЂС‹ СѓСЂРѕРІРЅРµР№ Рё РґРІРёР¶РµРЅРёСЏ, СЃРѕСЂС‚РёСЂРѕРІРєР°), РґРѕР±Р°РІР»СЏРµС‚ HP-СЃС‚РµРїРµСЂС‹, С‡РёРї СЃРѕСЃС‚РѕСЏРЅРёСЏ
+ * СЃРјРµСЂС‚Рё Рё С€РёСЂРѕРєСѓСЋ РїР°Р»РёС‚СЂСѓ РѕСЂСѓР¶РёСЏ СЃ РєРЅРѕРїРєР°РјРё РђС‚Р°РєР° / РџРµСЂРµР·Р°СЂСЏРґРёС‚СЊ. РќР°СЃР»РµРґСѓРµС‚
+ * СЃС‚РѕРєРѕРІС‹Р№ TokenHUD (РєР»Р°СЃСЃ Р±РµСЂС‘Рј РёР· CONFIG.Token.hudClass вЂ” РІРЅСѓС‚СЂРµРЅРЅРёР№ Р°Р»РёР°СЃ
+ * @client РЅРµ РґРѕСЃС‚СѓРїРµРЅ РёР· СЃРёСЃС‚РµРјРЅС‹С… РјРѕРґСѓР»РµР№), РїРѕСЌС‚РѕРјСѓ СЃС‚Р°РЅРґР°СЂС‚РЅС‹Рµ РєРЅРѕРїРєРё Рё
+ * РѕР±СЂР°Р±РѕС‚С‡РёРєРё СЃРѕС…СЂР°РЅСЏСЋС‚СЃСЏ. */
 export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
 
     /** @override */
@@ -35,49 +35,59 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
         const context = await super._prepareContext(options);
         const actor = this.document?.actor;
 
-        // HP для степперов и чипа.
+        // HP РґР»СЏ СЃС‚РµРїРїРµСЂРѕРІ Рё С‡РёРїР°.
         const wounds = actor?.system?.wounds ?? null;
         const hpMax = Number(wounds?.max) || 0;
         const hpEditable = Boolean(actor?.isOwner) && actor !== undefined;
 
-        // Чип состояния смерти: только финальные/активные статусы.
+        // Р§РёРї СЃРѕСЃС‚РѕСЏРЅРёСЏ СЃРјРµСЂС‚Рё: С‚РѕР»СЊРєРѕ С„РёРЅР°Р»СЊРЅС‹Рµ/Р°РєС‚РёРІРЅС‹Рµ СЃС‚Р°С‚СѓСЃС‹.
         let deathChip = null;
         const homeruleEnabled = game.settings.get('tinyd6v14', 'enableTinyD6Plus');
         const death = actor?.system?.death;
         if (homeruleEnabled && death?.dead)
         {
-            deathChip = { state: "dead", label: game.i18n.localize("tinyd6.death.dead"), icon: "fa-skull", tooltip: game.i18n.localize("tinyd6.death.dead") };
+            deathChip = { state: "dead", label: game.i18n.localize("tinyd6.death.dead"), icon: "skull", tooltip: game.i18n.localize("tinyd6.death.dead") };
         }
         else if (homeruleEnabled && death?.dying)
         {
             const rounds = Number(death.roundsLeft) || 0;
             deathChip = {
                 state: "dying",
-                label: `${game.i18n.localize("tinyd6.death.dying")} · ${rounds}`,
-                icon: "fa-skull-crossbones",
-                tooltip: game.i18n.format("tinyd6.death.dyingHint", { rounds })
+                label: `${game.i18n.localize("tinyd6.death.dying")} В· ${rounds}`,
+                icon: "skull-crossbones",
+                tooltip: game.i18n.format("tinyd6.death.dyingHint", { rounds, word: roundsWord(rounds) })
             };
         }
         else if (homeruleEnabled && death?.down)
         {
-            deathChip = { state: "down", label: game.i18n.localize("tinyd6.death.down"), icon: "fa-skull-crossbones", tooltip: game.i18n.localize("tinyd6.death.down") };
+            deathChip = { state: "down", label: game.i18n.localize("tinyd6.death.down"), icon: "skull-crossbones", tooltip: game.i18n.localize("tinyd6.death.down") };
         }
 
-        // У NPC вся броня и всё оружие всегда считаются экипированными
-        // (NPC не «переодевается»), у героев — только помеченные equipped.
+        // РЈ NPC РІСЃСЏ Р±СЂРѕРЅСЏ Рё РІСЃС‘ РѕСЂСѓР¶РёРµ РІСЃРµРіРґР° СЃС‡РёС‚Р°СЋС‚СЃСЏ СЌРєРёРїРёСЂРѕРІР°РЅРЅС‹РјРё
+        // (NPC РЅРµ В«РїРµСЂРµРѕРґРµРІР°РµС‚СЃСЏВ»), Сѓ РіРµСЂРѕРµРІ вЂ” С‚РѕР»СЊРєРѕ РїРѕРјРµС‡РµРЅРЅС‹Рµ equipped.
         const npcAll = actor?.type === "npc";
 
-        // Только «живая» броня (экипированная, с запасом прочности > 0).
+        // РўРѕР»СЊРєРѕ В«Р¶РёРІР°СЏВ» Р±СЂРѕРЅСЏ (СЌРєРёРїРёСЂРѕРІР°РЅРЅР°СЏ, СЃ Р·Р°РїР°СЃРѕРј РїСЂРѕС‡РЅРѕСЃС‚Рё > 0).
         const activeArmor = (actor?.items ?? []).filter(i => (i.type === "armor") && (npcAll || i.system.equipped)
             && ((Number(i.system.armorHp?.value) || 0) > 0));
         const armorTotal = activeArmor.reduce((sum, i) => sum + (Number(i.system.damageReduction) || 0), 0);
         const armorHpTotal = activeArmor.reduce((sum, i) => sum + (Number(i.system.armorHp?.value) || 0), 0);
 
-        // Экипированное оружие для палитры атаки/перезарядки.
-        // empty = только у оружия с перезарядкой, у которого кончились заряды
-        // (у ближнего uses/charges = 0, но оно не «пустое»).
-        const weapons = (actor?.items ?? [])
-            .filter(i => (i.type === "weapon") && (npcAll || i.system.equipped))
+        // Р­РєРёРїРёСЂРѕРІР°РЅРЅРѕРµ РѕСЂСѓР¶РёРµ РґР»СЏ РїР°Р»РёС‚СЂС‹ Р°С‚Р°РєРё/РїРµСЂРµР·Р°СЂСЏРґРєРё.
+        // empty = С‚РѕР»СЊРєРѕ Сѓ РѕСЂСѓР¶РёСЏ СЃ РїРµСЂРµР·Р°СЂСЏРґРєРѕР№, Сѓ РєРѕС‚РѕСЂРѕРіРѕ РєРѕРЅС‡РёР»РёСЃСЊ Р·Р°СЂСЏРґС‹
+        // (Сѓ Р±Р»РёР¶РЅРµРіРѕ uses/charges = 0, РЅРѕ РѕРЅРѕ РЅРµ В«РїСѓСЃС‚РѕРµВ»).
+        // РЈ NPC: С‚РѕР»СЊРєРѕ preferredWeapons (РµСЃР»Рё Р·Р°РґР°РЅС‹), РёРЅР°С‡Рµ РІСЃРµ.
+        let weaponItems = (actor?.items ?? [])
+            .filter(i => (i.type === "weapon") && (npcAll || i.system.equipped));
+
+        if (npcAll) {
+            const preferredIds = actor.system?.preferredWeapons || [];
+            if (preferredIds.length > 0) {
+                weaponItems = weaponItems.filter(i => preferredIds.includes(i.id));
+            }
+        }
+
+        const weapons = weaponItems
             .map(i => {
                 const reload = Boolean(i.system.reload);
                 const uses = Number(i.system.uses) || 0;
@@ -96,7 +106,7 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
 
         const weaponsEnabled = homeruleEnabled;
 
-        // Heal-гиры (gear.category = heal) с количеством для палитры лечения.
+        // Heal-РіРёСЂС‹ (gear.category = heal) СЃ РєРѕР»РёС‡РµСЃС‚РІРѕРј РґР»СЏ РїР°Р»РёС‚СЂС‹ Р»РµС‡РµРЅРёСЏ.
         const healItems = (actor?.items ?? [])
             .filter(i => i.type === "gear" && i.system?.category === "heal")
             .map(i => ({
@@ -110,9 +120,9 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
         const healEnabled = homeruleEnabled;
         const stabTarget = homeruleEnabled ? getStabilizeTarget(actor) : null;
 
-        // Палитры оружия и лечения на HUD показываем только владельцам токена
-        // (как HP-степеры и броню). Иначе игрок, выбравший чужой токен, увидел
-        // бы кнопки Атака/Перезарядить/Лечить, которые без прав не работают.
+        // РџР°Р»РёС‚СЂС‹ РѕСЂСѓР¶РёСЏ Рё Р»РµС‡РµРЅРёСЏ РЅР° HUD РїРѕРєР°Р·С‹РІР°РµРј С‚РѕР»СЊРєРѕ РІР»Р°РґРµР»СЊС†Р°Рј С‚РѕРєРµРЅР°
+        // (РєР°Рє HP-СЃС‚РµРїРµСЂС‹ Рё Р±СЂРѕРЅСЋ). РРЅР°С‡Рµ РёРіСЂРѕРє, РІС‹Р±СЂР°РІС€РёР№ С‡СѓР¶РѕР№ С‚РѕРєРµРЅ, СѓРІРёРґРµР»
+        // Р±С‹ РєРЅРѕРїРєРё РђС‚Р°РєР°/РџРµСЂРµР·Р°СЂСЏРґРёС‚СЊ/Р›РµС‡РёС‚СЊ, РєРѕС‚РѕСЂС‹Рµ Р±РµР· РїСЂР°РІ РЅРµ СЂР°Р±РѕС‚Р°СЋС‚.
         const owner = Boolean(actor?.isOwner);
 
         return foundry.utils.mergeObject(context, {
@@ -142,7 +152,7 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
             .forEach(el => el.addEventListener("change", this._onArmorEdit.bind(this)));
     }
 
-    /** Редактирование поля брони (DR или HP) прямо из HUD. */
+    /** Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ РїРѕР»СЏ Р±СЂРѕРЅРё (DR РёР»Рё HP) РїСЂСЏРјРѕ РёР· HUD. */
     async _onArmorEdit(event) {
         event.preventDefault();
         const attr = event.currentTarget.dataset.editAttr; // "dr" | "hp"
@@ -156,7 +166,7 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
             ? items.reduce((s, i) => s + (Number(i.system.damageReduction) || 0), 0)
             : items.reduce((s, i) => s + (Number(i.system.armorHp?.value) || 0), 0);
 
-        // Перезаписываем сумму с дельтой по предметам брони.
+        // РџРµСЂРµР·Р°РїРёСЃС‹РІР°РµРј СЃСѓРјРјСѓ СЃ РґРµР»СЊС‚РѕР№ РїРѕ РїСЂРµРґРјРµС‚Р°Рј Р±СЂРѕРЅРё/С‰РёС‚РѕРІ.
         let delta = target - current;
         const updates = [];
         for (const item of items) {
@@ -172,7 +182,7 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
         this.render();
     }
 
-    /** HP-степер: −1 / +1 HP за клик (пошагово, как в листе). */
+    /** HP-СЃС‚РµРїРµСЂ: в€’1 / +1 HP Р·Р° РєР»РёРє (РїРѕС€Р°РіРѕРІРѕ, РєР°Рє РІ Р»РёСЃС‚Рµ). */
     static async _onHpStep(event, target) {
         event.preventDefault();
         const actor = this.document?.actor;
@@ -190,7 +200,7 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
         this.render();
     }
 
-    /** Запуск атаки выбранным оружием из палитры HUD. */
+    /** Р—Р°РїСѓСЃРє Р°С‚Р°РєРё РІС‹Р±СЂР°РЅРЅС‹Рј РѕСЂСѓР¶РёРµРј РёР· РїР°Р»РёС‚СЂС‹ HUD. */
     static async _onWeaponAttack(event, target) {
         event.preventDefault();
         const actor = this.document?.actor;
@@ -199,7 +209,7 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
         const weapon = actor?.items?.get(weaponId);
         if (!weapon) return;
 
-        // Homerule: TinyD6+ — оружие без зарядов из HUD недоступно.
+        // Homerule: TinyD6+ вЂ” РѕСЂСѓР¶РёРµ Р±РµР· Р·Р°СЂСЏРґРѕРІ РёР· HUD РЅРµРґРѕСЃС‚СѓРїРЅРѕ.
         if (weapon.system.reload)
         {
             const charges = (weapon.system.charges !== undefined && weapon.system.charges !== null)
@@ -211,7 +221,7 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
             }
         }
 
-        // Homerule: TinyD6+ — выведенный из строя персонаж не может атаковать.
+        // Homerule: TinyD6+ вЂ” РІС‹РІРµРґРµРЅРЅС‹Р№ РёР· СЃС‚СЂРѕСЏ РїРµСЂСЃРѕРЅР°Р¶ РЅРµ РјРѕР¶РµС‚ Р°С‚Р°РєРѕРІР°С‚СЊ.
         if (game.settings.get('tinyd6v14', 'enableTinyD6Plus') && actor.system?.death?.down)
         {
             ui.notifications.warn(game.i18n.localize("tinyd6.death.cannotAct"));
@@ -220,8 +230,8 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
         Dice.openAttackDialog(actor, weapon);
     }
 
-    /** Перезарядка оружия из HUD: списывает ammo-гир (рожок) и заполняет
-     *  магазин до uses. Если ammo-гира нет — предупреждение, заряды не меняются. */
+    /** РџРµСЂРµР·Р°СЂСЏРґРєР° РѕСЂСѓР¶РёСЏ РёР· HUD: СЃРїРёСЃС‹РІР°РµС‚ ammo-РіРёСЂ (СЂРѕР¶РѕРє) Рё Р·Р°РїРѕР»РЅСЏРµС‚
+     *  РјР°РіР°Р·РёРЅ РґРѕ uses. Р•СЃР»Рё ammo-РіРёСЂР° РЅРµС‚ вЂ” РїСЂРµРґСѓРїСЂРµР¶РґРµРЅРёРµ, Р·Р°СЂСЏРґС‹ РЅРµ РјРµРЅСЏСЋС‚СЃСЏ. */
     static async _onWeaponReload(event, target) {
         event.preventDefault();
         const actor = this.document?.actor;
@@ -230,7 +240,7 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
         const weapon = actor?.items?.get(weaponId);
         if (!weapon) return;
 
-        // Анимация: крутится только иконка, затем перезаряжаем.
+        // РђРЅРёРјР°С†РёСЏ: РєСЂСѓС‚РёС‚СЃСЏ С‚РѕР»СЊРєРѕ РёРєРѕРЅРєР°, Р·Р°С‚РµРј РїРµСЂРµР·Р°СЂСЏР¶Р°РµРј.
         target.classList.add("spin");
         await new Promise(resolve => {
             target.addEventListener("animationend", () => resolve(), { once: true });
@@ -259,7 +269,7 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
         this.render();
     }
 
-    /** Стабилизация поверженного токена-цели из палитры Heal. */
+    /** РЎС‚Р°Р±РёР»РёР·Р°С†РёСЏ РїРѕРІРµСЂР¶РµРЅРЅРѕРіРѕ С‚РѕРєРµРЅР°-С†РµР»Рё РёР· РїР°Р»РёС‚СЂС‹ Heal. */
     static async _onStabilize(event, target) {
         event.preventDefault();
         const actor = this.document?.actor;
@@ -274,7 +284,7 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
         openStabilizeDialog(actor, stabTarget);
     }
 
-    /** Использование heal-гира из палитры Heal: лечит цель (или себя). */
+    /** РСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ heal-РіРёСЂР° РёР· РїР°Р»РёС‚СЂС‹ Heal: Р»РµС‡РёС‚ С†РµР»СЊ (РёР»Рё СЃРµР±СЏ). */
     static async _onHealUse(event, target) {
         event.preventDefault();
         const actor = this.document?.actor;
@@ -308,3 +318,4 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
         this.render();
     }
 }
+

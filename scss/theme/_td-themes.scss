@@ -86,26 +86,26 @@
     color: var(--td-text);
 }
 .tinyd6.sheet.td-sheet-perkament form.actor-sheet .floating-header,
-.tinyd6.sheet.td-sheet-perkament form.actor-sheet .section-header,
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .td6-section-header,
 .tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .floating-header,
-.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .section-header {
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .td6-section-header {
     font-family: Georgia, "Times New Roman", serif;
     letter-spacing: .02em;
     text-transform: none;
     border-bottom: 1px solid var(--td-border);
 }
 .tinyd6.sheet.td-sheet-perkament form.actor-sheet .floating-header::before,
-.tinyd6.sheet.td-sheet-perkament form.actor-sheet .section-header::before,
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .td6-section-header::before,
 .tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .floating-header::before,
-.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .section-header::before {
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .td6-section-header::before {
     width: 10px; height: 10px; background: var(--td-accent);
     border-radius: 0; transform: rotate(45deg);
     box-shadow: 0 0 0 1px rgba(46,36,21,.5);
 }
 .tinyd6.sheet.td-sheet-perkament form.actor-sheet .floating-header::after,
-.tinyd6.sheet.td-sheet-perkament form.actor-sheet .section-header::after,
+.tinyd6.sheet.td-sheet-perkament form.actor-sheet .td6-section-header::after,
 .tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .floating-header::after,
-.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .section-header::after {
+.tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .td6-section-header::after {
     content: ""; flex: 1 1 auto;
 }
 
@@ -317,6 +317,165 @@
 
 
 /* ------------------------------------------------------------
+   КИБЕРПАНК (V4) — старая школа: неон, сканлайны, терминал
+   ------------------------------------------------------------ */
+.tinyd6.sheet.td-sheet-cyberpunk,
+.tinyd6.sheet.npc.td-sheet-cyberpunk {
+    --td-bg: #0a0c10;
+    --td-card: #10141b;
+    --td-field: #151b24;
+    --td-hover: #1d2530;
+    --td-border: #23415a;
+    --td-text: #b8e6e0;
+    --td-strong: #eafffb;
+    --td-muted: #5f8a86;
+    --td-accent: #00e5d0;
+    --td-accent-soft: #ff2e88;
+    --td-ok: #2ee66b;
+    --td-danger: #ff3860;
+    --td-radius: 2px;
+    --td-font: "Segoe UI", system-ui, sans-serif;
+    /* Сканлайны ЭЛТ вместо пленочного зерна */
+    --td-noise: linear-gradient(rgba(0, 0, 0, .3) 50%, transparent 50%);
+    --td-noise-size: 100% 3px;
+}
+.tinyd6.sheet.td-sheet-cyberpunk .window-content,
+.tinyd6.sheet.npc.td-sheet-cyberpunk .window-content {
+    /* Задник: неоновая дымка сверху + сетка «терминала» */
+    background:
+        radial-gradient(120% 90% at 50% 0%, rgba(0, 229, 208, .07) 0%, transparent 55%),
+        linear-gradient(rgba(0, 229, 208, .03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 229, 208, .03) 1px, transparent 1px),
+        #0a0c10;
+    background-size: 100% 100%, 26px 26px, 26px 26px, 100% 100%;
+}
+/* Сканлайны — поверх всего контента листа */
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet::after,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background-image: var(--td-noise);
+    background-size: var(--td-noise-size);
+    opacity: .5;
+}
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet { position: relative; }
+/* Шапка: тот же город, но залитый неоном */
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .td-hero-head,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet .td-hero-head {
+    position: relative;
+    border-bottom-color: var(--td-accent);
+    background:
+        linear-gradient(90deg, #0a0c10 0%, rgba(10, 12, 16, 0) 16%),
+        linear-gradient(90deg, rgba(10, 12, 16, 0) 84%, #0a0c10 100%),
+        linear-gradient(180deg, rgba(10, 12, 16, 0) 0%, rgba(10, 12, 16, .12) 30%, rgba(10, 12, 16, .82) 92%, rgba(10, 12, 16, 1) 100%),
+        url("../assets/noir/city.svg") no-repeat center bottom / cover;
+}
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .td-hero-head::before,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet .td-hero-head::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1;
+    background:
+        radial-gradient(110% 130% at 50% 0%, rgba(0, 229, 208, .14) 0%, transparent 55%),
+        linear-gradient(180deg, rgba(10, 12, 16, 0) 55%, rgba(10, 12, 16, .75) 100%);
+}
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .td-hero-head > *,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet .td-hero-head > * { position: relative; z-index: 2; }
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .td-avatar,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet .td-avatar {
+    border-radius: 2px;
+    border: 1px solid var(--td-accent);
+    box-shadow: 0 0 10px rgba(0, 229, 208, .35);
+}
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .td-stat,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet .td-stat {
+    border-left-color: rgba(0, 229, 208, .4);
+}
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .td-stat .n,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet .td-stat .n {
+    color: var(--td-accent);
+    text-shadow: 0 0 8px rgba(0, 229, 208, .5);
+}
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .td-tab.active::after,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet .td-tab.active::after {
+    background: var(--td-accent);
+    box-shadow: 0 0 8px rgba(0, 229, 208, .6);
+}
+/* Метры: угловатые «чипы» с неоновой заливкой */
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .health-box,
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .corruption-box,
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .advancement-progress-box,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet .health-box,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet .corruption-box,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet .advancement-progress-box {
+    border-radius: 1px;
+    background: #10151c;
+    border: 1px solid #23415a;
+}
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .health-box:checked,
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .corruption-box:checked,
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .advancement-progress-box:checked,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet .health-box:checked,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet .corruption-box:checked,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet .advancement-progress-box:checked {
+    background: linear-gradient(180deg, var(--td-accent), #00a896);
+    border-color: var(--td-accent);
+    box-shadow: 0 0 6px rgba(0, 229, 208, .55);
+}
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .roll-dice,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet .roll-dice {
+    border-radius: 2px; text-transform: uppercase; letter-spacing: .08em; font-size: 12px;
+}
+/* Акцентные кнопки: неоновая заливка со свечением на hover */
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .roll-dice:hover,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet .roll-dice:hover {
+    background: var(--td-accent);
+    border-color: var(--td-accent);
+    color: #062a26;
+    box-shadow: 0 0 10px rgba(0, 229, 208, .45);
+}
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .roll-dice:hover .fas,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet .roll-dice:hover .fas { background: rgba(6, 42, 38, .25); }
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .item-control,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet .item-control {
+    color: var(--td-muted); border: 1px solid transparent; border-radius: 2px;
+    width: 22px; height: 22px; justify-content: center; font-size: 12px;
+    transition: color .15s ease, border-color .15s ease, background .15s ease;
+}
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .item-control:hover,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet .item-control:hover {
+    color: #ff2e88; border-color: rgba(255, 46, 136, .5); background: rgba(255, 46, 136, .1);
+}
+/* Тёмные поля: подложка, неоновая обводка при фокусе */
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .property input[type="text"],
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .property input:not([type]),
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet .property input[type="text"],
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet .property input:not([type]),
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .proficiencies .mastered input,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet .proficiencies .mastered input {
+    background: var(--td-field); border: 1px solid var(--td-border); border-radius: 2px;
+    padding: 5px 8px; transition: border-color .15s ease, box-shadow .15s ease;
+}
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .property input[type="text"]:focus,
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .property input:not([type]):focus,
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .property input[type="text"]:focus,
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .property input:not([type]):focus,
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .proficiencies .mastered input:focus,
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .proficiencies .mastered input:focus {
+    border-color: var(--td-accent); box-shadow: 0 0 0 1px rgba(0, 229, 208, .25);
+}
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .editor:focus-within,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet .editor:focus-within {
+    border-color: var(--td-accent); box-shadow: 0 0 0 1px rgba(0, 229, 208, .25);
+}
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .item-add,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet .item-add { border-radius: 2px; background: var(--td-accent); color: #062a26; }
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .equipped-armor .total-armor,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet .equipped-armor .total-armor {
+    border-radius: 2px; background: linear-gradient(180deg, var(--td-accent), #00a896);
+    box-shadow: 0 0 10px rgba(0, 229, 208, .3);
+}
+
+
+/* ------------------------------------------------------------
    МИНИМАЛИЗМ (V3) — светлый, чистый, строгий
    ------------------------------------------------------------ */
 .tinyd6.sheet.td-sheet-minimal,
@@ -354,14 +513,14 @@
 .tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .td-stat { border-left-color: var(--td-border); }
 .tinyd6.sheet.td-sheet-minimal form.actor-sheet .floating-header,
 .tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .floating-header,
-.tinyd6.sheet.td-sheet-minimal form.actor-sheet .section-header,
-.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .section-header {
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .td6-section-header,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .td6-section-header {
     border-bottom: 0; padding-bottom: 6px; text-transform: uppercase; letter-spacing: .12em;
 }
 .tinyd6.sheet.td-sheet-minimal form.actor-sheet .floating-header::before,
 .tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .floating-header::before,
-.tinyd6.sheet.td-sheet-minimal form.actor-sheet .section-header::before,
-.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .section-header::before {
+.tinyd6.sheet.td-sheet-minimal form.actor-sheet .td6-section-header::before,
+.tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .td6-section-header::before {
     display: none;
 }
 .tinyd6.sheet.td-sheet-minimal form.actor-sheet .td-tab,
@@ -477,7 +636,18 @@
    окно Die Roller — через classes в DieRoller.js.
    ============================================================ */
 
-/* ---------- Переменные темы для чат-карточек ---------- */
+/* ---------- Переменные темы для чат-карточек ----------
+   Переменные вешаем и на само сообщение (.chat-message.td-sheet-*),
+   чтобы темизировать и «задник» сообщения, и на внутреннюю карточку. */
+.chat-message.td-sheet-default,
+.chat-message.td-sheet-default .tinyd6 {
+    --td-bg: #1b1b1f; --td-card: #24242a; --td-field: #2f2f36;
+    --td-hover: #3b3b44; --td-border: #3b3b44; --td-text: #d7d8dc;
+    --td-strong: #e8e9ea; --td-muted: #8a8b92; --td-accent: #4a52ca;
+    --td-accent-soft: #6ea8fe; --td-ok: #2e7d32; --td-danger: #7a3b3b;
+    --td-radius: 8px;
+}
+.chat-message.td-sheet-perkament,
 .chat-message.td-sheet-perkament .tinyd6 {
     --td-bg: #cdbb92; --td-card: #ddcca6; --td-field: #e4d6b2;
     --td-hover: #d6c494; --td-border: #a08a58; --td-text: #2e2415;
@@ -485,6 +655,7 @@
     --td-accent-soft: #a85a3c; --td-ok: #3f6d3a; --td-danger: #8b2f2f;
     --td-radius: 6px;
 }
+.chat-message.td-sheet-noir,
 .chat-message.td-sheet-noir .tinyd6 {
     --td-bg: #0d0e11; --td-card: #16181d; --td-field: #1b1d23;
     --td-hover: #262a33; --td-border: #2c2c34; --td-text: #d8d8d8;
@@ -492,12 +663,44 @@
     --td-accent-soft: #d3a25e; --td-ok: #2e7d32; --td-danger: #a34a4a;
     --td-radius: 4px;
 }
+.chat-message.td-sheet-minimal,
 .chat-message.td-sheet-minimal .tinyd6 {
     --td-bg: #f5f5f2; --td-card: #ffffff; --td-field: #ffffff;
     --td-hover: #eef0ed; --td-border: #dcded9; --td-text: #33373f;
     --td-strong: #1b1e24; --td-muted: #9aa0a8; --td-accent: #4a7db3;
     --td-accent-soft: #6f9fce; --td-ok: #3f7d5a; --td-danger: #a34a4a;
     --td-radius: 8px;
+}
+.chat-message.td-sheet-cyberpunk,
+.chat-message.td-sheet-cyberpunk .tinyd6 {
+    --td-bg: #0a0c10; --td-card: #10141b; --td-field: #151b24;
+    --td-hover: #1d2530; --td-border: #23415a; --td-text: #b8e6e0;
+    --td-strong: #eafffb; --td-muted: #5f8a86; --td-accent: #00e5d0;
+    --td-accent-soft: #ff2e88; --td-ok: #2ee66b; --td-danger: #ff3860;
+    --td-radius: 2px;
+}
+
+/* ---------- «Задник» сообщения в теме ----------
+   Дублируем с body.crlngn-ui: при включённом Carolingian его безслойные
+   правила .chat-message имеют специфичность выше — этот префикс
+   выигрывает каскад (наш CSS безслойным дублем идёт позже). */
+.chat-message.td-sheet-default,
+.chat-message.td-sheet-perkament,
+.chat-message.td-sheet-noir,
+.chat-message.td-sheet-minimal,
+.chat-message.td-sheet-cyberpunk {
+    background: var(--td-bg);
+    color: var(--td-text);
+    border-color: var(--td-border);
+}
+body.crlngn-ui .chat-message.td-sheet-default,
+body.crlngn-ui .chat-message.td-sheet-perkament,
+body.crlngn-ui .chat-message.td-sheet-noir,
+body.crlngn-ui .chat-message.td-sheet-minimal,
+body.crlngn-ui .chat-message.td-sheet-cyberpunk {
+    background: var(--td-bg) !important;
+    color: var(--td-text) !important;
+    border-color: var(--td-border) !important;
 }
 
 /* ---------- Item-card ---------- */
@@ -524,65 +727,65 @@
 .chat-message .tinyd6.item-card .item-card-body p:last-child { margin-bottom: 0; }
 
 /* ---------- Attack-card ---------- */
-.chat-message .tinyd6.attack-card {
+.chat-message .tinyd6.td6-attack-card {
     background: var(--td-card); border: 1px solid var(--td-border);
     border-radius: var(--td-radius); padding: 12px;
     box-shadow: 0 4px 14px -8px rgba(0,0,0,.35);
 }
-.chat-message .tinyd6.attack-card .attack-card-head img { border-radius: 5px; }
-.chat-message .tinyd6.attack-card .attack-card-name {
+.chat-message .tinyd6.td6-attack-card .attack-card-head img { border-radius: 5px; }
+.chat-message .tinyd6.td6-attack-card .attack-card-name {
     font-size: 15px; font-weight: 700; color: var(--td-strong); margin: 0;
 }
-.chat-message .tinyd6.attack-card .attack-card-sub {
+.chat-message .tinyd6.td6-attack-card .attack-card-sub {
     font-size: 12px; color: var(--td-muted); margin-top: 3px;
 }
-.chat-message .tinyd6.attack-card .attack-hit { color: var(--td-ok); font-weight: 700; margin-right: 8px; }
-.chat-message .tinyd6.attack-card .attack-miss { color: var(--td-danger); font-weight: 700; margin-right: 8px; }
-.chat-message .tinyd6.attack-card .attack-crit {
+.chat-message .tinyd6.td6-attack-card .attack-hit { color: var(--td-ok); font-weight: 700; margin-right: 8px; }
+.chat-message .tinyd6.td6-attack-card .attack-miss { color: var(--td-danger); font-weight: 700; margin-right: 8px; }
+.chat-message .tinyd6.td6-attack-card .attack-crit {
     color: var(--td-accent); font-weight: 800; text-transform: uppercase; letter-spacing: .04em;
     font-size: 11px; padding: 1px 7px; border-radius: 10px;
     background: var(--td-field); border: 1px solid var(--td-border); margin-right: 8px;
 }
-.chat-message .tinyd6.attack-card .attack-damage .attack-damage-base {
+.chat-message .tinyd6.td6-attack-card .attack-damage .attack-damage-base {
     color: var(--td-muted); margin-right: 4px;
 }
-.chat-message .tinyd6.attack-card .attack-card-roll { gap: 8px; margin: 10px 0; flex-wrap: wrap; }
-.chat-message .tinyd6.attack-card .attack-die {
+.chat-message .tinyd6.td6-attack-card .attack-card-roll { gap: 8px; margin: 10px 0; flex-wrap: wrap; }
+.chat-message .tinyd6.td6-attack-card .attack-die {
     width: 40px; height: 40px; border-radius: 8px;
     background: var(--td-field); border: 1px solid var(--td-border);
     display: inline-flex; align-items: center; justify-content: center;
     font-size: 22px; color: var(--td-accent-soft);
 }
-.chat-message .tinyd6.attack-card .attack-card-footer {
+.chat-message .tinyd6.td6-attack-card .attack-card-footer {
     border-top: 1px solid var(--td-border); padding-top: 10px;
     gap: 12px; flex-wrap: wrap;
 }
-.chat-message .tinyd6.attack-card .attack-damage { font-size: 13px; color: var(--td-text); }
-.chat-message .tinyd6.attack-card .attack-apply {
+.chat-message .tinyd6.td6-attack-card .attack-damage { font-size: 13px; color: var(--td-text); }
+.chat-message .tinyd6.td6-attack-card .attack-apply {
     margin-left: auto; background: var(--td-accent); color: #fff;
     border: 0; border-radius: 6px; padding: 7px 14px; cursor: pointer;
     font-family: inherit; font-size: 13px; font-weight: 600;
     display: inline-flex; align-items: center; gap: 6px;
 }
-.chat-message .tinyd6.attack-card .attack-apply:hover { background: var(--td-accent-soft); }
-.chat-message .tinyd6.attack-card .attack-report {
+.chat-message .tinyd6.td6-attack-card .attack-apply:hover { background: var(--td-accent-soft); }
+.chat-message .tinyd6.td6-attack-card .attack-report {
     font-size: 12px; color: var(--td-ok); font-weight: 600;
 }
-.chat-message .tinyd6.attack-card .attack-card-ranout {
+.chat-message .tinyd6.td6-attack-card .attack-card-ranout {
     margin: 8px 0 4px; padding: 6px 10px; font-size: 12px; font-weight: 600;
     color: var(--td-danger); background: color-mix(in srgb, var(--td-danger) 12%, transparent);
     border: 1px solid color-mix(in srgb, var(--td-danger) 40%, transparent); border-radius: 5px;
 }
-.chat-message .tinyd6.attack-card .attack-card-undo {
+.chat-message .tinyd6.td6-attack-card .attack-card-undo {
     border-top: 1px dashed var(--td-border); margin-top: 8px; padding-top: 8px;
 }
-.chat-message .tinyd6.attack-card .attack-undo {
+.chat-message .tinyd6.td6-attack-card .attack-undo {
     background: var(--td-field); color: var(--td-accent); border: 1px solid var(--td-border);
     border-radius: 6px; padding: 6px 12px; cursor: pointer;
     font-family: inherit; font-size: 12px; font-weight: 600;
     display: inline-flex; align-items: center; gap: 6px;
 }
-.chat-message .tinyd6.attack-card .attack-undo:hover { background: var(--td-hover); }
+.chat-message .tinyd6.td6-attack-card .attack-undo:hover { background: var(--td-hover); }
 
 /* ---------- Отчёт о применённом уроне / заглушки ---------- */
 .chat-message .tinyd6.attack-report-chat {
@@ -623,17 +826,17 @@
 .chat-message .tinyd6.death-stub.death-timer b { color: var(--td-danger); }
 
 /* ---------- Результат броска + разбор кубиков ---------- */
-.chat-message .tinyd6.roll-result {
+.chat-message .tinyd6.td6-roll-result {
     border-radius: var(--td-radius); font-weight: 700; letter-spacing: .06em;
 }
-.chat-message .tinyd6.roll-result.bg-success { background: var(--td-ok); }
-.chat-message .tinyd6.roll-result.bg-danger { background: var(--td-danger); }
-.chat-message .tinyd6.dice-breakdown {
+.chat-message .tinyd6.td6-roll-result.bg-success { background: var(--td-ok); }
+.chat-message .tinyd6.td6-roll-result.bg-danger { background: var(--td-danger); }
+.chat-message .tinyd6.td6-dice-breakdown {
     background: var(--td-card); color: var(--td-text);
     border: 1px solid var(--td-border); border-radius: var(--td-radius);
     border-top: 0; border-top-left-radius: 0; border-top-right-radius: 0;
 }
-.chat-message .tinyd6.dice-breakdown .fas { color: var(--td-accent-soft); }
+.chat-message .tinyd6.td6-dice-breakdown .fas { color: var(--td-accent-soft); }
 
 /* ---------- Die Roller (окно) ---------- */
 .tinyd6.die-roller.td-sheet-perkament {
@@ -678,19 +881,36 @@
     --dr-act-avail: rgba(74,125,179,.9);
     --dr-act-spent: rgba(154,160,168,.6);
 }
+.tinyd6.die-roller.td-sheet-cyberpunk {
+    --td-bg: #0a0c10; --td-card: #10141b; --td-field: #151b24;
+    --td-hover: #1d2530; --td-border: #23415a; --td-text: #b8e6e0;
+    --td-strong: #eafffb; --td-muted: #5f8a86; --td-accent: #00e5d0;
+    --td-accent-soft: #ff2e88; --td-radius: 2px;
+    --dr-bg: var(--td-card);
+    --dr-field: var(--td-field);
+    --dr-border: var(--td-border);
+    --dr-text: var(--td-text);
+    --dr-strong: var(--td-strong);
+    --dr-accent: var(--td-accent);
+    --dr-act-avail: rgba(0,229,208,.9);
+    --dr-act-spent: rgba(35,65,90,.85);
+}
 
 /* Окно и кнопки броска */
 .tinyd6.die-roller.td-sheet-perkament .window-content,
 .tinyd6.die-roller.td-sheet-noir .window-content,
-.tinyd6.die-roller.td-sheet-minimal .window-content {
+.tinyd6.die-roller.td-sheet-minimal .window-content,
+.tinyd6.die-roller.td-sheet-cyberpunk .window-content {
     background: var(--dr-bg);
 }
 .tinyd6.die-roller.td-sheet-perkament .die-roller,
 .tinyd6.die-roller.td-sheet-noir .die-roller,
-.tinyd6.die-roller.td-sheet-minimal .die-roller { gap: 8px; }
+.tinyd6.die-roller.td-sheet-minimal .die-roller,
+.tinyd6.die-roller.td-sheet-cyberpunk .die-roller { gap: 8px; }
 .tinyd6.die-roller.td-sheet-perkament .roll-dice,
 .tinyd6.die-roller.td-sheet-noir .roll-dice,
-.tinyd6.die-roller.td-sheet-minimal .roll-dice {
+.tinyd6.die-roller.td-sheet-minimal .roll-dice,
+.tinyd6.die-roller.td-sheet-cyberpunk .roll-dice {
     flex: 1 1 0; min-width: 0; margin: 0;
     background: var(--dr-field); border: 1px solid var(--dr-border);
     border-radius: var(--td-radius); padding: 8px 10px;
@@ -699,56 +919,68 @@
 }
 .tinyd6.die-roller.td-sheet-perkament .roll-dice:hover,
 .tinyd6.die-roller.td-sheet-noir .roll-dice:hover,
-.tinyd6.die-roller.td-sheet-minimal .roll-dice:hover {
+.tinyd6.die-roller.td-sheet-minimal .roll-dice:hover,
+.tinyd6.die-roller.td-sheet-cyberpunk .roll-dice:hover {
     background: var(--dr-accent); border-color: var(--dr-accent); color: #fff;
 }
 .tinyd6.die-roller.td-sheet-perkament .roll-dice .fas,
 .tinyd6.die-roller.td-sheet-noir .roll-dice .fas,
-.tinyd6.die-roller.td-sheet-minimal .roll-dice .fas {
+.tinyd6.die-roller.td-sheet-minimal .roll-dice .fas,
+.tinyd6.die-roller.td-sheet-cyberpunk .roll-dice .fas {
     width: 18px; height: 18px; font-size: 11px;
     display: inline-flex; align-items: center; justify-content: center;
     background: var(--dr-accent); border-radius: 5px;
 }
 .tinyd6.die-roller.td-sheet-perkament .roll-dice:hover .fas,
 .tinyd6.die-roller.td-sheet-noir .roll-dice:hover .fas,
-.tinyd6.die-roller.td-sheet-minimal .roll-dice:hover .fas { background: rgba(255,255,255,.25); }
+.tinyd6.die-roller.td-sheet-minimal .roll-dice:hover .fas,
+.tinyd6.die-roller.td-sheet-cyberpunk .roll-dice:hover .fas { background: rgba(255,255,255,.25); }
 .tinyd6.die-roller.td-sheet-perkament .action-modifiers label,
 .tinyd6.die-roller.td-sheet-noir .action-modifiers label,
-.tinyd6.die-roller.td-sheet-minimal .action-modifiers label {
+.tinyd6.die-roller.td-sheet-minimal .action-modifiers label,
+.tinyd6.die-roller.td-sheet-cyberpunk .action-modifiers label {
     color: var(--dr-text); font-size: 12px;
     display: inline-flex; align-items: center; gap: 6px;
 }
 .tinyd6.die-roller.td-sheet-perkament .action-modifiers input,
 .tinyd6.die-roller.td-sheet-noir .action-modifiers input,
-.tinyd6.die-roller.td-sheet-minimal .action-modifiers input { accent-color: var(--dr-accent); }
+.tinyd6.die-roller.td-sheet-minimal .action-modifiers input,
+.tinyd6.die-roller.td-sheet-cyberpunk .action-modifiers input { accent-color: var(--dr-accent); }
 .tinyd6.die-roller.td-sheet-perkament .die-roller-collapsed,
 .tinyd6.die-roller.td-sheet-noir .die-roller-collapsed,
-.tinyd6.die-roller.td-sheet-minimal .die-roller-collapsed {
+.tinyd6.die-roller.td-sheet-minimal .die-roller-collapsed,
+.tinyd6.die-roller.td-sheet-cyberpunk .die-roller-collapsed {
     background: var(--dr-bg); color: var(--dr-text); border: 1px solid var(--dr-border);
 }
 .tinyd6.die-roller.td-sheet-perkament .die-roller-collapse,
 .tinyd6.die-roller.td-sheet-noir .die-roller-collapse,
-.tinyd6.die-roller.td-sheet-minimal .die-roller-collapse { color: var(--dr-text); }
+.tinyd6.die-roller.td-sheet-minimal .die-roller-collapse,
+.tinyd6.die-roller.td-sheet-cyberpunk .die-roller-collapse { color: var(--dr-text); }
 
 /* Счётчик действий (ромбики) */
 .tinyd6.die-roller.td-sheet-perkament .dr-shapes .act.avail,
 .tinyd6.die-roller.td-sheet-noir .dr-shapes .act.avail,
-.tinyd6.die-roller.td-sheet-minimal .dr-shapes .act.avail { background: var(--dr-act-avail); }
+.tinyd6.die-roller.td-sheet-minimal .dr-shapes .act.avail,
+.tinyd6.die-roller.td-sheet-cyberpunk .dr-shapes .act.avail { background: var(--dr-act-avail); }
 .tinyd6.die-roller.td-sheet-perkament .dr-shapes .act.spent,
 .tinyd6.die-roller.td-sheet-noir .dr-shapes .act.spent,
-.tinyd6.die-roller.td-sheet-minimal .dr-shapes .act.spent { background: var(--dr-act-spent); }
+.tinyd6.die-roller.td-sheet-minimal .dr-shapes .act.spent,
+.tinyd6.die-roller.td-sheet-cyberpunk .dr-shapes .act.spent { background: var(--dr-act-spent); }
 .tinyd6.die-roller.td-sheet-perkament .dr-shapes .actions-btns button,
 .tinyd6.die-roller.td-sheet-noir .dr-shapes .actions-btns button,
-.tinyd6.die-roller.td-sheet-minimal .dr-shapes .actions-btns button {
+.tinyd6.die-roller.td-sheet-minimal .dr-shapes .actions-btns button,
+.tinyd6.die-roller.td-sheet-cyberpunk .dr-shapes .actions-btns button {
     background: var(--dr-field); border-color: var(--dr-border); color: var(--dr-text);
 }
 .tinyd6.die-roller.td-sheet-perkament .dr-shapes .actions-btns button.plus:hover,
 .tinyd6.die-roller.td-sheet-noir .dr-shapes .actions-btns button.plus:hover,
-.tinyd6.die-roller.td-sheet-minimal .dr-shapes .actions-btns button.plus:hover {
+.tinyd6.die-roller.td-sheet-minimal .dr-shapes .actions-btns button.plus:hover,
+.tinyd6.die-roller.td-sheet-cyberpunk .dr-shapes .actions-btns button.plus:hover {
     background: var(--dr-accent); border-color: var(--dr-accent); color: #fff;
 }
 .tinyd6.die-roller.td-sheet-perkament .dr-shapes .actions-btns button.minus:hover,
 .tinyd6.die-roller.td-sheet-noir .dr-shapes .actions-btns button.minus:hover,
-.tinyd6.die-roller.td-sheet-minimal .dr-shapes .actions-btns button.minus:hover {
+.tinyd6.die-roller.td-sheet-minimal .dr-shapes .actions-btns button.minus:hover,
+.tinyd6.die-roller.td-sheet-cyberpunk .dr-shapes .actions-btns button.minus:hover {
     border-color: var(--td-danger); color: var(--td-danger);
 }

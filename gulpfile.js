@@ -16,7 +16,7 @@ function css()
 {
     return src(paths.css)
         .pipe(concat('tinyd6.css'))
-        .pipe(sass({ outputStyle: 'expanded', silenceDeprecations: ['legacy-js-api', 'import', 'global-builtin', 'slash-div', 'color-functions', 'abs-percent'] }))
+        .pipe(sass({ outputStyle: 'compressed', silenceDeprecations: ['legacy-js-api', 'import', 'global-builtin', 'slash-div', 'color-functions', 'abs-percent'] }))
         .pipe(dest(buildPaths.css));
 }
 

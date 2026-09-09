@@ -12,6 +12,7 @@
    ============================================================ */
 
 import { gmProxy } from "./socket.js";
+import { iconSvg } from "./icons.js";
 
 export const DEATH_STATUSES = {
     // Встроенный статус Foundry «потеря сознания» (hero / important NPC).
@@ -62,6 +63,75 @@ async function _setStatus(actor, id, active, { overlay = false } = {}) {
 const DIE_FACES = [null, "fa-dice-one", "fa-dice-two", "fa-dice-three", "fa-dice-four", "fa-dice-five", "fa-dice-six"];
 function _dieFace(total) {
     return DIE_FACES[total] || "fa-dice-one";
+}
+
+/* Иконка выпавшей грани: d6-грани (fa-dice-one..six), для кубиков d8/d10 —
+ * иконка типа самого кубика. */
+function _deathRollIcon(formula, total) {
+    const faces = [null, "fa-dice-one", "fa-dice-two", "fa-dice-three", "fa-dice-four", "fa-dice-five", "fa-dice-six"];
+    if (faces[total]) return faces[total];
+    const m = String(formula || "").match(/d([0-9]+)$/);
+    if (m && ["4", "8", "10", "12", "20"].includes(m[1])) return `fa-dice-d${m[1]}`;
+    return "fa-dice-d6";
+}
+
+/* Правильная форма слова по числу (Intl.PluralRules по языку игры). */
+function _pluralWord(kind, n) {
+    const lang = game.i18n?.lang || "en";
+    let rules;
+    try { rules = new Intl.PluralRules(lang); }
+    catch (err) { rules = new Intl.PluralRules("en"); }
+    const form = rules.select(Number(n) || 0);
+    const key = `tinyd6.plural.${kind}.${form}`;
+    const w = game.i18n.localize(key);
+    return w === key ? game.i18n.localize(`tinyd6.plural.${kind}.many`) : w;
+}
+
+/* Склонение слова «раунд» по числу (таймер смерти). */
+export function roundsWord(n) { return _pluralWord("round", n); }
+
+/* Склонение слова «ход» по числу (сообщения таймера). */
+export function turnsWord(n) { return _pluralWord("turn", n); }
+
+/* Кубик спасброска героя: персональное поле листа (d4–d10) или d6. */
+function _deathDie(actor) {
+    const hb = String(actor?.system?.homebrew?.deathDie ?? "").trim();
+    return /^d[0-9]+$/.test(hb) ? hb : "1d6";
+}
+
+/* Порог спасброска: персональное поле героя, иначе настройка мира. */
+function _deathThreshold(actor) {
+    const hb = Number(actor?.system?.homebrew?.deathSaveThreshold);
+    if (!Number.isNaN(hb) && hb > 0) return hb;
+    return Number(game.settings.get('tinyd6v14', 'deathSaveThreshold')) || 4;
+}
+
+/* «Раунды до смерти»: персональное поле героя (если заполнено) или
+ * настройка мира. Принимает и число (3), и формулу (1d6+2, 2d5) —
+ * формула кидается один раз при падении HP в 0. Возвращает итог. */
+async function _resolveDeathRounds(actor) {
+    const hb = String(actor?.system?.homebrew?.deathRounds ?? "").trim();
+    const world = String(game.settings.get('tinyd6v14', 'deathRounds') ?? "3").trim() || "3";
+    const raw = hb || world;
+    if (/^\s*-?\d+\s*$/.test(raw)) return { total: Math.max(1, Number(raw)), formula: null };
+    try {
+        const roll = await new Roll(raw, {}).evaluate();
+        return { total: Math.max(1, roll.total), formula: raw };
+    } catch (err) {
+        return { total: 3, formula: null };
+    }
+}
+
+/* Предложение-результат карточки смерти: имя персонажа + локализованный текст.
+ * Успех — стабилизирован; провал — умирает, без помощи умрёт через N раундов. */
+function _deathSentence(actor, success, rounds) {
+    const name = `<b>${actor.name}</b>`;
+    if (success)
+    {
+        return `<span class="death-mini-text">${name} ${game.i18n.localize("tinyd6.death.stabilizedRest")}</span>`;
+    }
+    const word = roundsWord(rounds);
+    return `<span class="death-mini-text">${name} ${game.i18n.format("tinyd6.death.dyingRest", { n: rounds, word })}</span>`;
 }
 
 async function _clearAll(actor) {
@@ -115,9 +185,14 @@ export async function handleZeroHp(actor) {
     }
 
     // Герой / важный NPC: «потеря сознания» + спасбросок смерти.
-    const rounds = Number(game.settings.get('tinyd6v14', 'deathRounds')) || 3;
-    const threshold = Number(game.settings.get('tinyd6v14', 'deathSaveThreshold')) || 4;
-    const roll = await new Roll("1d6", {}).evaluate();
+    // Количество раундов и кубик/порог задаются в настройках мира и листа
+    // героя; «раунды» могут быть формулой (1d6+2, 2d5) — она кидается один
+    // раз при падении HP в 0, чтобы каждое падение давало разный срок.
+    const roundsRes = await _resolveDeathRounds(actor);
+    const rounds = roundsRes.total;
+    const threshold = _deathThreshold(actor);
+    const dieFormula = _deathDie(actor);
+    const roll = await new Roll(dieFormula, {}).evaluate();
     const success = roll.total >= threshold;
 
     // Счётчик ставится с момента обнуления: при успехе (стабилизация) — 0,
@@ -137,8 +212,8 @@ export async function handleZeroHp(actor) {
         speaker,
         flavor: game.i18n.localize("tinyd6.death.thrown") + " — " + game.i18n.localize("tinyd6.death.self"),
         content: success
-            ? `<div class="tinyd6 death-mini stable"><span class="death-mini-icon"><i class="fas ${_dieFace(roll.total)}"></i></span><div class="death-mini-body"><span class="death-mini-title">${game.i18n.localize("tinyd6.death.stabilized")}</span><span class="death-mini-sub">${game.i18n.localize("tinyd6.death.stabilizedHint")}</span></div></div>`
-            : `<div class="tinyd6 death-mini dying"><span class="death-mini-icon"><i class="fas ${_dieFace(roll.total)}"></i></span><div class="death-mini-body"><span class="death-mini-title">${game.i18n.localize("tinyd6.death.dying")}</span><span class="death-mini-sub">${game.i18n.localize("tinyd6.death.dyingHint").replace("{rounds}", rounds)}</span></div></div>`,
+            ? `<div class="tinyd6 death-mini stable"><span class="death-mini-icon"><i class="fas ${_deathRollIcon(dieFormula, roll.total)}"></i></span><div class="death-mini-body"><span class="death-mini-title">${game.i18n.localize("tinyd6.death.stabilized")}</span>${_deathSentence(actor, true)}</div></div>`
+            : `<div class="tinyd6 death-mini dying"><span class="death-mini-icon"><i class="fas ${_deathRollIcon(dieFormula, roll.total)}"></i></span><div class="death-mini-body"><span class="death-mini-title">${game.i18n.localize("tinyd6.death.dying")}</span>${_deathSentence(actor, false, rounds)}</div></div>`,
         rolls: [roll]
     });
 }
@@ -161,7 +236,7 @@ export async function tickDeathTimers(combat) {
     if (next > 0)
     {
         await actor.update({ "system.death.roundsLeft": next }, { render: false });
-        const text = game.i18n.format("tinyd6.death.turnsLeft", { actor: actor.name, n: next });
+        const text = game.i18n.format("tinyd6.death.turnsLeft", { actor: actor.name, n: next, word: turnsWord(next) });
         ChatMessage.create({
             speaker: ChatMessage.getSpeaker({ actor }),
             content: `<div class="tinyd6 death-stub death-timer">${text}</div>`
@@ -301,9 +376,11 @@ export async function rollStabilize(stabilizer, target, dice = 2) {
     const speaker = ChatMessage.getSpeaker({ actor: stabilizer });
     const flavor = `${game.i18n.localize("tinyd6.stabilize.thrown")} — ${game.i18n.localize("tinyd6.stabilize.target")} ${actor.name}`;
     const facesHtml = faces.map(f => `<span class="death-mini-icon mini"><i class="fas ${f}"></i></span>`).join("");
+    const failRounds = Number(actor.system?.death?.roundsLeft) || 3;
+    const rollsHtml = facesHtml ? `<div class="death-mini-rolls">${facesHtml}</div>` : "";
     const content = success
-        ? `<div class="tinyd6 death-mini stable"><div class="death-mini-icon"><i class="fas fa-kit-medical"></i></div><div class="death-mini-body"><span class="death-mini-title">${game.i18n.localize("tinyd6.stabilize.success")}</span><span class="death-mini-sub">${actor.name} — ${game.i18n.localize("tinyd6.death.stabilizedHint")}</span></div><div class="death-mini-rolls">${facesHtml}</div></div>`
-        : `<div class="tinyd6 death-mini dying"><div class="death-mini-icon"><i class="fas fa-skull-crossbones"></i></div><div class="death-mini-body"><span class="death-mini-title">${game.i18n.localize("tinyd6.stabilize.fail")}</span><span class="death-mini-sub">${actor.name} — ${game.i18n.localize("tinyd6.death.dyingHint").replace("{rounds}", Number(actor.system?.death?.roundsLeft) || 0)}</span></div><div class="death-mini-rolls">${facesHtml}</div></div>`;
+        ? `<div class="tinyd6 death-mini stable"><div class="death-mini-icon">${iconSvg("kit-medical")}</div><div class="death-mini-body">${_deathSentence(actor, true)}${rollsHtml}</div></div>`
+        : `<div class="tinyd6 death-mini dying"><div class="death-mini-icon">${iconSvg("skull-crossbones")}</div><div class="death-mini-body">${_deathSentence(actor, false, failRounds)}${rollsHtml}</div></div>`;
 
     await ChatMessage.create({
         speaker,
@@ -340,8 +417,8 @@ async function _postStabilizeConfirmation(stabilizer, target, { success, roll, f
         data-stab-target='${_stabJsonAttr(_extractTokenRefStab(target))}'
         data-stab-success="${success ? "true" : "false"}">
         <div class="death-mini-body">
-            <span class="death-mini-title">${success ? game.i18n.localize("tinyd6.stabilize.thrown") + " — " + game.i18n.localize("tinyd6.stabilize.success") : game.i18n.localize("tinyd6.stabilize.thrown") + " — " + game.i18n.localize("tinyd6.stabilize.fail")}</span>
-            <span class="death-mini-sub"><b>${stabilizer.name}</b> — <b>${actor.name}</b></span>
+            <span class="death-mini-title">${success ? game.i18n.localize("tinyd6.stabilize.success") : game.i18n.localize("tinyd6.stabilize.fail")}</span>
+            <span class="death-mini-sub"><b>${stabilizer.name}</b> → <b>${actor.name}</b></span>
             ${facesHtml ? `<div class="death-mini-rolls">${facesHtml}</div>` : ""}
             <button type="button" class="stab-apply" data-action="confirm-stabilize">${game.i18n.localize("tinyd6.stabilize.applyConfirm")}</button>
         </div>
@@ -374,9 +451,10 @@ export async function applyStabilizeRefs({ targetRef, success }) {
 
     const speaker = ChatMessage.getSpeaker({ actor });
     const flavor = game.i18n.localize("tinyd6.stabilize.thrown");
+    const failRounds = Number(actor.system?.death?.roundsLeft) || 3;
     const content = success
-        ? `<div class="tinyd6 death-mini stable"><div class="death-mini-icon"><i class="fas fa-kit-medical"></i></div><div class="death-mini-body"><span class="death-mini-title">${game.i18n.localize("tinyd6.stabilize.success")}</span><span class="death-mini-sub">${actor.name} — ${game.i18n.localize("tinyd6.death.stabilizedHint")}</span></div></div>`
-        : `<div class="tinyd6 death-mini dying"><div class="death-mini-icon"><i class="fas fa-skull-crossbones"></i></div><div class="death-mini-body"><span class="death-mini-title">${game.i18n.localize("tinyd6.stabilize.fail")}</span><span class="death-mini-sub">${actor.name} — ${game.i18n.localize("tinyd6.death.dyingHint").replace("{rounds}", Number(game.settings.get('tinyd6v14', 'deathRounds')) || 3)}</span></div></div>`;
+        ? `<div class="tinyd6 death-mini stable"><div class="death-mini-icon">${iconSvg("kit-medical")}</div><div class="death-mini-body">${_deathSentence(actor, true)}</div></div>`
+        : `<div class="tinyd6 death-mini dying"><div class="death-mini-icon">${iconSvg("skull-crossbones")}</div><div class="death-mini-body">${_deathSentence(actor, false, failRounds)}</div></div>`;
 
     await ChatMessage.create({ speaker, flavor, content });
     return { ok: true, success, actor };

@@ -1,199 +1,254 @@
-﻿<form class="actor-sheet {{cssClass}}" autocomplete="off">
+﻿<form class="actor-sheet {{classes}}" autocomplete="off">
     <div class="td-hero-head">
+        <div class="td-avatar"><img src="{{actor.img}}" data-edit="img" title="{{actor.name}}" alt=""/></div>
         <div class="td-who">
-            <h1>{{actor.name}}</h1>
-            <div class="td-sub">{{localize "tinyd6.actor.npc"}}</div>
-            <label class="important-npc">
-                <input type="checkbox" name="system.important" {{checked data.system.important}}/>
-                {{localize "tinyd6.actor.important"}}
-            </label>
+            <input class="npc-name-input" type="text" name="name" value="{{actor.name}}" data-edit="name"/>
+            <div class="td-sub">{{#if data.system.important}}Important NPC{{/if}}</div>
+            <label class="important-npc"><input type="checkbox" name="system.important" {{checked data.system.important}}/> {{localize 'tinyd6.actor.important'}}</label>
         </div>
         <div class="td-stats">
+            <div class="td-stat">
+                <div class="n">
+                    <input class="inline-num wounds-input" type="number" min="0" name="system.wounds.value" value="{{data.system.wounds.value}}"/>
+                    <span class="inline-sep">/</span>
+                    <input class="inline-num wounds-input" type="number" min="0" name="system.wounds.max" value="{{data.system.wounds.max}}"/>
+                </div>
+                <div class="c">{{localize 'tinyd6.sheet.wounds'}}</div>
+            </div>
+            <div class="td-stat"><div class="n">{{data.system.armorTotal}}</div><div class="c">{{localize 'tinyd6.sheet.armor'}}</div></div>
+            <div class="npc-proficiencies">
+                <label class="npc-prof {{#if data.system.proficiencies.lightMelee}}active{{/if}}" title="{{localize 'tinyd6.weapon.lightMelee'}}"><input type="checkbox" name="system.proficiencies.lightMelee" {{checked data.system.proficiencies.lightMelee}}/>LM</label>
+                <label class="npc-prof {{#if data.system.proficiencies.heavyMelee}}active{{/if}}" title="{{localize 'tinyd6.weapon.heavyMelee'}}"><input type="checkbox" name="system.proficiencies.heavyMelee" {{checked data.system.proficiencies.heavyMelee}}/>HM</label>
+                <label class="npc-prof {{#if data.system.proficiencies.lightRanged}}active{{/if}}" title="{{localize 'tinyd6.weapon.lightRanged'}}"><input type="checkbox" name="system.proficiencies.lightRanged" {{checked data.system.proficiencies.lightRanged}}/>LR</label>
+                <label class="npc-prof {{#if data.system.proficiencies.heavyRanged}}active{{/if}}" title="{{localize 'tinyd6.weapon.heavyRanged'}}"><input type="checkbox" name="system.proficiencies.heavyRanged" {{checked data.system.proficiencies.heavyRanged}}/>HR</label>
+            </div>
             {{> "systems/tinyd6v14/templates/partials/action-tracker.hbs"}}
-            <div class="td-stat"><div class="n" data-live="wounds">{{data.system.wounds.value}}/{{data.system.wounds.max}}</div><div class="c">{{localize "tinyd6.sheet.wounds"}}</div></div>
         </div>
     </div>
 
-    <section class="character">
-        <div class="row">
-            <div class="col npc-col">
-                <div class="name property d-flex justify-content-between border-bottom">
-                    <label><span>{{localize "tinyd6.actor.name"}}</span></label>
-                    <input name="name" type="text" class="text-right" value="{{actor.name}}" placeholder="{{localize "tinyd6.actor.name"}}"/>
-                </div>
-                <div class="description property">
-                    <label class="border-bottom"><span>{{localize "tinyd6.actor.description"}}</span></label>
-                    {{editor descriptionHTML target="system.description" button=true owner=owner editable=editable}}
-                </div>
+    {{#if owner}}
+        {{> "systems/tinyd6v14/templates/partials/roll-bar.hbs" flexClass=""}}
+    {{/if}}
 
-                <section class="trauma">
-                    <div class="d-flex justify-content-between">
-                        <h2 class="section-header">{{localize "tinyd6.actor.wounds.header"}}</h2>
-                        <span class="d-flex justify-content-end ml-auto">
-                            <span class="mr-2">{{localize "tinyd6.actor.wounds.max"}}</span>
-                            {{#if owner}}
-                                <input name="system.wounds.max" type="text" class="mx-2" style="width: 10%;"
-                                       value="{{data.system.wounds.max}}" dType="Number"/>
-                            {{^}}
-                                <span>{{data.system.wounds.max}}</span>
-                            {{/if}}
-                        </span>
-                    </div>
-                    <div class="health-meter">
-                        {{#times data.system.wounds.max}}
-                            <input type="checkbox" value="1" class="health-box d-inline-block"
-                                   {{#if (lt . ../data.system.wounds.value)}}checked{{/if}} />
-                        {{/times}}
-                    </div>
-                    {{#if owner}}
-                        <p class="help">{{localize "tinyd6.actor.wounds.help"}}</p>
-                    {{/if}}
-                    {{#if config.enableTinyD6Plus}}
-                    <div class="stab-action">
-                        <div class="icon"><i class="fas fa-kit-medical"></i></div>
-                        <div class="stab-action-body">
-                            <div class="t">{{localize "tinyd6.stabilize.title"}}</div>
-                            <div class="d">{{localize "tinyd6.stabilize.sheetHint"}}</div>
-                        </div>
-                        <button type="button" class="stab-btn" data-action="stabilize">
-                            <i class="fas fa-burst"></i> {{localize "tinyd6.stabilize.title"}}
-                        </button>
-                    </div>
-                    {{/if}}
-                </section>
-            </div>
-            <div class="col-4 npc-side text-center">
-                <div>
-                    <img src="{{actor.img}}" data-edit="img" title="{{actor.name}}" class="character-art img-fluid"/>
-                </div>
-                <div class="stat-values">
-                    {{#if config.enableCorruption}}
-                        <div class="corruption-test property">
-                            <label class="border-bottom d-flex justify-content-between">
-                                <span>{{localize "tinyd6.actor.corruption.test"}}</span>
-                            </label>
-                            <select name="system.corruptionTest" class="w-100">
-                                {{selectOptions config.corruptionTests selected=data.system.corruptionTest localize="true"}}
-                            </select>
-                        </div>
-                    {{/if}}
+    <div class="td-pane active">
 
-                    <section class="traits property standalone">
-                        <div>
-                            <span class="float-right">
-                                <a class="item-add" data-type="trait">
-                                    <span class="fas fa-plus"></span>
-                                </a>
-                            </span>
-                            <label class="border-bottom d-flex justify-content-between">
-                                <span>{{localize "tinyd6.actor.traits"}}</span>
-                            </label>
-                        </div>
-                        <ul class="actor-items px-0">
-                            {{#each data.system.traits as |trait id|}}
-                                {{> "systems/tinyd6v14/templates/partials/trait-block.hbs" trait}}
-                            {{/each}}
-                        </ul>
-                    </section>
-                </div>
-            </div>
-        </div>
-
-        <div class="npc-bottom">
-            <div class="npc-profs">
-                <section class="proficiencies">
-                    <h2 class="section-header">{{localize "tinyd6.sheet.weaponProficiency"}}</h2>
-                    <div class="d-flex justify-content-start">
-                        <div class="light mr-4">
-                            <label>
-                                <input type="checkbox" name="system.proficiencies.lightMelee" {{checked data.system.proficiencies.lightMelee}}/>
-                                {{localize "tinyd6.weapon.lightMelee"}}
-                            </label>
-                        </div>
-                        <div class="heavy mr-4">
-                            <label>
-                                <input type="checkbox" name="system.proficiencies.heavyMelee" {{checked data.system.proficiencies.heavyMelee}}/>
-                                {{localize "tinyd6.weapon.heavyMelee"}}
-                            </label>
-                        </div>
-                        <div class="ranged mr-4">
-                            <label>
-                                <input type="checkbox" name="system.proficiencies.lightRanged" {{checked data.system.proficiencies.lightRanged}}/>
-                                {{localize "tinyd6.weapon.lightRanged"}}
-                            </label>
-                        </div>
-                        <div class="ranged mr-4">
-                            <label>
-                                <input type="checkbox" name="system.proficiencies.heavyRanged" {{checked data.system.proficiencies.heavyRanged}}/>
-                                {{localize "tinyd6.weapon.heavyRanged"}}
-                            </label>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-start mt-2">
-                        <label class="mr-2"><h3 class="section-header">{{localize "tinyd6.actor.proficiencies.mastered"}}</h3></label>
-                            <button type="button" class="mastered-weapon-picker" data-action="openMasteredWeaponSelector">
-                                {{#if data.system.masteredWeaponName}}
-                                    {{data.system.masteredWeaponName}}
-                                {{else}}
-                                    {{localize "tinyd6.sheet.none"}}
+        <!-- Preferred Weapons -->
+        <section class="npc-preferred">
+            <h2 class="floating-header">{{localize 'tinyd6.actor.preferredWeapons'}}</h2>
+            <div class="npc-preferred-grid">
+                {{#each data.system.preferredWeapons as |weapon id|}}
+                    <div class="npc-preferred-slot" data-preferred-id="{{weapon._id}}">
+                        <img class="npc-preferred-img" src="{{weapon.img}}" alt=""/>
+                        <div class="npc-preferred-body">
+                            <div class="npc-preferred-name">{{weapon.name}}</div>
+                            <div class="npc-preferred-stats">
+                                {{weapon.system.damage}}d6
+                                {{#if (or (eq weapon.system.damageType 'light') (eq weapon.system.weaponType 'lightMelee') (eq weapon.system.weaponType 'lightRanged'))}}
+                                    <span class="inv-row-tag">L</span>
+                                {{else if (or (eq weapon.system.damageType 'heavy') (eq weapon.system.weaponType 'heavyMelee') (eq weapon.system.weaponType 'heavyRanged'))}}
+                                    <span class="inv-row-tag">H</span>
                                 {{/if}}
-                            </button>
+                            </div>
+                        </div>
+                        <div class="npc-preferred-actions">
+                            <a class="npc-pref-btn attack" title="{{localize 'tinyd6.attack.attack'}}" data-weapon-id="{{weapon._id}}"><i class="fas fa-crosshairs"></i></a>
+                            {{#if weapon.system.reload}}
+                                <a class="npc-pref-btn weapon-reload" title="{{localize 'tinyd6.Reload'}}" data-weapon-id="{{weapon._id}}"><i class="fas fa-rotate"></i></a>
+                            {{/if}}
+                            <a class="npc-pref-btn npc-remove-preferred" title="{{localize 'tinyd6.actor.removePreferred'}}" data-preferred-id="{{weapon._id}}"><i class="fas fa-xmark"></i></a>
+                        </div>
                     </div>
-                </section>
+                {{/each}}
+                <div class="npc-preferred-slot empty npc-add-preferred">
+                    <i class="fas fa-plus"></i> {{localize 'tinyd6.actor.noPreferredWeapons'}}
+                </div>
             </div>
-            <div class="npc-gear">
-                <section class="inventory">
-                    <h2 class="floating-header">{{localize "tinyd6.actor.gear"}}</h2>
-                    <section class="equipment">
-                        <div class="row">
-                            <div class="col">
-                                {{#each data.system.weapons as |weapon id|}}
-                                    <div class="equipped-weapon">
-                                        <div class="d-flex align-items-center">
-                                            <h3 class="weapon-name">{{weapon.name}}</h3>
-                                            <a class="weapon-attack ml-2" title="{{localize "tinyd6.attack.attack"}}" data-weapon-id="{{weapon._id}}"><i class="fas fa-crosshairs"></i></a>
-                                            {{#if weapon.system.reload}}
-                                                <span class="weapon-charges {{#if (eq weapon.system.charges 0)}}empty{{/if}}">
-                                                    {{weapon.system.charges}}/{{weapon.system.uses}}
-                                                </span>
-                                                <a class="weapon-reload ml-1" title="{{localize "tinyd6.reload.reloadBtn"}}" data-weapon-id="{{weapon._id}}"><i class="fas fa-undo-alt"></i></a>
-                                            {{/if}}
-                                            {{#if (or (eq weapon.system.damageType "light") (eq weapon.system.weaponType "lightMelee") (eq weapon.system.weaponType "lightRanged"))}}
-                                                <label class="light ml-auto">{{localize "tinyd6.weapon.lightShort"}}</label>
-                                            {{else if (or (eq weapon.system.damageType "heavy") (eq weapon.system.weaponType "heavyMelee") (eq weapon.system.weaponType "heavyRanged"))}}
-                                                <label class="heavy ml-auto">{{localize "tinyd6.weapon.heavyShort"}}</label>
-                                            {{/if}}
-                                        </div>
-                                    </div>
-                                {{/each}}
-                            </div>
-                            <div class="col-4 equipped-armor">
-                                <div class="total-armor">{{data.system.armorTotal}}</div>
-                                <div class="armor-hprow">
-                                    <input class="armor-hp-input" type="number" min="0" value="{{data.system.armorHpTotal}}" title="{{localize "tinyd6.armor.armorHp"}}"/>
-                                    <button type="button" class="armor-restore" data-tooltip="TINYD6.ArmorRestore" data-tooltip-direction="UP">
-                                        <i class="fas fa-arrows-rotate"></i>
-                                    </button>
-                                </div>
-                                <div class="armor-names">
-                                    {{#each data.system.armor as |armor id|}}
-                                        <span class="armor-name">{{armor.name}}</span>
-                                    {{/each}}
-                                    {{#unless data.system.armor}}<span class="armor-name">{{localize "tinyd6.armor.none"}}</span>{{/unless}}
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+        </section>
 
-                    <section class="owned-items">
-                        <div class="row">
-                            {{#each data.system.gear as |gearItem id|}}
-                                {{> "systems/tinyd6v14/templates/partials/inventory-card.hbs" gearItem=gearItem tagName="div" classes="col-4" }}
-                            {{/each}}
-                        </div>
-                    </section>
-                </section>
+        <!-- Weapons -->
+        <section class="inventory-weapons inv-collapsible">
+            <div class="inv-section-toggle" data-section="weapons">
+                <span class="arrow">&#9660;</span> {{localize 'tinyd6.actor.equipment'}}
+                <span class="inv-section-count">{{data.system.weapons.length}}</span>
             </div>
-        </div>
-    </section>
+            <div class="inv-section-body">
+                {{#each data.system.weapons as |weapon id|}}
+                    <div class="inv-row" data-item-id="{{weapon._id}}">
+                        <img class="inv-row-img" src="{{weapon.img}}" alt=""/>
+                        <span class="inv-row-name">{{weapon.name}}</span>
+                        {{#if weapon.system.reload}}
+                            <span class="inv-row-charges {{#if (eq weapon.system.charges 0)}}empty{{/if}}">
+                                <input class="inline-num" type="number" min="0" max="{{weapon.system.uses}}" value="{{weapon.system.charges}}" data-field="system.charges" data-item-id="{{weapon._id}}"/>
+                                <span class="inline-sep">/</span><span class="inline-max">{{weapon.system.uses}}</span>
+                            </span>
+                            <a class="inv-row-btn weapon-reload" title="{{localize 'tinyd6.Reload'}}" data-weapon-id="{{weapon._id}}"><i class="fas fa-rotate"></i></a>
+                        {{/if}}
+                        {{#if (or (eq weapon.system.damageType 'light') (eq weapon.system.weaponType 'lightMelee') (eq weapon.system.weaponType 'lightRanged'))}}
+                            <span class="inv-row-tag">L</span>
+                        {{else if (or (eq weapon.system.damageType 'heavy') (eq weapon.system.weaponType 'heavyMelee') (eq weapon.system.weaponType 'heavyRanged'))}}
+                            <span class="inv-row-tag">H</span>
+                        {{/if}}
+                        <a class="inv-row-btn attack" title="{{localize 'tinyd6.attack.attack'}}" data-weapon-id="{{weapon._id}}"><i class="fas fa-crosshairs"></i></a>
+                        <a class="inv-row-btn item-show" title="{{weapon.name}}" data-item-id="{{weapon._id}}"><i class="fas fa-pen-to-square"></i></a>
+                        <a class="inv-row-btn delete" title="{{localize 'tinyd6.sheet.delete'}}" data-item-id="{{weapon._id}}"><i class="fas fa-trash"></i></a>
+                    </div>
+                {{/each}}
+                {{#if owner}}
+                <button type="button" class="npc-add-ammo"><i class="fas fa-plus"></i> {{localize 'tinyd6.actor.addAmmo'}}</button>
+                {{/if}}
+            </div>
+        </section>
+
+        <!-- Armor + Shields -->
+        <section class="inventory-armor inv-collapsible">
+            <div class="inv-section-toggle" data-section="armor">
+                <span class="arrow">&#9660;</span> {{localize 'tinyd6.armor.armor'}}
+                <span class="inv-section-count">{{add data.system.armor.length data.system.shields.length}}</span>
+            </div>
+            <div class="inv-section-body">
+                <div class="inv-armor-wrap">
+                    <div class="inv-armor-list">
+                        {{#each data.system.armor as |armor id|}}
+                            <div class="inv-row" data-item-id="{{armor._id}}">
+                                <img class="inv-row-img" src="{{armor.img}}" alt=""/>
+                                <span class="inv-row-name">{{armor.name}}</span>
+                                <span class="inv-row-stats">DR:{{armor.system.damageReduction}}</span>
+                                {{#if armor.system.armorHp}}
+                                    <span class="inv-row-charges {{#if (eq armor.system.armorHp.value 0)}}empty{{/if}}">
+                                        <input class="inline-num" type="number" min="0" max="{{armor.system.armorHp.max}}" value="{{armor.system.armorHp.value}}" data-field="system.armorHp.value" data-item-id="{{armor._id}}"/>
+                                        <span class="inline-sep">/</span><span class="inline-max">{{armor.system.armorHp.max}}</span>
+                                    </span>
+                                {{/if}}
+                                <a class="inv-row-btn delete" title="{{localize 'tinyd6.sheet.delete'}}" data-item-id="{{armor._id}}"><i class="fas fa-trash"></i></a>
+                            </div>
+                        {{/each}}
+                        {{#each data.system.shields as |shield id|}}
+                            <div class="inv-row inv-row-shield" data-item-id="{{shield._id}}">
+                                <img class="inv-row-img" src="{{shield.img}}" alt=""/>
+                                <span class="inv-row-name">{{shield.name}}</span>
+                                <span class="inv-row-stats">DR:{{shield.system.damageReduction}}</span>
+                                <span class="inv-row-charges {{#if (eq shield.system.armorHp.value 0)}}empty{{/if}}">
+                                    <input class="inline-num" type="number" min="0" max="{{shield.system.armorHp.max}}" value="{{shield.system.armorHp.value}}" data-field="system.armorHp.value" data-item-id="{{shield._id}}"/>
+                                    <span class="inline-sep">/</span><span class="inline-max">{{shield.system.armorHp.max}}</span>
+                                </span>
+                                <a class="inv-row-btn delete" title="{{localize 'tinyd6.sheet.delete'}}" data-item-id="{{shield._id}}"><i class="fas fa-trash"></i></a>
+                            </div>
+                        {{/each}}
+                        {{#unless data.system.armor}}
+                            {{#unless data.system.shields}}
+                                <div class="inv-empty">{{localize 'tinyd6.armor.none'}}</div>
+                            {{/unless}}
+                        {{/unless}}
+                    </div>
+                    <div class="inv-armor-block">
+                        <div class="total-armor">{{data.system.armorTotal}}</div>
+                        <div class="armor-hprow">
+                            <input class="armor-hp-input" type="number" min="0" value="{{data.system.armorHpTotal}}" title="{{localize 'tinyd6.armor.armorHp'}}"/>
+                            <button type="button" class="armor-restore" data-tooltip="TINYD6.ArmorRestore" data-tooltip-direction="UP">
+                                <i class="fas fa-arrows-rotate"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Inventory: Currency + Gear -->
+        <section class="npc-inventory">
+            <h2 class="floating-header">{{localize 'tinyd6.actor.gear'}}</h2>
+
+            <!-- Currency -->
+            <section class="inventory-currency inv-collapsible">
+                <div class="inv-section-toggle" data-section="currency">
+                    <span class="arrow">&#9660;</span> {{localize 'tinyd6.actor.money'}}
+                </div>
+                <div class="inv-section-body">
+                    <div class="inv-currency-wrap count-{{data.system.currencies.length}}">
+                        {{#each data.system.currencies as |currency id|}}
+                            <div class="inv-currency-item" data-item-id="{{currency._id}}">
+                                <img class="inv-currency-img" src="{{currency.img}}" alt=""/>
+                                <span class="inv-currency-name">{{currency.name}}</span>
+                                <input class="currency-input" type="number" min="0" value="{{currency.system.quantity.value}}" data-field="system.quantity.value" data-item-id="{{currency._id}}"/>
+                                <a class="inv-row-btn delete" title="{{localize 'tinyd6.sheet.delete'}}" data-item-id="{{currency._id}}"><i class="fas fa-xmark"></i></a>
+                            </div>
+                        {{/each}}
+                        {{#unless data.system.currencies}}
+                            <div class="inv-empty">{{localize 'tinyd6.actor.noMoney'}}</div>
+                        {{/unless}}
+                    </div>
+                </div>
+            </section>
+
+            <hr class="divider">
+
+            <!-- Gear (ammo, potions, misc) -->
+            <section class="inventory-gear inv-collapsible">
+                <div class="inv-section-toggle" data-section="gear">
+                    <span class="arrow">&#9660;</span> {{localize 'tinyd6.actor.gear'}}
+                    <span class="inv-section-count">{{data.system.nonMoneyGear.length}}</span>
+                </div>
+                <div class="inv-section-body">
+                    <div class="inv-gear-grid">
+                        {{#each data.system.nonMoneyGear as |gearItem id|}}
+                            {{#if (or (eq gearItem.type "weapon") (eq gearItem.type "armor"))}}
+                                <div class="inv-row" data-item-id="{{gearItem._id}}">
+                                    <img class="inv-row-img" src="{{gearItem.img}}" alt=""/>
+                                    <span class="inv-row-name">{{gearItem.name}}</span>
+                                    <a class="inv-row-btn item-equip" title="{{localize 'tinyd6.actor.equipped'}}" data-item-id="{{gearItem._id}}"><i class="fas fa-arrow-right-to-bracket"></i></a>
+                                    <a class="inv-row-btn delete" title="{{localize 'tinyd6.sheet.delete'}}" data-item-id="{{gearItem._id}}"><i class="fas fa-xmark"></i></a>
+                                </div>
+                            {{else}}
+                                {{#if (eq gearItem.system.category "heal")}}
+                                    <div class="inv-row heal-row {{#if (eq gearItem.system.quantity.value 0)}}zero-qty{{/if}}" data-item-id="{{gearItem._id}}">
+                                        <img class="inv-row-img" src="{{gearItem.img}}" alt=""/>
+                                        <span class="inv-row-name {{#if (eq gearItem.system.quantity.value 0)}}strikethrough{{/if}}">{{gearItem.name}}</span>
+                                        <span class="heal-badge" title="{{localize 'tinyd6.gear.heal'}}">{{gearItem.system.heal}}</span>
+                                        <span class="inv-row-qty">
+                                            <input class="inline-num" type="number" min="0" value="{{gearItem.system.quantity.value}}" data-field="system.quantity.value" data-item-id="{{gearItem._id}}"/>
+                                        </span>
+                                        <a class="inv-row-btn delete" title="{{localize 'tinyd6.sheet.delete'}}" data-item-id="{{gearItem._id}}"><i class="fas fa-xmark"></i></a>
+                                    </div>
+                                {{else}}
+                                    <div class="inv-row {{#if (eq gearItem.system.quantity.value 0)}}zero-qty{{/if}}" data-item-id="{{gearItem._id}}">
+                                        <img class="inv-row-img" src="{{gearItem.img}}" alt=""/>
+                                        <span class="inv-row-name {{#if (eq gearItem.system.quantity.value 0)}}strikethrough{{/if}}">{{gearItem.name}}</span>
+                                        <span class="inv-row-qty">
+                                            <input class="inline-num" type="number" min="0" value="{{gearItem.system.quantity.value}}" data-field="system.quantity.value" data-item-id="{{gearItem._id}}"/>
+                                        </span>
+                                        <a class="inv-row-btn delete" title="{{localize 'tinyd6.sheet.delete'}}" data-item-id="{{gearItem._id}}"><i class="fas fa-xmark"></i></a>
+                                    </div>
+                                {{/if}}
+                            {{/if}}
+                        {{/each}}
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <!-- Traits -->
+        <section class="npc-traits">
+            <h2 class="floating-header">{{localize 'tinyd6.actor.traits'}}</h2>
+            <div class="floating-action">
+                {{#if owner}}
+                    <a class="item-add" data-type="trait">
+                        <span class="fas fa-plus"></span>
+                    </a>
+                {{/if}}
+            </div>
+            <ul class="actor-items px-0">
+                {{#each data.system.traits as |trait id|}}
+                    {{> "systems/tinyd6v14/templates/partials/trait-block.hbs" trait}}
+                {{/each}}
+            </ul>
+        </section>
+
+        <!-- Description / Notes -->
+        <section class="npc-description">
+            <h2 class="floating-header">{{localize 'tinyd6.actor.description'}}</h2>
+            <div class="editor-fields">
+                {{editor descriptionHTML target="system.description" button=true owner=owner editable=editable}}
+            </div>
+        </section>
+
+    </div>
 </form>

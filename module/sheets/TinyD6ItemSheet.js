@@ -8,7 +8,8 @@ export default class TinyD6ItemSheet extends ItemSheet {
     }
 
     get template() {
-        return `systems/tinyd6v14/templates/sheets/${this.document.type}-sheet.hbs`;
+        const type = this.document.type === "shield" ? "armor" : this.document.type;
+        return `systems/tinyd6v14/templates/sheets/${type}-sheet.hbs`;
     }
 
     async getData() {

@@ -1,5 +1,23 @@
 {
     "tinyd6": {
+        "mech": {
+            "sheet": "Sheet",
+            "mechanics": "Settings",
+            "actions": "Actions",
+            "actionsMax": "Max Actions",
+            "woundsMax": "Max Wounds",
+            "corruptionMax": "Max Corruption",
+            "masteredCount": "Mastered Weapons",
+            "masteredHint": "Number of weapons the hero can master at once (requires the \"Mastered Weapons\" rule).",
+            "death": "Death & Dying",
+            "deathDie": "Death Die",
+            "worldDefault": "d6 (world default)",
+            "deathRounds": "Death Rounds",
+            "deathThreshold": "Death Save Threshold",
+            "emptyWorld": "Leave empty to use the world default.",
+            "damageBonus": "Damage Bonus",
+            "damageBonusHint": "Bonus added to all weapon damage rolls."
+        },
         "TinyD6HeroSheet": "Hero",
         "TinyD6NpcSheet": "NPC",
         "TokenArmor": "Armor",
@@ -37,7 +55,8 @@
                     "default": "Default Dark",
                     "perkament": "Perkament · Folklore",
                     "noir": "Noir · Copper",
-                    "minimal": "Default Light"
+                    "minimal": "Default Light",
+                    "cyberpunk": "Cyberpunk · Neon"
                 }
             },
             "rollerInCharsheet": {
@@ -105,7 +124,7 @@
             },
             "deathRounds": {
                 "name": "Death Save: Rounds to Die",
-                "hint": "Number of combat rounds a Dying character survives before dying if not healed (stock 3)."
+                "hint": "Rounds until death after hitting 0 HP. Enter a number (3) or a die formula rolled when HP drops to 0, e.g. 1d6+2 or 2d5, for a random duration each time."
             },
             "deathSaveThreshold": {
                 "name": "Death Save: Success Threshold",
@@ -150,6 +169,14 @@
             "enableAttackProficiency": {
                 "name": "Auto weapon proficiency",
                 "hint": "TinyD6+: automatically suggests the attack dice based on weapon proficiency (mastered weapon = advantage, untrained = disadvantage). The player can still pick any dice level manually."
+            },
+            "enableArmorStacking": {
+                "name": "Enable armor stacking",
+                "hint": "When enabled, multiple equipped armor pieces stack their DR. When disabled, only the highest DR armor piece applies."
+            },
+            "enableArmorBreakMessages": {
+                "name": "Armor break chat messages",
+                "hint": "Post a chat message when a shield or armor piece breaks (HP reaches 0)."
             }
         },
         "dice": {
@@ -194,6 +221,8 @@
             "wounds": "Wounds",
             "armor": "Armor",
             "corruption": "Corruption",
+            "unequip": "Unequip",
+            "delete": "Delete",
             "xp": "XP",
             "actions": {
                 "name": "Actions",
@@ -278,10 +307,20 @@
                 "mastered": "Mastery"
             },
             "gear": "Inventory",
+            "preferredWeapons": "Preferred Weapons",
+            "noPreferredWeapons": "Click to assign a preferred weapon",
+            "removePreferred": "Remove from preferred",
+            "addAmmo": "Add Ammo",
+            "addAmmoTitle": "Add Ammo",
+            "ammoType": "Ammo Type",
+            "selectWeapon": "Select Weapon",
             "equipped": "Equipped",
+            "equipment": "Weapons",
             "weaponry": "Weaponry",
             "wearing": "Wearing",
             "important": "Important NPC",
+            "money": "Currency",
+            "noMoney": "No currency",
             "actions": {
                 "editTrait": "Edit Trait",
                 "chatTrait": "Share Trait",
@@ -302,7 +341,8 @@
             "none": "",
             "light": "Light",
             "medium": "Medium",
-            "heavy": "Heavy"
+            "heavy": "Heavy",
+            "shield": "Shield"
         },
         "corruptionTests": {
             "none": "None",
@@ -352,10 +392,12 @@
             "self": "own death save",
             "stabilized": "Stabilized",
             "stabilizedHint": "The character is down but alive and stabilized.",
-            "dyingHint": "The character is dying and will die in {rounds} rounds if not healed.",
+            "dyingHint": "The character is dying and will die in {rounds} {word} if not healed.",
             "defeated": "is defeated.",
             "died": "has died.",
-            "turnsLeft": "{actor} will die in {n} turns."
+            "turnsLeft": "{actor} will die in {n} {word}.",
+            "stabilizedRest": "falls, but nothing threatens them anymore.",
+            "dyingRest": "falls and bleeds out. Without aid, death will come in {n} {word}."
         },
         "stabilize": {
             "title": "Stabilize",
@@ -395,7 +437,18 @@
             "slots": "Item Slots",
             "depletion": "Depletion",
             "description": "Description",
-            "none": "No Armor"
+            "none": "No Armor",
+            "armor": "Armor",
+            "shieldBreak": "{actor}'s shield {name} has broken!",
+            "armorBreak": "{actor}'s armor {name} has broken!"
+        },
+        "shield": {
+            "name": "Name",
+            "damageReduction": "DR",
+            "armorHp": "Shield HP",
+            "shields": "Shields",
+            "none": "No Shield",
+            "description": "Description"
         },
         "gear": {
             "name": "Name",
@@ -424,6 +477,20 @@
         "trait": {
             "name": "Name",
             "description": "Description"
+        },
+        "plural": {
+            "round": {
+                "one": "round",
+                "few": "round",
+                "many": "round",
+                "other": "round"
+            },
+            "turn": {
+                "one": "turn",
+                "few": "turns",
+                "many": "turns",
+                "other": "turns"
+            }
         }
     }
 }

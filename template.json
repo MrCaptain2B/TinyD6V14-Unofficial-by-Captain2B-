@@ -11,10 +11,10 @@
           "value": 12,
           "max": 12
         },
-      "actions": {
-        "value": 0,
-        "max": 1
-      },
+        "actions": {
+          "value": 0,
+          "max": 1
+        },
         "traits": {},
         "description": "",
         "death": {
@@ -66,6 +66,7 @@
     "npc": {
       "templates": [ "commonStats", "causesCorruption" ],
       "important": false,
+      "preferredWeapons": [],
       "proficiencies": {
         "lightMelee": false,
         "heavyMelee": false,
@@ -79,6 +80,7 @@
     "types": [
       "weapon",
       "armor",
+      "shield",
       "gear",
       "heritage",
       "trait"
@@ -116,10 +118,20 @@
     },
     "armor": {
       "templates": [ "slots", "itemDescription", "depletion", "proficiencyGroup", "equipment" ],
+      "group": "",
       "damageReduction": 1,
       "armorHp": {
         "value": 3,
         "max": 3
+      }
+    },
+    "shield": {
+      "templates": [ "slots", "itemDescription", "depletion", "equipment" ],
+      "group": "shield",
+      "damageReduction": 1,
+      "armorHp": {
+        "value": 2,
+        "max": 2
       }
     },
     "gear": {

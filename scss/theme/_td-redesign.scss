@@ -37,9 +37,6 @@
     line-height: 1.45;
 }
 
-.tinyd6.sheet.hero form.actor-sheet *,
-.tinyd6.sheet.npc form.actor-sheet * { box-sizing: border-box; }
-
 /* ===== Шапка: полоса без карточки, отделена линией ===== */
 .tinyd6.sheet.hero form.actor-sheet .td-hero-head,
 .tinyd6.sheet.npc form.actor-sheet .td-hero-head {
@@ -122,12 +119,58 @@
     to { opacity: 1; transform: none; }
 }
 
+/* ===== NPC: Имя и HP инпуты ===== */
+.tinyd6.sheet.npc .npc-name-input {
+    background: transparent; border: 0; color: var(--td-strong);
+    font-size: 22px; font-weight: 600; line-height: 1.2;
+    width: 100%; outline: none; font-family: inherit;
+    padding: 0; margin: 0;
+}
+.tinyd6.sheet.npc .npc-name-input:focus {
+    background: var(--td-field); border-radius: 4px;
+}
+.tinyd6.sheet.npc .wounds-input {
+    width: 32px; text-align: center;
+    background: transparent; border: 0;
+    color: var(--td-strong); font-size: 18px; font-weight: 700;
+    font-family: inherit; outline: none; padding: 0; height: auto;
+}
+.tinyd6.sheet.npc .wounds-input:focus {
+    background: var(--td-field); border-radius: 4px;
+}
+.tinyd6.sheet.npc .td-stat .n {
+    display: flex; align-items: center; gap: 2px;
+}
+
+/* NPC: компактные бейджи владения оружием — 2x2 */
+.npc-proficiencies {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2px;
+}
+.npc-prof {
+    width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 8px; font-weight: 700; letter-spacing: .03em;
+    border: 1px solid var(--td-border); border-radius: 4px;
+    color: var(--td-muted); background: var(--td-field);
+    cursor: pointer; transition: all 0.12s;
+    position: relative;
+}
+.npc-prof input { position: absolute; opacity: 0; width: 0; height: 0; }
+.npc-prof.active {
+    color: #fff; background: var(--td-accent); border-color: var(--td-accent);
+}
+.npc-prof:hover {
+    border-color: var(--td-accent); color: var(--td-accent-soft);
+}
+
 /* ===== Ролл-бар: компактный сегментированный тулбар ===== */
-.tinyd6.sheet.hero form.actor-sheet .die-roller {
+.tinyd6.sheet.hero form.actor-sheet .die-roller,
+.tinyd6.sheet.npc form.actor-sheet .die-roller {
     background: transparent; border: 0; border-radius: 0;
     padding: 12px 0 0; margin: 0; gap: 8px;
 }
-.tinyd6.sheet.hero form.actor-sheet .roll-dice {
+.tinyd6.sheet.hero form.actor-sheet .roll-dice,
+.tinyd6.sheet.npc form.actor-sheet .roll-dice {
     flex: 1 1 0; min-width: 0;
     margin: 0 !important; background: var(--td-field);
     border: 1px solid var(--td-border); border-radius: 7px;
@@ -136,24 +179,32 @@
     display: inline-flex; align-items: center; justify-content: center; gap: 8px;
     white-space: nowrap;
 }
-.tinyd6.sheet.hero form.actor-sheet .roll-dice:hover {
+.tinyd6.sheet.hero form.actor-sheet .roll-dice:hover,
+.tinyd6.sheet.npc form.actor-sheet .roll-dice:hover {
     background: var(--td-accent); border-color: var(--td-accent); color: #fff;
     box-shadow: none;
 }
 .tinyd6.sheet.hero form.actor-sheet .roll-dice i.fas,
-.tinyd6.sheet.hero form.actor-sheet .roll-dice .fas {
+.tinyd6.sheet.hero form.actor-sheet .roll-dice .fas,
+.tinyd6.sheet.npc form.actor-sheet .roll-dice i.fas,
+.tinyd6.sheet.npc form.actor-sheet .roll-dice .fas {
     width: 18px; height: 18px; font-size: 11px;
     display: inline-flex; align-items: center; justify-content: center;
     background: var(--td-hover); border-radius: 5px;
 }
 .tinyd6.sheet.hero form.actor-sheet .roll-dice:hover i.fas,
-.tinyd6.sheet.hero form.actor-sheet .roll-dice:hover .fas { background: rgba(255,255,255,.2); }
-.tinyd6.sheet.hero form.actor-sheet .action-modifiers { padding: 8px 0 0; margin: 0; }
-.tinyd6.sheet.hero form.actor-sheet .action-modifiers label {
+.tinyd6.sheet.hero form.actor-sheet .roll-dice:hover .fas,
+.tinyd6.sheet.npc form.actor-sheet .roll-dice:hover i.fas,
+.tinyd6.sheet.npc form.actor-sheet .roll-dice:hover .fas { background: rgba(255,255,255,.2); }
+.tinyd6.sheet.hero form.actor-sheet .action-modifiers,
+.tinyd6.sheet.npc form.actor-sheet .action-modifiers { padding: 8px 0 0; margin: 0; }
+.tinyd6.sheet.hero form.actor-sheet .action-modifiers label,
+.tinyd6.sheet.npc form.actor-sheet .action-modifiers label {
     color: var(--td-muted); font-size: 13px;
     display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
 }
-.tinyd6.sheet.hero form.actor-sheet .action-modifiers input { accent-color: var(--td-accent); }
+.tinyd6.sheet.hero form.actor-sheet .action-modifiers input,
+.tinyd6.sheet.npc form.actor-sheet .action-modifiers input { accent-color: var(--td-accent); }
 
 /* ===== Секции и заголовки ===== */
 .tinyd6.sheet.hero form.actor-sheet section.character,
@@ -168,8 +219,8 @@
 .tinyd6.sheet.npc form.actor-sheet section { margin: 0 0 22px; }
 .tinyd6.sheet.hero form.actor-sheet .floating-header,
 .tinyd6.sheet.npc form.actor-sheet .floating-header,
-.tinyd6.sheet.hero form.actor-sheet .section-header,
-.tinyd6.sheet.npc form.actor-sheet .section-header {
+.tinyd6.sheet.hero form.actor-sheet .td6-section-header,
+.tinyd6.sheet.npc form.actor-sheet .td6-section-header {
     margin: 0 0 12px; font-weight: 600; color: var(--td-strong);
     font-size: 13px; text-transform: uppercase; letter-spacing: .07em;
     display: flex; align-items: center; gap: 8px;
@@ -179,13 +230,13 @@
 }
 .tinyd6.sheet.hero form.actor-sheet .floating-header::before,
 .tinyd6.sheet.npc form.actor-sheet .floating-header::before,
-.tinyd6.sheet.hero form.actor-sheet .section-header::before,
-.tinyd6.sheet.npc form.actor-sheet .section-header::before {
+.tinyd6.sheet.hero form.actor-sheet .td6-section-header::before,
+.tinyd6.sheet.npc form.actor-sheet .td6-section-header::before {
     content: ""; width: 9px; height: 9px; border-radius: 2px;
     background: var(--td-accent); flex: none;
 }
-.tinyd6.sheet.hero form.actor-sheet .trauma .section-header,
-.tinyd6.sheet.npc form.actor-sheet .trauma .section-header { border-bottom: 0; padding-bottom: 0; }
+.tinyd6.sheet.hero form.actor-sheet .trauma .td6-section-header,
+.tinyd6.sheet.npc form.actor-sheet .trauma .td6-section-header { border-bottom: 0; padding-bottom: 0; }
 .tinyd6.sheet.hero form.actor-sheet .traits .floating-header,
 .tinyd6.sheet.npc form.actor-sheet .traits .floating-header,
 .tinyd6.sheet.hero form.actor-sheet .inventory .floating-header,
@@ -278,8 +329,8 @@
 .tinyd6.sheet.npc form.actor-sheet .property input:focus {
     background: var(--td-field); border-radius: 4px; box-shadow: none;
 }
-.tinyd6.sheet.hero form.actor-sheet .border-bottom,
-.tinyd6.sheet.npc form.actor-sheet .border-bottom { border-bottom: 1px solid var(--td-border) !important; }
+.tinyd6.sheet.hero form.actor-sheet .td6-border-bottom,
+.tinyd6.sheet.npc form.actor-sheet .td6-border-bottom { border-bottom: 1px solid var(--td-border) !important; }
 
 /* ===== Портрет ===== */
 .tinyd6.sheet.hero form.actor-sheet .character-art,
@@ -307,7 +358,7 @@
     border-radius: 0 0 2px 0;
 }
 .tinyd6.sheet.hero form.actor-sheet .bio-box > .row,
-.tinyd6.sheet.hero form.actor-sheet .bio-box > .stat-values { position: relative; z-index: 1; }
+.tinyd6.sheet.hero form.actor-sheet .bio-box > .td6-stat-values { position: relative; z-index: 1; }
 .tinyd6.sheet.hero form.actor-sheet .bio-box .description { margin-top: 10px; }
 
 /* ===== Редактор описания ===== */
@@ -321,8 +372,8 @@
 .tinyd6.sheet.npc form.actor-sheet .editor .editor-content { min-height: 90px; }
 .tinyd6.sheet.hero form.actor-sheet .editor:focus-within,
 .tinyd6.sheet.npc form.actor-sheet .editor:focus-within { border-color: var(--td-accent-soft); }
-.tinyd6.sheet.hero form.actor-sheet .description.property .border-bottom,
-.tinyd6.sheet.npc form.actor-sheet .description.property .border-bottom { margin-bottom: 8px; }
+.tinyd6.sheet.hero form.actor-sheet .description.property .td6-border-bottom,
+.tinyd6.sheet.npc form.actor-sheet .description.property .td6-border-bottom { margin-bottom: 8px; }
 
 /* ===== Метры здоровья ===== */
 .tinyd6.sheet.hero form.actor-sheet .health-meter,
@@ -415,14 +466,14 @@
 }
 .tinyd6.sheet.hero form.actor-sheet .proficiencies input[type="checkbox"],
 .tinyd6.sheet.npc form.actor-sheet .proficiencies input[type="checkbox"] { accent-color: var(--td-accent); }
-.tinyd6.sheet.hero form.actor-sheet .proficiencies .border-bottom input,
-.tinyd6.sheet.npc form.actor-sheet .proficiencies .border-bottom input {
+.tinyd6.sheet.hero form.actor-sheet .proficiencies .td6-border-bottom input,
+.tinyd6.sheet.npc form.actor-sheet .proficiencies .td6-border-bottom input {
     background: transparent; border: 0; color: var(--td-text);
     outline: none; width: 100%; font-family: inherit; font-size: 13px;
     padding: 2px 4px; box-shadow: none; height: auto;
 }
-.tinyd6.sheet.hero form.actor-sheet .proficiencies .border-bottom input:focus,
-.tinyd6.sheet.npc form.actor-sheet .proficiencies .border-bottom input:focus {
+.tinyd6.sheet.hero form.actor-sheet .proficiencies .td6-border-bottom input:focus,
+.tinyd6.sheet.npc form.actor-sheet .proficiencies .td6-border-bottom input:focus {
     background: var(--td-field); border-radius: 4px; box-shadow: none;
 }
 /* Мастерство оружия — кнопка, открывающая окно выбора из директории мира. */
@@ -439,9 +490,24 @@
 .tinyd6.sheet.npc form.actor-sheet .proficiencies button.mastered-weapon-picker:hover {
     border-color: var(--td-accent, #d1a760);
 }
+/* Слоты мастерства (TinyD6+) — строка «название + кнопка выбора + очистка». */
+.tinyd6.sheet.hero form.actor-sheet .proficiencies .mastered-slots {
+    margin-top: 6px;
+}
+.tinyd6.sheet.hero form.actor-sheet .proficiencies .mastered-slot {
+    display: flex; align-items: center; gap: 6px; padding: 3px 0;
+}
+.tinyd6.sheet.hero form.actor-sheet .proficiencies .mastered-slot-label {
+    font-size: 12px; color: var(--td-text, inherit); white-space: nowrap;
+}
+.tinyd6.sheet.hero form.actor-sheet .proficiencies .mastered-slot-clear {
+    cursor: pointer; color: var(--td-text, #a33); font-size: 12px; padding: 0 4px;
+    text-decoration: none;
+}
+.tinyd6.sheet.hero form.actor-sheet .proficiencies .mastered-slot-clear i { pointer-events: none; }
 /* Линия заголовка Mastery совпадает с линией поля ввода ниже */
-.tinyd6.sheet.hero form.actor-sheet .proficiencies .section-header,
-.tinyd6.sheet.npc form.actor-sheet .proficiencies .section-header {
+.tinyd6.sheet.hero form.actor-sheet .proficiencies .td6-section-header,
+.tinyd6.sheet.npc form.actor-sheet .proficiencies .td6-section-header {
     margin: 0; padding: 0 0 5px; align-self: flex-end;
 }
 
@@ -629,12 +695,138 @@
 .tinyd6.sheet.npc form.actor-sheet .corruption-test select:focus,
 .tinyd6.sheet.npc form.actor-sheet select.w-100:focus,
 .tinyd6.sheet.hero form.actor-sheet select.w-100:focus { border-color: var(--td-accent-soft); outline: none; }
-.tinyd6.sheet.npc form.actor-sheet .traits.property.standalone .border-bottom { margin-bottom: 6px; }
+.tinyd6.sheet.npc form.actor-sheet .traits.property.standalone .td6-border-bottom { margin-bottom: 6px; }
 
 @media (max-width: 700px) {
     .tinyd6.sheet.npc form.actor-sheet .character .row { flex-direction: column; }
     .tinyd6.sheet.npc form.actor-sheet .npc-col { border-right: 0; padding-right: 0; }
     .tinyd6.sheet.npc form.actor-sheet .npc-bottom { flex-direction: column; }
+}
+
+/* ===== NPC: Preferred Weapons ===== */
+.tinyd6.sheet.npc form.actor-sheet .npc-preferred {
+    margin: 0 0 22px;
+}
+.tinyd6.sheet.npc form.actor-sheet .npc-preferred-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+}
+.tinyd6.sheet.npc form.actor-sheet .npc-preferred-slot {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--td-field); border: 1px solid var(--td-border);
+    border-radius: 8px; padding: 10px 12px; min-height: 52px;
+    transition: all 0.15s;
+}
+.tinyd6.sheet.npc form.actor-sheet .npc-preferred-slot:hover {
+    border-color: var(--td-accent); background: color-mix(in srgb, var(--td-accent) 8%, var(--td-field));
+}
+.tinyd6.sheet.npc form.actor-sheet .npc-preferred-slot .npc-preferred-img {
+    width: 36px; height: 36px; border-radius: 6px; object-fit: cover; flex: none;
+    border: 1px solid var(--td-border);
+}
+.tinyd6.sheet.npc form.actor-sheet .npc-preferred-slot .npc-preferred-body {
+    flex: 1; min-width: 0;
+}
+.tinyd6.sheet.npc form.actor-sheet .npc-preferred-slot .npc-preferred-name {
+    font-size: 13px; font-weight: 600; color: var(--td-strong);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.tinyd6.sheet.npc form.actor-sheet .npc-preferred-slot .npc-preferred-stats {
+    font-size: 11px; color: var(--td-muted); margin-top: 1px;
+    display: flex; align-items: center; gap: 4px;
+}
+.tinyd6.sheet.npc form.actor-sheet .npc-preferred-slot .npc-preferred-stats .inv-row-tag {
+    font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 3px;
+    background: var(--td-bg); color: var(--td-muted); border: 1px solid var(--td-border);
+}
+.tinyd6.sheet.npc form.actor-sheet .npc-preferred-slot .npc-preferred-reload {
+    color: var(--td-accent-soft); font-size: 10px;
+}
+.tinyd6.sheet.npc form.actor-sheet .npc-preferred-slot .npc-preferred-actions {
+    display: flex; gap: 4px; flex-shrink: 0;
+}
+.tinyd6.sheet.npc form.actor-sheet .npc-preferred-slot .npc-preferred-actions .npc-pref-btn {
+    width: 26px; height: 26px; border: 1px solid var(--td-border); border-radius: 5px;
+    cursor: pointer; font-size: 11px; display: flex; align-items: center;
+    justify-content: center; background: var(--td-field); color: var(--td-text);
+    transition: all 0.12s; flex: none; text-decoration: none;
+}
+.tinyd6.sheet.npc form.actor-sheet .npc-preferred-slot .npc-preferred-actions .npc-pref-btn:hover {
+    border-color: var(--td-accent); color: var(--td-accent-soft);
+}
+.tinyd6.sheet.npc form.actor-sheet .npc-preferred-slot .npc-preferred-actions .npc-pref-btn.attack {
+    background: var(--td-accent); color: #fff; border-color: var(--td-accent);
+}
+.tinyd6.sheet.npc form.actor-sheet .npc-preferred-slot .npc-preferred-actions .npc-pref-btn.attack:hover {
+    background: var(--td-accent-soft);
+}
+.tinyd6.sheet.npc form.actor-sheet .npc-preferred-slot .npc-preferred-actions .npc-pref-btn.npc-remove-preferred:hover {
+    border-color: var(--td-danger, #c0392b); color: var(--td-danger, #c0392b);
+}
+.tinyd6.sheet.npc form.actor-sheet .npc-preferred-slot.empty {
+    border-style: dashed; justify-content: center; cursor: pointer;
+    color: var(--td-muted); font-size: 11px; gap: 6px;
+}
+.tinyd6.sheet.npc form.actor-sheet .npc-preferred-slot.empty:hover {
+    color: var(--td-accent-soft); border-color: var(--td-accent);
+}
+
+/* ===== Preferred weapon selector dialog ===== */
+.pref-selector .pref-selector-body { padding: 4px; }
+.pref-selector .pref-hint { font-size: 11px; color: var(--td-muted); margin: 0 0 8px; text-align: center; }
+.pref-selector .pref-list { list-style: none; margin: 0; padding: 0; max-height: 320px; overflow-y: auto; }
+.pref-selector .pref-list li { margin: 0; padding: 0; }
+.pref-selector .pref-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 5px 8px; cursor: pointer; border-radius: 4px;
+    transition: background 0.1s;
+}
+.pref-selector .pref-row:hover { background: var(--td-field, rgba(0,0,0,.06)); }
+.pref-selector .pref-row input[type="checkbox"] { margin: 0; accent-color: var(--td-accent); flex: none; }
+.pref-selector .pref-row img { border-radius: 4px; flex: none; }
+.pref-selector .pref-row .pref-name { flex: 1; font-size: 13px; color: var(--td-text); }
+.pref-selector .pref-row .fa-check { color: var(--td-ok, #2e7d32); font-size: 11px; flex: none; }
+.pref-selector .pref-empty { color: var(--td-muted); font-style: italic; padding: 8px; text-align: center; }
+.pref-selector button.pref-save {
+    margin-top: 10px; width: 100%; padding: 6px 16px; border-radius: 6px;
+    font-size: 12px; font-weight: 600;
+    background: var(--td-accent, #4a52ca); color: #fff; border: 0; cursor: pointer;
+    font-family: inherit;
+}
+.pref-selector button.pref-save:hover { background: var(--td-accent-soft, #6ea8fe); }
+
+/* ===== NPC: Traits list ===== */
+.tinyd6.sheet.npc form.actor-sheet .npc-traits {
+    margin: 0 0 22px; position: relative;
+}
+.tinyd6.sheet.npc form.actor-sheet .npc-traits .floating-action {
+    position: absolute; top: 0; right: 0;
+}
+.tinyd6.sheet.npc form.actor-sheet .npc-traits .actor-items {
+    list-style: none; margin: 0; padding: 0;
+}
+.tinyd6.sheet.npc form.actor-sheet .npc-traits .actor-item {
+    padding: 7px 0; border-bottom: 1px solid var(--td-border);
+}
+.tinyd6.sheet.npc form.actor-sheet .npc-traits .actor-item:last-child {
+    border-bottom: 0;
+}
+
+/* ===== NPC: Description / Notes ===== */
+.tinyd6.sheet.npc form.actor-sheet .npc-description {
+    margin: 0 0 22px;
+}
+
+/* ===== NPC: Add Ammo button ===== */
+.tinyd6.sheet.npc form.actor-sheet .npc-add-ammo {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 10px; border-radius: 6px; font-size: 12px;
+    border: 1px dashed var(--td-border); background: transparent;
+    color: var(--td-muted); cursor: pointer; width: 100%;
+    transition: all 0.12s; font-family: inherit; margin-top: 6px;
+}
+.tinyd6.sheet.npc form.actor-sheet .npc-add-ammo:hover {
+    border-color: var(--td-accent); color: var(--td-accent-soft);
+    background: color-mix(in srgb, var(--td-accent) 6%, transparent);
 }
 
 /* ===== Карточка предмета в чате ===== */
@@ -778,51 +970,51 @@
 }
 
 /* ===== Карточка атаки в чате ===== */
-.tinyd6.attack-card {
+.tinyd6.td6-attack-card {
     --td-accent: #8a6d3b;
     --td-accent-soft: #b08d57;
     padding: 12px; border: 1px solid rgba(0,0,0,.14); border-radius: 8px;
     background: #faf8f4;
 }
-.tinyd6.attack-card .attack-card-head img { border-radius: 5px; }
-.tinyd6.attack-card .attack-card-name {
+.tinyd6.td6-attack-card .attack-card-head img { border-radius: 5px; }
+.tinyd6.td6-attack-card .attack-card-name {
     font-size: 15px; font-weight: 700; color: #2a2622; margin: 0;
 }
-.tinyd6.attack-card .attack-card-sub {
+.tinyd6.td6-attack-card .attack-card-sub {
     font-size: 12px; color: #6a6156; margin-top: 3px;
 }
-.tinyd6.attack-card .attack-hit { color: #2e7d32; font-weight: 700; margin-right: 8px; }
-.tinyd6.attack-card .attack-miss { color: #a34a4a; font-weight: 700; margin-right: 8px; }
-.tinyd6.attack-card .attack-crit {
+.tinyd6.td6-attack-card .attack-hit { color: #2e7d32; font-weight: 700; margin-right: 8px; }
+.tinyd6.td6-attack-card .attack-miss { color: #a34a4a; font-weight: 700; margin-right: 8px; }
+.tinyd6.td6-attack-card .attack-crit {
     color: #b8860b; font-weight: 800; text-transform: uppercase; letter-spacing: .04em;
     font-size: 11px; padding: 1px 7px; border-radius: 10px;
     background: #fff8e1; border: 1px solid #ecd9a0; margin-right: 8px;
 }
-.tinyd6.attack-card .attack-damage .attack-damage-base {
+.tinyd6.td6-attack-card .attack-damage .attack-damage-base {
     color: #a09a8e; margin-right: 4px;
 }
-.tinyd6.attack-card .attack-card-roll {
+.tinyd6.td6-attack-card .attack-card-roll {
     gap: 8px; margin: 10px 0; flex-wrap: wrap;
 }
-.tinyd6.attack-card .attack-die {
+.tinyd6.td6-attack-card .attack-die {
     width: 40px; height: 40px; border-radius: 8px;
     background: #fff; border: 1px solid rgba(0,0,0,.18);
     display: inline-flex; align-items: center; justify-content: center;
     font-size: 22px; color: #2a2622;
 }
-.tinyd6.attack-card .attack-card-footer {
+.tinyd6.td6-attack-card .attack-card-footer {
     border-top: 1px solid rgba(0,0,0,.1); padding-top: 10px;
     gap: 12px; flex-wrap: wrap;
 }
-.tinyd6.attack-card .attack-damage { font-size: 13px; color: #333; }
-.tinyd6.attack-card .attack-apply {
+.tinyd6.td6-attack-card .attack-damage { font-size: 13px; color: #333; }
+.tinyd6.td6-attack-card .attack-apply {
     margin-left: auto; background: var(--td-accent); color: #fff;
     border: 0; border-radius: 6px; padding: 7px 14px; cursor: pointer;
     font-family: inherit; font-size: 13px; font-weight: 600;
     display: inline-flex; align-items: center; gap: 6px;
 }
-.tinyd6.attack-card .attack-apply:hover { background: var(--td-accent-soft); }
-.tinyd6.attack-card .attack-report {
+.tinyd6.td6-attack-card .attack-apply:hover { background: var(--td-accent-soft); }
+.tinyd6.td6-attack-card .attack-report {
     font-size: 12px; color: #2e7d32; font-weight: 600;
 }
 .tinyd6.attack-report-chat {
@@ -831,23 +1023,23 @@
 }
 
 /* Сообщение об опустошённом оружии на карточке атаки */
-.tinyd6.attack-card .attack-card-ranout {
+.tinyd6.td6-attack-card .attack-card-ranout {
     margin: 8px 0 4px; padding: 6px 10px; font-size: 12px; font-weight: 600;
     color: #a34a4a; background: #fbe9e7; border: 1px solid #ecc7c2;
     border-radius: 5px;
 }
 
 /* Кнопка «Вернуть ресурс» на карточке атаки */
-.tinyd6.attack-card .attack-card-undo {
+.tinyd6.td6-attack-card .attack-card-undo {
     border-top: 1px dashed rgba(0,0,0,.12); margin-top: 8px; padding-top: 8px;
 }
-.tinyd6.attack-card .attack-undo {
+.tinyd6.td6-attack-card .attack-undo {
     background: #f0ead8; color: #8a6d3b; border: 1px solid #d5c9a3;
     border-radius: 6px; padding: 6px 12px; cursor: pointer;
     font-family: inherit; font-size: 12px; font-weight: 600;
     display: inline-flex; align-items: center; gap: 6px;
 }
-.tinyd6.attack-card .attack-undo:hover { background: #e6dcc0; }
+.tinyd6.td6-attack-card .attack-undo:hover { background: #e6dcc0; }
 
 /* Заглушки в чате (Homerule: TinyD6+) */
 .tinyd6.reload-stub {
@@ -881,7 +1073,9 @@
 .tinyd6.death-mini .death-mini-body { display: flex; flex-direction: column; }
 .tinyd6.death-mini .death-mini-title { font-size: 16px; font-weight: 800; color: #2a2622; }
 .tinyd6.death-mini .death-mini-sub { font-size: 12px; color: #6a6156; margin-top: 2px; }
-.tinyd6.death-mini .death-mini-sub b { color: #6e1a1a; }
+.tinyd6.death-mini .death-mini-sub b { color: var(--td-accent, #00a896); }
+.tinyd6.death-mini .death-mini-text { font-size: 13px; font-weight: 600; line-height: 1.35; color: #2a2622; }
+.tinyd6.death-mini .death-mini-text b { color: var(--td-accent, #00a896); }
 .tinyd6.death-mini.dying { border-color: #c0463a; background: linear-gradient(180deg, #fbf3f1, #f6e7e3); }
 .tinyd6.death-mini.dying .death-mini-icon { color: #9c2418; background: #fdf3f1; border-color: #e0a49a; }
 .tinyd6.death-mini.dying .death-mini-title { color: #9c2418; }
@@ -902,7 +1096,7 @@
     font-size: 13px; font-weight: 600;
 }
 .tinyd6.death-mini .heal-apply:hover, .tinyd6.death-mini .stab-apply:hover { filter: brightness(1.1); }
-.tinyd6.death-mini .death-mini-rolls { display: flex; gap: 6px; margin-left: auto; }
+.tinyd6.death-mini .death-mini-rolls { display: flex; gap: 6px; margin-left: 0; margin-top: 4px; }
 .tinyd6.death-mini .death-mini-icon.mini {
     width: 30px; height: 30px; flex: 0 0 30px; border-radius: 7px;
     font-size: 13px; flex-direction: column; gap: 1px; line-height: 1;
@@ -940,22 +1134,25 @@
     width: 100%; padding: 6px 8px; border: 1px solid rgba(0,0,0,.18);
     border-radius: 6px; background: #fff; color: #2a2622; font-family: inherit;
 }
-.tinyd6.attack-dialog .attack-mode-label {
-    flex: 1; text-align: center; cursor: pointer; margin: 0 2px;
+.tinyd6.attack-dialog .dialog-buttons {
+    display: flex; gap: 6px; justify-content: center; padding-top: 8px;
 }
-.tinyd6.attack-dialog .attack-mode-label input { display: none; }
-.tinyd6.attack-dialog .attack-mode-label span {
-    display: block; padding: 7px 4px; border: 1px solid rgba(0,0,0,.18);
-    border-radius: 6px; background: #fff; color: #555; font-size: 12px;
+.tinyd6.attack-dialog .dialog-button {
+    flex: 1; padding: 8px 12px; border: 1px solid var(--td-border, #3b3b44);
+    border-radius: 6px; background: var(--td-field, #2f2f36);
+    color: var(--td-text, #d7d8dc); font-family: inherit; font-size: 12px;
+    font-weight: 600; cursor: pointer; transition: all 0.12s; box-shadow: none;
 }
-.tinyd6.attack-dialog .attack-mode-label input:checked + span {
-    background: var(--td-accent, #8a6d3b); color: #fff; border-color: var(--td-accent, #8a6d3b);
+.tinyd6.attack-dialog .dialog-button:hover {
+    background: var(--td-hover, #3b3b44); border-color: var(--td-accent);
+    color: var(--td-strong, #e8e9ea);
 }
-.tinyd6.attack-dialog .attack-cancel {
-    margin-right: 6px; background: rgba(0,0,0,.06);
+.tinyd6.attack-dialog .dialog-button.attack-suggest {
+    background: var(--td-accent, #4a52ca); border-color: var(--td-accent, #4a52ca);
+    color: #fff;
 }
-.tinyd6.attack-dialog .attack-roll {
-    background: var(--td-accent, #8a6d3b); color: #fff;
+.tinyd6.attack-dialog .dialog-button.attack-suggest:hover {
+    background: var(--td-accent-soft, #6ea8fe);
 }
 
 /* Рекомендуемый уровень броска (Auto weapon proficiency): подсвечиваем
@@ -1005,12 +1202,9 @@
 
 /* ============================================================
    HUD fix: вернуть геометрию колонок Token HUD.
-   Вшитый в tinyd6.css Bootstrap Grid v4.6.2 объявляет глобально
-   `.col { position: relative; width: 100%; padding: 0 15px }`,
-   а Foundry держит свои правила в @layer — не-слоёные стили
-   (bootstrap) выигрывают независимо от специфичности, ломая
-   position/width колонок HUD. Эти правила не-слоёные и идут
-   после bootstrap, поэтому перекрывают его.
+   Bootstrap Grid теперь скоупирован под .tinyd6, поэтому не
+   ломает Foundry core. Стили ниже — собственная геометрия
+   HUD (колонки left/middle/right + pointer-events).
    ============================================================ */
 #token-hud .col,
 #token-hud .col-1,
@@ -1678,7 +1872,488 @@
     color: rgba(224, 91, 91, 0.95);
 }
 
+/* =============================================
+   COMPACT INVENTORY ROWS
+   ============================================= */
+.inventory-weapons,
+.inventory-armor,
+.inventory-gear {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
 
+.inv-section-header {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--td-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 4px 28px;
+  border: none;
+  padding: 0;
+}
 
+.inv-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  background: var(--td-field);
+  border: 1px solid var(--td-border);
+  border-radius: var(--td-radius);
+  min-height: 34px;
+  transition: border-color 0.15s;
+}
+.inv-row:hover {
+  border-color: var(--td-accent);
+}
 
+.inv-row-img {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  object-fit: cover;
+  flex: none;
+  cursor: pointer;
+}
 
+.inv-row-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--td-text);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inv-row-tag {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--td-muted);
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.05);
+  text-transform: uppercase;
+  flex: none;
+}
+
+.inv-row-charges {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex: none;
+}
+.inv-row-charges.empty .inline-num {
+  color: #ef4444;
+}
+
+.inv-row-stats {
+  font-size: 12px;
+  color: var(--td-muted);
+  flex: none;
+  margin-left: auto;
+}
+
+.inv-row-qty {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  margin-left: auto;
+}
+
+.inv-row-btn {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  color: var(--td-muted);
+  font-size: 12px;
+  flex: none;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.inv-row-btn:hover {
+  color: var(--td-text);
+  background: rgba(255,255,255,0.06);
+}
+.inv-row-btn.attack:hover {
+  color: var(--td-accent);
+  background: rgba(74,82,202,0.15);
+}
+.inv-row-btn.delete:hover {
+  color: #ef4444;
+  background: rgba(239,68,68,0.12);
+}
+
+/* Heal items: зелёный акцент */
+.inv-row.heal-row {
+  border-left: 2px solid #4ade80;
+}
+.heal-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: #22c55e;
+  background: rgba(74,222,128,0.12);
+  padding: 1px 5px;
+  border-radius: 3px;
+  flex: none;
+}
+
+/* NPC: компактные строки оружия */
+.tinyd6.sheet.npc .inventory-weapons .inv-row {
+  gap: 4px; padding: 2px 6px; min-height: 28px;
+}
+.tinyd6.sheet.npc .inventory-weapons .inv-row-img {
+  width: 22px; height: 22px;
+}
+.tinyd6.sheet.npc .inventory-weapons .inv-row-name {
+  font-size: 12px;
+}
+.tinyd6.sheet.npc .inventory-weapons .inv-row-btn {
+  width: 18px; height: 18px; font-size: 10px;
+}
+
+.inv-empty {
+  font-size: 12px;
+  color: var(--td-muted);
+  padding: 4px 8px;
+}
+
+.inline-num {
+  width: 36px;
+  height: 22px;
+  text-align: center;
+  background: transparent;
+  border: 1px solid var(--td-border);
+  border-radius: 3px;
+  color: var(--td-strong);
+  font-weight: 700;
+  font-size: 12px;
+  font-family: inherit;
+  outline: none;
+  padding: 0;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.inline-num::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+.inline-num:focus {
+  border-color: var(--td-accent);
+}
+
+.inline-sep {
+  font-size: 11px;
+  color: var(--td-muted);
+}
+.inline-max {
+  font-size: 11px;
+  color: var(--td-muted);
+}
+
+.inv-armor-wrap {
+  display: flex;
+  gap: 10px;
+}
+.inv-armor-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.inv-armor-block {
+  width: 72px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 6px;
+  background: var(--td-field);
+  border: 1px solid var(--td-border);
+  border-radius: var(--td-radius);
+}
+
+/* =============================================
+   COLLAPSIBLE SECTIONS
+   ============================================= */
+.inv-section-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--td-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid var(--td-border);
+  margin-bottom: 6px;
+  transition: color 0.15s;
+}
+.inv-section-toggle:hover {
+  color: var(--td-text);
+}
+.inv-section-toggle .arrow {
+  font-size: 9px;
+  transition: transform 0.2s;
+}
+.inv-section-toggle .arrow {
+  display: inline-block;
+}
+.inv-collapsible.collapsed .inv-section-toggle .arrow {
+  transform: rotate(-90deg);
+}
+.inv-section-count {
+  margin-left: auto;
+  font-weight: 400;
+  font-size: 10px;
+  color: var(--td-muted);
+  background: var(--td-field);
+  padding: 1px 6px;
+  border-radius: 8px;
+}
+.inv-section-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+  transition: max-height 0.25s ease, opacity 0.2s ease;
+  max-height: 2000px;
+  opacity: 1;
+}
+.inv-collapsible.collapsed .inv-section-body {
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* =============================================
+   ZERO-QUANTITY STRIKETHROUGH
+   ============================================= */
+.inv-row.zero-qty {
+  opacity: 0.45;
+}
+.inv-row.zero-qty .inv-row-img {
+  filter: grayscale(0.8);
+}
+.strikethrough {
+  text-decoration: line-through;
+  text-decoration-color: rgba(239,68,68,0.5);
+}
+
+/* =============================================
+   TOTAL-ARMOR BLOCK
+   ============================================= */
+.inv-armor-block {
+  width: auto;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--td-field);
+  border: 1px solid var(--td-border);
+  border-radius: var(--td-radius);
+}
+.total-armor {
+  display: inline-flex;
+  width: 64px;
+  height: 64px;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, var(--td-accent), color-mix(in srgb, var(--td-accent) 60%, #000));
+  color: #fff;
+  font-size: 28px;
+  font-weight: 700;
+  border-radius: 12px;
+  box-shadow: 0 3px 0 rgba(0,0,0,.3);
+}
+.armor-hprow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.armor-hp-input {
+  width: 36px;
+  height: 24px;
+  text-align: center;
+  background: var(--td-field);
+  border: 1px solid var(--td-border);
+  border-radius: 4px;
+  color: var(--td-strong);
+  font-weight: 700;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  padding: 0;
+}
+.armor-hp-input:focus {
+  border-color: var(--td-accent);
+}
+.armor-restore {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--td-border);
+  background: var(--td-field);
+  color: var(--td-text);
+  font-size: 11px;
+  border-radius: 4px;
+  cursor: pointer;
+  flex: none;
+}
+.armor-restore:hover {
+  color: var(--td-accent);
+  border-color: var(--td-accent);
+}
+
+/* =============================================
+   GEAR GRID (2 columns)
+   ============================================= */
+.inv-gear-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+.inv-gear-grid .inv-row {
+  min-width: 0;
+}
+.inv-gear-grid .inv-row-name {
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =============================================
+   CURRENCY DYNAMIC WIDTH
+   ============================================= */
+.inv-currency-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 6px 0;
+}
+.inv-currency-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: var(--td-field);
+  border: 1px solid var(--td-border);
+  border-radius: var(--td-radius);
+  flex: 1 1 auto;
+  min-width: 0;
+  transition: border-color 0.15s;
+}
+.inv-currency-item:hover {
+  border-color: var(--td-accent);
+}
+.inv-currency-img {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  object-fit: cover;
+  flex: none;
+}
+.inv-currency-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--td-text);
+  white-space: nowrap;
+}
+.currency-input {
+  width: 100%;
+  min-width: 60px;
+  flex: 1;
+  height: 28px;
+  padding: 0 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #f59e0b;
+  background: var(--td-field);
+  border: 1px solid #f59e0b;
+  border-radius: 4px;
+  font-family: inherit;
+  outline: none;
+  -moz-appearance: textfield;
+  appearance: textfield;
+  text-align: right;
+}
+.currency-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+.currency-input:focus {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 1px rgba(245,158,11,.3);
+}
+.inv-currency-wrap.count-1 .inv-currency-item { flex: 1 1 100%; }
+.inv-currency-wrap.count-2 .inv-currency-item { flex: 1 1 calc(50% - 3px); }
+.inv-currency-wrap.count-3 .inv-currency-item { flex: 1 1 calc(33.333% - 4px); }
+.inv-currency-wrap.count-4 .inv-currency-item { flex: 1 1 calc(25% - 5px); }
+.inv-currency-wrap.count-5 .inv-currency-item { flex: 1 1 calc(20% - 5px); }
+
+/* Встроенные SVG-иконки (td6-ico): без зависимости от шрифта FontAwesome.
+/* Встроенные SVG-иконки (td6-ico): без зависимости от шрифта FontAwesome. */
+.td6-ico { display: inline-block; flex: none; width: 1em; height: 1em; }
+.tinyd6.death-mini .death-mini-icon svg.td6-ico { width: 26px; height: 26px; }
+.tinyd6.death-mini .death-mini-icon.mini svg.td6-ico { width: 15px; height: 15px; margin-top: 1px; }
+.chat-message .tinyd6 svg.td6-ico { width: 15px; height: 15px; vertical-align: -3px; }
+.float-num svg.td6-ico { width: 24px; height: 24px; vertical-align: -4px; }
+.tinyd6.sheet.hero form.actor-sheet .stab-action .icon svg.td6-ico,
+.tinyd6.sheet.npc form.actor-sheet .stab-action .icon svg.td6-ico { width: 18px; height: 18px; color: var(--td-accent-soft); }
+.tinyd6.sheet.hero form.actor-sheet .stab-action .stab-btn svg.td6-ico,
+.tinyd6.sheet.npc form.actor-sheet .stab-action .stab-btn svg.td6-ico { width: 12px; height: 12px; }
+#token-hud svg.td6-ico { width: 20px; height: 20px; }
+#token-hud .wbtn svg.td6-ico { width: 12px; height: 12px; }
+#token-hud .hp-heart svg.td6-ico { width: 18px; height: 18px; }
+#token-hud .death-chip svg.td6-ico { width: 15px; height: 15px; margin-right: 4px; vertical-align: -2px; }
+
+/* Fallback death-mini icons: SVG data-URI, no font needed (kit-medical / skull-crossbones / dice 1-6). */
+.tinyd6.death-mini.stable .death-mini-icon:empty {
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNTYgMjU2KSBzY2FsZSgwLjk1IC0wLjk1KSB0cmFuc2xhdGUoLTI1Ni4wIC0xOTIuMCkiPjxwYXRoIGZpbGw9IiMyRTZCM0YiIGQ9Ik02NCAzODRDMjkgMzg0IDAgMzU1IDAgMzIwVjY0QzAgMjkgMjkgMCA2NCAwSDgwVjM4NEg2NFpNMTI4IDM4NFYwSDM4NFYzODRIMTI4Wk00NDggMEM0ODMgMCA1MTIgMjkgNTEyIDY0VjMyMEM1MTIgMzU1IDQ4MyAzODQgNDQ4IDM4NEg0MzJWMEg0NDhaTTIyNCAyNjRDMjI0IDI3MyAyMzEgMjgwIDI0MCAyODBIMjcyQzI4MSAyODAgMjg4IDI3MyAyODggMjY0VjIyNEgzMjhDMzM3IDIyNCAzNDQgMjE3IDM0NCAyMDhWMTc2QzM0NCAxNjcgMzM3IDE2MCAzMjggMTYwSDI4OFYxMjBDMjg4IDExMSAyODEgMTA0IDI3MiAxMDRIMjQwQzIzMSAxMDQgMjI0IDExMSAyMjQgMTIwVjE2MEgxODRDMTc1IDE2MCAxNjggMTY3IDE2OCAxNzZWMjA4QzE2OCAyMTcgMTc1IDIyNCAxODQgMjI0SDIyNFYyNjRaIi8+PC9nPjwvc3ZnPg==");
+  background-size: 65% auto; background-position: center; background-repeat: no-repeat;
+}
+.tinyd6.death-mini.dying .death-mini-icon:empty {
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNTYgMjU2KSBzY2FsZSgwLjg5MzkgLTAuODkzOSkgdHJhbnNsYXRlKC0yMjQuMjEgLTE3NS45NCkiPjxwYXRoIGZpbGw9IiM5QzI0MTgiIGQ9Ik0zODQgMzA0QzM4NCAzODMgMzEyIDQ0OCAyMjQgNDQ4QzEzNiA0NDggNjQgMzgzIDY0IDMwNEM2NCAyNTcgODkgMjE1IDEyOCAxODlWMTYwQzEyOCAxNDIgMTQyIDEyOCAxNjAgMTI4SDI4OEMzMDYgMTI4IDMyMCAxNDIgMzIwIDE2MFYxODlDMzU5IDIxNSAzODQgMjU3IDM4NCAzMDRaTTE2MCAzMjBDMTc4IDMyMCAxOTIgMzA2IDE5MiAyODhDMTkyIDI3MCAxNzggMjU2IDE2MCAyNTZDMTQyIDI1NiAxMjggMjcwIDEyOCAyODhDMTI4IDMwNiAxNDIgMzIwIDE2MCAzMjBaTTI1NiAyODhDMjU2IDMwNiAyNzAgMzIwIDI4OCAzMjBDMzA2IDMyMCAzMjAgMzA2IDMyMCAyODhDMzIwIDI3MCAzMDYgMjU2IDI4OCAyNTZDMjcwIDI1NiAyNTYgMjcwIDI1NiAyODhaTTQ0NiAxMDhDNDM5IDEyNSA0MjAgMTMyIDQwNCAxMjVMMjI0IDUxTDQ0IDEyNUMyOCAxMzIgOSAxMjUgMyAxMDhDLTQgOTIgMyA3MyAyMCA2NkwxNDEgMTZMMjAgLTM1QzMgLTQxIC00IC02MCAzIC03NkM5IC05MyAyOCAtMTAwIDQ0IC05NEwyMjQgLTE5TDQwNCAtOTRDNDIwIC0xMDAgNDM5IC05MyA0NDYgLTc2QzQ1MiAtNjAgNDQ1IC00MSA0MjggLTM1TDMwNyAxNkw0MjggNjZDNDQ1IDczIDQ1MiA5MiA0NDYgMTA4WiIvPjwvZz48L3N2Zz4=");
+  background-size: 65% auto; background-position: center; background-repeat: no-repeat;
+}
+i.fa-dice-one::before, i.fa-dice-two::before, i.fa-dice-three::before,
+i.fa-dice-four::before, i.fa-dice-five::before, i.fa-dice-six::before { content: none !important; }
+i.fa-dice-one {
+  background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNTYgMjU2KSBzY2FsZSgwLjk1IC0wLjk1KSB0cmFuc2xhdGUoLTIyNC4wIC0xOTIuMCkiPjxwYXRoIGZpbGw9IiMyQTI2MjIiIGQ9Ik02NCA0MTZDMjkgNDE2IDAgMzg3IDAgMzUyVjMyQzAgLTMgMjkgLTMyIDY0IC0zMkgzODRDNDE5IC0zMiA0NDggLTMgNDQ4IDMyVjM1MkM0NDggMzg3IDQxOSA0MTYgMzg0IDQxNkg2NFpNMjI0IDIyNEMyNDIgMjI0IDI1NiAyMTAgMjU2IDE5MkMyNTYgMTc0IDI0MiAxNjAgMjI0IDE2MEMyMDYgMTYwIDE5MiAxNzQgMTkyIDE5MkMxOTIgMjEwIDIwNiAyMjQgMjI0IDIyNFoiLz48L2c+PC9zdmc+") center / contain no-repeat;
+  display: inline-block; width: 1em; height: 1em; font-style: normal;
+}
+i.fa-dice-two {
+  background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNTYgMjU2KSBzY2FsZSgwLjk1IC0wLjk1KSB0cmFuc2xhdGUoLTIyNC4wIC0xOTIuMCkiPjxwYXRoIGZpbGw9IiMyQTI2MjIiIGQ9Ik0wIDM1MkMwIDM4NyAyOSA0MTYgNjQgNDE2SDM4NEM0MTkgNDE2IDQ0OCAzODcgNDQ4IDM1MlYzMkM0NDggLTMgNDE5IC0zMiAzODQgLTMySDY0QzI5IC0zMiAwIC0zIDAgMzJWMzUyWk0zNTIgOTZDMzUyIDExNCAzMzggMTI4IDMyMCAxMjhDMzAyIDEyOCAyODggMTE0IDI4OCA5NkMyODggNzggMzAyIDY0IDMyMCA2NEMzMzggNjQgMzUyIDc4IDM1MiA5NlpNMTI4IDI1NkMxNDYgMjU2IDE2MCAyNzAgMTYwIDI4OEMxNjAgMzA2IDE0NiAzMjAgMTI4IDMyMEMxMTAgMzIwIDk2IDMwNiA5NiAyODhDOTYgMjcwIDExMCAyNTYgMTI4IDI1NloiLz48L2c+PC9zdmc+") center / contain no-repeat;
+  display: inline-block; width: 1em; height: 1em; font-style: normal;
+}
+i.fa-dice-three {
+  background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNTYgMjU2KSBzY2FsZSgwLjk1IC0wLjk1KSB0cmFuc2xhdGUoLTIyNC4wIC0xOTIuMCkiPjxwYXRoIGZpbGw9IiMyQTI2MjIiIGQ9Ik02NCA0MTZDMjkgNDE2IDAgMzg3IDAgMzUyVjMyQzAgLTMgMjkgLTMyIDY0IC0zMkgzODRDNDE5IC0zMiA0NDggLTMgNDQ4IDMyVjM1MkM0NDggMzg3IDQxOSA0MTYgMzg0IDQxNkg2NFpNMTI4IDMyMEMxNDYgMzIwIDE2MCAzMDYgMTYwIDI4OEMxNjAgMjcwIDE0NiAyNTYgMTI4IDI1NkMxMTAgMjU2IDk2IDI3MCA5NiAyODhDOTYgMzA2IDExMCAzMjAgMTI4IDMyMFpNMTkyIDE5MkMxOTIgMjEwIDIwNiAyMjQgMjI0IDIyNEMyNDIgMjI0IDI1NiAyMTAgMjU2IDE5MkMyNTYgMTc0IDI0MiAxNjAgMjI0IDE2MEMyMDYgMTYwIDE5MiAxNzQgMTkyIDE5MlpNMzIwIDEyOEMzMzggMTI4IDM1MiAxMTQgMzUyIDk2QzM1MiA3OCAzMzggNjQgMzIwIDY0QzMwMiA2NCAyODggNzggMjg4IDk2QzI4OCAxMTQgMzAyIDEyOCAzMjAgMTI4WiIvPjwvZz48L3N2Zz4=") center / contain no-repeat;
+  display: inline-block; width: 1em; height: 1em; font-style: normal;
+}
+i.fa-dice-four {
+  background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNTYgMjU2KSBzY2FsZSgwLjk1IC0wLjk1KSB0cmFuc2xhdGUoLTIyNC4wIC0xOTIuMCkiPjxwYXRoIGZpbGw9IiMyQTI2MjIiIGQ9Ik0wIDM1MkMwIDM4NyAyOSA0MTYgNjQgNDE2SDM4NEM0MTkgNDE2IDQ0OCAzODcgNDQ4IDM1MlYzMkM0NDggLTMgNDE5IC0zMiAzODQgLTMySDY0QzI5IC0zMiAwIC0zIDAgMzJWMzUyWk0xNjAgMjg4QzE2MCAzMDYgMTQ2IDMyMCAxMjggMzIwQzExMCAzMjAgOTYgMzA2IDk2IDI4OEM5NiAyNzAgMTEwIDI1NiAxMjggMjU2QzE0NiAyNTYgMTYwIDI3MCAxNjAgMjg4Wk0xMjggNjRDMTQ2IDY0IDE2MCA3OCAxNjAgOTZDMTYwIDExNCAxNDYgMTI4IDEyOCAxMjhDMTEwIDEyOCA5NiAxMTQgOTYgOTZDOTYgNzggMTEwIDY0IDEyOCA2NFpNMzUyIDI4OEMzNTIgMzA2IDMzOCAzMjAgMzIwIDMyMEMzMDIgMzIwIDI4OCAzMDYgMjg4IDI4OEMyODggMjcwIDMwMiAyNTYgMzIwIDI1NkMzMzggMjU2IDM1MiAyNzAgMzUyIDI4OFpNMzIwIDY0QzMzOCA2NCAzNTIgNzggMzUyIDk2QzM1MiAxMTQgMzM4IDEyOCAzMjAgMTI4QzMwMiAxMjggMjg4IDExNCAyODggOTZDMjg4IDc4IDMwMiA2NCAzMjAgNjRaIi8+PC9nPjwvc3ZnPg==") center / contain no-repeat;
+  display: inline-block; width: 1em; height: 1em; font-style: normal;
+}
+i.fa-dice-five {
+  background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNTYgMjU2KSBzY2FsZSgwLjk1IC0wLjk1KSB0cmFuc2xhdGUoLTIyNC4wIC0xOTIuMCkiPjxwYXRoIGZpbGw9IiMyQTI2MjIiIGQ9Ik02NCA0MTZDMjkgNDE2IDAgMzg3IDAgMzUyVjMyQzAgLTMgMjkgLTMyIDY0IC0zMkgzODRDNDE5IC0zMiA0NDggLTMgNDQ4IDMyVjM1MkM0NDggMzg3IDQxOSA0MTYgMzg0IDQxNkg2NFpNMTI4IDMyMEMxNDYgMzIwIDE2MCAzMDYgMTYwIDI4OEMxNjAgMjcwIDE0NiAyNTYgMTI4IDI1NkMxMTAgMjU2IDk2IDI3MCA5NiAyODhDOTYgMzA2IDExMCAzMjAgMTI4IDMyMFpNOTYgOTZDOTYgMTE0IDExMCAxMjggMTI4IDEyOEMxNDYgMTI4IDE2MCAxMTQgMTYwIDk2QzE2MCA3OCAxNDYgNjQgMTI4IDY0QzExMCA2NCA5NiA3OCA5NiA5NlpNMjI0IDIyNEMyNDIgMjI0IDI1NiAyMTAgMjU2IDE5MkMyNTYgMTc0IDI0MiAxNjAgMjI0IDE2MEMyMDYgMTYwIDE5MiAxNzQgMTkyIDE5MkMxOTIgMjEwIDIwNiAyMjQgMjI0IDIyNFpNMjg4IDI4OEMyODggMzA2IDMwMiAzMjAgMzIwIDMyMEMzMzggMzIwIDM1MiAzMDYgMzUyIDI4OEMzNTIgMjcwIDMzOCAyNTYgMzIwIDI1NkMzMDIgMjU2IDI4OCAyNzAgMjg4IDI4OFpNMzIwIDEyOEMzMzggMTI4IDM1MiAxMTQgMzUyIDk2QzM1MiA3OCAzMzggNjQgMzIwIDY0QzMwMiA2NCAyODggNzggMjg4IDk2QzI4OCAxMTQgMzAyIDEyOCAzMjAgMTI4WiIvPjwvZz48L3N2Zz4=") center / contain no-repeat;
+  display: inline-block; width: 1em; height: 1em; font-style: normal;
+}
+i.fa-dice-six {
+  background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNTYgMjU2KSBzY2FsZSgwLjk1IC0wLjk1KSB0cmFuc2xhdGUoLTIyNC4wIC0xOTIuMCkiPjxwYXRoIGZpbGw9IiMyQTI2MjIiIGQ9Ik0wIDM1MkMwIDM4NyAyOSA0MTYgNjQgNDE2SDM4NEM0MTkgNDE2IDQ0OCAzODcgNDQ4IDM1MlYzMkM0NDggLTMgNDE5IC0zMiAzODQgLTMySDY0QzI5IC0zMiAwIC0zIDAgMzJWMzUyWk0xNjAgMjg4QzE2MCAzMDYgMTQ2IDMyMCAxMjggMzIwQzExMCAzMjAgOTYgMzA2IDk2IDI4OEM5NiAyNzAgMTEwIDI1NiAxMjggMjU2QzE0NiAyNTYgMTYwIDI3MCAxNjAgMjg4Wk0xMjggMTYwQzE0NiAxNjAgMTYwIDE3NCAxNjAgMTkyQzE2MCAyMTAgMTQ2IDIyNCAxMjggMjI0QzExMCAyMjQgOTYgMjEwIDk2IDE5MkM5NiAxNzQgMTEwIDE2MCAxMjggMTYwWk0xNjAgOTZDMTYwIDExNCAxNDYgMTI4IDEyOCAxMjhDMTEwIDEyOCA5NiAxMTQgOTYgOTZDOTYgNzggMTEwIDY0IDEyOCA2NEMxNDYgNjQgMTYwIDc4IDE2MCA5NlpNMzIwIDI1NkMzMzggMjU2IDM1MiAyNzAgMzUyIDI4OEMzNTIgMzA2IDMzOCAzMjAgMzIwIDMyMEMzMDIgMzIwIDI4OCAzMDYgMjg4IDI4OEMyODggMjcwIDMwMiAyNTYgMzIwIDI1NlpNMzUyIDE5MkMzNTIgMjEwIDMzOCAyMjQgMzIwIDIyNEMzMDIgMjI0IDI4OCAyMTAgMjg4IDE5MkMyODggMTc0IDMwMiAxNjAgMzIwIDE2MEMzMzggMTYwIDM1MiAxNzQgMzUyIDE5MlpNMzIwIDY0QzMzOCA2NCAzNTIgNzggMzUyIDk2QzM1MiAxMTQgMzM4IDEyOCAzMjAgMTI4QzMwMiAxMjggMjg4IDExNCAyODggOTZDMjg4IDc4IDMwMiA2NCAzMjAgNjRaIi8+PC9nPjwvc3ZnPg==") center / contain no-repeat;
+  display: inline-block; width: 1em; height: 1em; font-style: normal;
+}

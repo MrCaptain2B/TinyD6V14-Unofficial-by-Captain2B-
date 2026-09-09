@@ -2,7 +2,7 @@
     {{#if showHeal}}
     <button type="button" class="control-icon heal-icon" data-action="togglePalette" data-palette="heal"
             data-tooltip="tinyd6.TokenHeal" data-tooltip-direction="RIGHT">
-        <i class="fa-solid fa-plus" inert></i>
+        {{{td6icon "plus"}}}
     </button>
     <div class="palette palette-heal" data-palette="heal">
         {{#if showStab}}
@@ -16,7 +16,7 @@
                 <button type="button" class="wbtn stab {{#unless stabEnabled}}disabled{{/unless}}" data-action="stabilize"
                         data-tooltip="tinyd6.stabilize.sheetHint" data-tooltip-direction="DOWN"
                         {{#unless stabEnabled}}disabled{{/unless}}>
-                    {{localize "tinyd6.stabilize.title"}} <i class="fa-solid fa-burst" inert></i>
+                    {{localize "tinyd6.stabilize.title"}} {{{td6icon "burst"}}}
                 </button>
             </div>
         </div>
@@ -26,13 +26,13 @@
             <div class="whead">
                 <img src="{{heal.img}}" alt="{{heal.name}}">
                 <span class="wname" title="{{heal.name}}">{{heal.name}}</span>
-                <span class="charges {{#if (eq heal.qty 0)}}empty{{/if}}">+{{heal.heal}} · ×{{heal.qty}}</span>
+                <span class="charges {{#if (eq heal.qty 0)}}empty{{/if}}">+{{heal.heal}} В· Г—{{heal.qty}}</span>
             </div>
             <div class="whead">
                 <button type="button" class="wbtn heal {{#if (eq heal.qty 0)}}empty{{/if}}" data-action="healUse"
                         data-tooltip="tinyd6.heal.useTooltip" data-tooltip-direction="DOWN"
                         {{#if (eq heal.qty 0)}}disabled{{/if}}>
-                    {{localize "tinyd6.heal.use"}} <i class="fa-solid fa-heart-pulse" inert></i>
+                    {{localize "tinyd6.heal.use"}} {{{td6icon "heart-pulse"}}}
                 </button>
             </div>
         </div>
@@ -50,7 +50,7 @@
     {{#if showWeapons}}
     <button type="button" class="control-icon" data-action="togglePalette" data-palette="weapons"
             data-tooltip="tinyd6.TokenWeapons" data-tooltip-direction="RIGHT">
-        <i class="fa-solid fa-crosshairs" inert></i>
+        {{{td6icon "crosshairs"}}}
     </button>
     <div class="palette palette-weapons" data-palette="weapons">
         {{#each weapons as |weapon|}}
@@ -63,11 +63,11 @@
             <div class="wactions">
                 <button type="button" class="wbtn attack {{#if weapon.empty}}empty{{/if}}"
                         data-action="weaponAttack" title="{{localize "tinyd6.Attack"}}">
-                    {{localize "tinyd6.Attack"}} <i class="fa-solid fa-burst" inert></i>
+                    {{localize "tinyd6.Attack"}} {{{td6icon "burst"}}}
                 </button>
                 {{#if weapon.reload}}
                 <button type="button" class="wbtn reload" data-action="weaponReload" title="{{localize "tinyd6.Reload"}}">
-                    {{localize "tinyd6.Reload"}} <i class="fa-solid fa-rotate-right" inert></i>
+                    {{localize "tinyd6.Reload"}} {{{td6icon "rotate-right"}}}
                 </button>
                 {{/if}}
             </div>
@@ -78,7 +78,7 @@
 
     {{#if canConfigure}}
     <button type="button" class="control-icon" data-action="config" data-tooltip="HUD.OpenConfig">
-        <i class="fa-solid fa-gear" inert></i>
+        {{{td6icon "gear"}}}
     </button>
     {{/if}}
 </div>
@@ -86,8 +86,8 @@
 <div class="col middle">
     <div class="attribute hp-rail">
         <button type="button" class="hp-stepper minus" data-action="hpStep" data-step="-1"
-                {{#unless hpEditable}}disabled{{/unless}} title="−1 HP">−</button>
-        <span class="hp-heart"><i class="fa-solid fa-heart-pulse" inert></i></span>
+                {{#unless hpEditable}}disabled{{/unless}} title="-1 HP">{{{td6icon "minus"}}}</button>
+        <span class="hp-heart">{{{td6icon "heart-pulse"}}}</span>
         <input type="text" name="bar1" class="hp-value" value="{{bar1Data.value}}" max="{{hpMax}}"
                {{#unless bar1Data.editable}}disabled{{/unless}}>
         <button type="button" class="hp-stepper plus" data-action="hpStep" data-step="1"
@@ -109,7 +109,7 @@
     {{#if deathChip}}
     <div class="attribute">
         <span class="death-chip {{deathChip.state}}" title="{{deathChip.tooltip}}">
-            <i class="fa-solid {{deathChip.icon}}" inert></i> {{deathChip.label}}
+            {{{td6icon deathChip.icon}}} {{deathChip.label}}
         </span>
     </div>
     {{/if}}
@@ -133,7 +133,7 @@
     </div>
 
     <button type="button" class="control-icon {{targetClass}}" data-action="target" data-tooltip="HUD.ToggleTargetState">
-        <i class="fa-solid fa-bullseye" inert></i>
+        {{{td6icon "bullseye"}}}
     </button>
 
     {{#if canToggleCombat}}

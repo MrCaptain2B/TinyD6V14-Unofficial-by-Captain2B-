@@ -1,5 +1,23 @@
 {
     "tinyd6": {
+        "mech": {
+            "sheet": "Karta",
+            "mechanics": "Ustawienia",
+            "actions": "Akcje",
+            "actionsMax": "Maks. akcje",
+            "woundsMax": "Maks. obrażenia",
+            "corruptionMax": "Maks. korupcja",
+            "masteredCount": "Opanowane bronie",
+            "masteredHint": "Liczba broni, które bohater może jednocześnie opanować (wymaga zasady „Opanowane bronie”).",
+            "death": "Śmierć i umieranie",
+            "deathDie": "Kość śmierci",
+            "worldDefault": "d6 (domyślnie w świecie)",
+            "deathRounds": "Rundy umierania",
+            "deathThreshold": "Próg rzutu na śmierć",
+            "emptyWorld": "Pozostaw puste, aby użyć wartości domyślnej świata.",
+            "damageBonus": "Bonus do obrażeń",
+            "damageBonusHint": "Bonus dodawany do wszystkich rzutów na obrażenia."
+        },
         "TinyD6HeroSheet": "Bohater",
         "TinyD6NpcSheet": "BN",
         "TokenWeapons": "Bron",
@@ -32,7 +50,8 @@
                     "default": "Ciemny (domyslny)",
                     "perkament": "Pergamin пїЅ Folklor",
                     "noir": "Noir пїЅ Miedz",
-                    "minimal": "Minimalny пїЅ Jasny"
+                    "minimal": "Minimalny пїЅ Jasny",
+                    "cyberpunk": "Cyberpunk пїЅ Neon"
                 }
             },
             "rollerInCharsheet": {
@@ -120,7 +139,7 @@
             },
             "deathRounds": {
                 "name": "Rzut na smierc: rundy do smierci",
-                "hint": "Liczba rund walki, ktore Umierajacy przezyje bez leczenia (standard 3)."
+                "hint": "Rundy do śmierci po osiągnięciu 0 PZ. Wpisz liczbę (3) lub formułę rzucaną przy 0 PZ, np. 1d6+2 albo 2d5, aby każdy upadek trwał inaczej."
             },
             "deathSaveThreshold": {
                 "name": "Rzut na smierc: prog sukcesu",
@@ -141,6 +160,18 @@
             "enableAttackProficiency": {
                 "name": "Auto biegłosc w broni",
                 "hint": "TinyD6+: automatycznie proponuje liczbe kosci ataku na podstawie biegłosci w broni (opanowana bron = przewaga, niewytresowana = utrudnienie). Gracz moze recznie wybrac dowolny poziom."
+            },
+            "enableArmorStacking": {
+                "name": "Umozliwianie nakładania zbroi",
+                "hint": "Gdy włączone, wiele zakwalifikowanych zbroi sumuje swój DR. Gdy wyłączone, stosuje się tylko zbroję z najwyższym DR."
+            },
+            "enableArmorBreakMessages": {
+                "name": "Wiadomosci o lamaniu pancerza w czacie",
+                "hint": "Publikuj wiadomosc w czacie, gdy tarcza lub pancerz sie zlamie (HP spadnie do 0)."
+            },
+            "animFx": {
+                "name": "Animacje walki",
+                "hint": "Pokazuj plywajace liczby obrazen, blyski tokenow, efekty krytyczne i efekty smierci. Wylacz na slabych komputerach."
             }
         },
         "dice": {
@@ -157,6 +188,22 @@
                 "critical": "Krytyczny Sukces!!",
                 "botch": "Krytyczna Porazka!!"
             }
+        },
+        "weaponCategories": {
+            "melee": "Wrecz",
+            "ranged": "Dystansowe"
+        },
+        "weaponTypes": {
+            "none": "",
+            "light": "Lekka",
+            "heavy": "Ciezka"
+        },
+        "armorTypes": {
+            "none": "",
+            "light": "Lekka",
+            "medium": "Srednia",
+            "heavy": "Ciezka",
+            "shield": "Tarcza"
         },
         "sheet": {
             "tab": {
@@ -178,7 +225,9 @@
             "newItem": "Nowy przedmiot",
             "description": "Opis",
             "none": "Brak",
-            "noWeapons": "Nie znaleziono broni w katalogu przedmiotów świata."
+            "noWeapons": "Nie znaleziono broni w katalogu przedmiotów świata.",
+            "unequip": "Zdejmij",
+            "delete": "Usun"
         },
         "actor": {
             "name": "Imie",
@@ -229,6 +278,51 @@
                 "max": "Maks:",
                 "increaseMax": "Zwieksz maks. HP",
                 "help": "Zaznacz, gdy otrzymasz obrazenia. Odznacz, gdy wyzdrowiejesz."
+            },
+            "gear": "Ekwipunek",
+            "preferredWeapons": "Preferowane Bronie",
+            "noPreferredWeapons": "Kliknij, aby przypisac preferowana bron",
+            "removePreferred": "Usun z preferowanych",
+            "addAmmo": "Dodaj Amunicje",
+            "addAmmoTitle": "Dodaj Amunicje",
+            "ammoType": "Typ Amunicji",
+            "selectWeapon": "Wybierz Bron",
+            "equipped": "Zakwipowany",
+            "equipment": "Bron",
+            "weaponry": "Bronie",
+            "wearing": "Ubranie",
+            "important": "Wazny BN",
+            "money": "Waluta",
+            "noMoney": "Brak waluty",
+            "corruption": {
+                "header": "Skazenie",
+                "current": "Obecne",
+                "max": "Maks:",
+                "increaseMax": "Zwieksz prog skazenia",
+                "help": "Zaznacz, gdy otrzymasz skazenie. Odznacz, gdy wyzdrowiejesz.",
+                "test": "Test Skazenia"
+            },
+            "radiation": {
+                "header": "Promieniowanie",
+                "current": "Obecne",
+                "max": "Maks:",
+                "increaseMax": "Zwieksz maks. promieniowanie",
+                "help": "Zaznacz, gdy otrzymasz promieniowanie."
+            },
+            "panic": {
+                "header": "Panika",
+                "current": "Obecne",
+                "help": "Odznacz, gdy dostaniesz Panike. Zaznacz, gdy sie wycofa. Rzut na Panike, gdy Panika wynosi 1.",
+                "test": "Test Paniki"
+            },
+            "grit": {
+                "header": "Hart ducha",
+                "current": "Obecne",
+                "help": "Odznacz, gdy wydasz Hart ducha."
+            },
+            "proficiencies": {
+                "header": "Bieglosc",
+                "mastered": "Opanowanie"
             }
         },
         "gear": {
@@ -261,10 +355,12 @@
             "self": "Nie mozesz stabilizowac siebie.",
             "stabilized": "Ustabilizowany",
             "stabilizedHint": "Cel jest ustabilizowany i nie umiera.",
-            "dyingHint": "Umierajacy: za N rund umrze bez leczenia.",
+            "dyingHint": "Umierający: umrze za {rounds} {word} bez leczenia.",
             "defeated": "Pokonany",
             "died": "Zmarl",
-            "turnsLeft": "rundy do smierci"
+            "turnsLeft": "{actor} umrze za {n} {word}.",
+            "stabilizedRest": "pada, ale nic już mu nie zagraża.",
+            "dyingRest": "pada i krwawi. Bez pomocy śmierć nadejdzie za {n} {word}."
         },
         "stabilize": {
             "title": "Stabilizacja",
@@ -295,6 +391,106 @@
             "confirmTitle": "Potwierdzenie leczenia",
             "applyConfirm": "Zastosuj",
             "confirmed": "Potwierdzono"
+        },
+        "Attack": "Atak",
+        "Reload": "Przeladuj",
+        "corruptionTests": {
+            "none": "Brak",
+            "disadvantage": "Utrudnienie",
+            "standard": "Zwykly"
+        },
+        "weapon": {
+            "name": "Nazwa",
+            "type": "Typ broni",
+            "damage": "Obrazenia",
+            "slots": "Sloty przedmiotu",
+            "description": "Opis",
+            "light": "Lekka",
+            "heavy": "Ciezka",
+            "ranged": "Dystansowa",
+            "lightMelee": "L. wrecz",
+            "heavyMelee": "H. wrecz",
+            "lightRanged": "L. dystansowa",
+            "heavyRanged": "H. dystansowa",
+            "lightShort": "L",
+            "heavyShort": "C",
+            "meleeShort": "W",
+            "rangedShort": "D",
+            "oneAttack": "Atakuje raz na runde",
+            "reload": "Przeladowanie",
+            "uses": "Uzytki",
+            "ammoType": "Typ amunicji",
+            "ammoAny": "— dowolna amunicja"
+        },
+        "reload": {
+            "outOfAmmo": "Brak amunicji — przeladuj!",
+            "ranOut": "Amunicja wyczerpana — przeladuj, aby kontynuowac.",
+            "reloadBtn": "Przeladuj (resetuj do max)",
+            "reloaded": "przeladowano",
+            "undoResource": "Przywroc zasob",
+            "noMag": "Brak magazynkow typu \"{type}\" w ekwipunku.",
+            "emptyMag": "Magazynek \"{type}\" jest pusty (0 zostalo).",
+            "noMagAny": "Brak magazynkow (amunicji) w ekwipunku.",
+            "ammoUsed": " (mag {ammo})"
+        },
+        "armor": {
+            "name": "Nazwa",
+            "type": "Typ pancerza",
+            "damageReduction": "OBP",
+            "armorHp": "HP pancerza",
+            "slots": "Sloty przedmiotu",
+            "depletion": "Zuzycie",
+            "description": "Opis",
+            "none": "Bez pancerza",
+            "armor": "Pancerz",
+            "shieldBreak": "Tarcza {name} aktora {actor} zlamala sie!",
+            "armorBreak": "Pancerz {name} aktora {actor} zlamal sie!"
+        },
+        "shield": {
+            "name": "Nazwa",
+            "damageReduction": "OBP",
+            "armorHp": "HP tarczy",
+            "shields": "Tarcze",
+            "none": "Bez tarczy",
+            "description": "Opis"
+        },
+        "heritage": {
+            "trait": "Cecha pochodzenia",
+            "startingHealth": "Poczatkowe HP",
+            "corruptionThreshold": "Prog skazenia"
+        },
+        "trait": {
+            "name": "Nazwa",
+            "description": "Opis"
+        },
+        "attack": {
+            "attack": "Atak",
+            "hit": "Trafienie",
+            "miss": "Pudlo",
+            "crit": "Krytyczne",
+            "targets": "Cele",
+            "damage": "Obrazenia",
+            "noTarget": "Wybierz cel (badz zaznacz tokeny) przed atakiem.",
+            "applyDamage": "Zastosuj obrazenia",
+            "weapon": "Bron",
+            "mode": "Rzut",
+            "roll": "Atak",
+            "cancel": "Anuluj"
+        },
+        "ArmorRestore": "Przywroc pancerz",
+        "plural": {
+            "round": {
+                "one": "runda",
+                "few": "rundy",
+                "many": "rund",
+                "other": "rund"
+            },
+            "turn": {
+                "one": "tura",
+                "few": "tury",
+                "many": "tur",
+                "other": "tur"
+            }
         }
     }
 }

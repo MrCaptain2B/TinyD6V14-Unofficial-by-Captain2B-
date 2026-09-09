@@ -46,7 +46,7 @@
    выезжают слева (Foundry добавляет их в лог, анимация
    проигрывается при вставке в DOM).
    ------------------------------------------------------------ */
-.tinyd6.attack-card,
+.tinyd6.td6-attack-card,
 .tinyd6.item-card,
 .tinyd6.roll {
     animation: td-card-in .3s cubic-bezier(.2, .9, .3, 1) both;
@@ -60,16 +60,16 @@
    Кубы «выкатываются» друг за другом в карточке атаки и в
    разборе броска (оригинальные иконки fa-dice-*, только анимация).
    ------------------------------------------------------------ */
-.tinyd6.attack-card .attack-die,
-.tinyd6.dice-breakdown span {
+.tinyd6.td6-attack-card .attack-die,
+.tinyd6.td6-dice-breakdown span {
     animation: td-die-roll .4s cubic-bezier(.2, .9, .3, 1) both;
 }
-.tinyd6.attack-card .attack-die:nth-child(1) { animation-delay: .05s; }
-.tinyd6.attack-card .attack-die:nth-child(2) { animation-delay: .15s; }
-.tinyd6.attack-card .attack-die:nth-child(3) { animation-delay: .25s; }
-.tinyd6.dice-breakdown span:nth-child(1) { animation-delay: .05s; }
-.tinyd6.dice-breakdown span:nth-child(2) { animation-delay: .15s; }
-.tinyd6.dice-breakdown span:nth-child(3) { animation-delay: .25s; }
+.tinyd6.td6-attack-card .attack-die:nth-child(1) { animation-delay: .05s; }
+.tinyd6.td6-attack-card .attack-die:nth-child(2) { animation-delay: .15s; }
+.tinyd6.td6-attack-card .attack-die:nth-child(3) { animation-delay: .25s; }
+.tinyd6.td6-dice-breakdown span:nth-child(1) { animation-delay: .05s; }
+.tinyd6.td6-dice-breakdown span:nth-child(2) { animation-delay: .15s; }
+.tinyd6.td6-dice-breakdown span:nth-child(3) { animation-delay: .25s; }
 @keyframes td-die-roll {
     from { opacity: 0; transform: translateY(-8px) rotate(-50deg); }
     to   { opacity: 1; transform: none; }
@@ -78,7 +78,7 @@
 /* ------------------------------------------------------------
    Крит: карточка с меткой «КРИТ» получает золотую вспышку.
    ------------------------------------------------------------ */
-.tinyd6.attack-card:has(.attack-crit) {
+.tinyd6.td6-attack-card:has(.attack-crit) {
     animation: td-card-in .3s cubic-bezier(.2, .9, .3, 1) both, td-crit-flash .7s ease .15s;
 }
 @keyframes td-crit-flash {

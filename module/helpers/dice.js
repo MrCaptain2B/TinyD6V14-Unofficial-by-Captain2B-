@@ -1,16 +1,17 @@
 import { isDowned } from "./death.js";
 import { gmProxy, broadcastFx } from "./socket.js";
+import { iconSvg } from "./icons.js";
 
-/* Включены ли анимации боя (настройка мира animFx). */
+/* Р’РєР»СЋС‡РµРЅС‹ Р»Рё Р°РЅРёРјР°С†РёРё Р±РѕСЏ (РЅР°СЃС‚СЂРѕР№РєР° РјРёСЂР° animFx). */
 export function isAnimFxEnabled() {
     try { return game.settings.get("tinyd6v14", "animFx") !== false; }
     catch (err) { return true; }
 }
 
-/* Реестр всплывающих чисел, привязанных к конкретному токену-цели.
- * Ключ — id актёра, значение — id токена, над которым надо показать число.
- * Нужен потому, что для unlinked NPC у всех копий одного актёра одинаковый
- * actor.id, поэтому хук updateActor сам не может различить, какой из них ранен. */
+/* Р РµРµСЃС‚СЂ РІСЃРїР»С‹РІР°СЋС‰РёС… С‡РёСЃРµР», РїСЂРёРІСЏР·Р°РЅРЅС‹С… Рє РєРѕРЅРєСЂРµС‚РЅРѕРјСѓ С‚РѕРєРµРЅСѓ-С†РµР»Рё.
+ * РљР»СЋС‡ вЂ” id Р°РєС‚С‘СЂР°, Р·РЅР°С‡РµРЅРёРµ вЂ” id С‚РѕРєРµРЅР°, РЅР°Рґ РєРѕС‚РѕСЂС‹Рј РЅР°РґРѕ РїРѕРєР°Р·Р°С‚СЊ С‡РёСЃР»Рѕ.
+ * РќСѓР¶РµРЅ РїРѕС‚РѕРјСѓ, С‡С‚Рѕ РґР»СЏ unlinked NPC Сѓ РІСЃРµС… РєРѕРїРёР№ РѕРґРЅРѕРіРѕ Р°РєС‚С‘СЂР° РѕРґРёРЅР°РєРѕРІС‹Р№
+ * actor.id, РїРѕСЌС‚РѕРјСѓ С…СѓРє updateActor СЃР°Рј РЅРµ РјРѕР¶РµС‚ СЂР°Р·Р»РёС‡РёС‚СЊ, РєР°РєРѕР№ РёР· РЅРёС… СЂР°РЅРµРЅ. */
 const PENDING_FLOAT = new Map();
 
 export function _setPendingFloat(actorId, tokenId) {
@@ -103,7 +104,7 @@ export function diceToFaces(value, content)
 }
 
 /* ============================================================
-   Автоматизированные атаки (оружие по таргетам)
+   РђРІС‚РѕРјР°С‚РёР·РёСЂРѕРІР°РЅРЅС‹Рµ Р°С‚Р°РєРё (РѕСЂСѓР¶РёРµ РїРѕ С‚Р°СЂРіРµС‚Р°Рј)
    ============================================================ */
 
 function _attackTargets(attacker) {
@@ -112,7 +113,7 @@ function _attackTargets(attacker) {
     {
         game.user.targets.forEach(t => {
             if (!t.actor) return;
-            // Целью может быть NPC или другой герой, но не сам стреляющий.
+            // Р¦РµР»СЊСЋ РјРѕР¶РµС‚ Р±С‹С‚СЊ NPC РёР»Рё РґСЂСѓРіРѕР№ РіРµСЂРѕР№, РЅРѕ РЅРµ СЃР°Рј СЃС‚СЂРµР»СЏСЋС‰РёР№.
             if (attacker && t.actor.id === attacker.id) return;
             if (t.actor.type === "npc" || t.actor.type === "hero") targets.push({ actor: t.actor, token: t.document });
         });
@@ -120,41 +121,91 @@ function _attackTargets(attacker) {
     return targets;
 }
 
-/* Экипированная броня. У NPC вся броня всегда считается экипированной:
- * NPC не «переодевается», и без этого броня, добавленная в лист NPC, не давала
- * бы DR и не показывалась в HUD. Для героев по-прежнему важен флаг equipped. */
+/* РџСЂРѕРІРµСЂРєР°, СЏРІР»СЏРµС‚СЃСЏ Р»Рё РїСЂРµРґРјРµС‚ С‰РёС‚РѕРј (armor СЃ group === "shield"). */
+function _isShield(item) {
+    return item?.type === "armor" && item?.system?.group === "shield";
+}
+
+/* Р­РєРёРїРёСЂРѕРІР°РЅРЅР°СЏ Р±СЂРѕРЅСЏ. РЈ NPC РІСЃСЏ Р±СЂРѕРЅСЏ РІСЃРµРіРґР° СЃС‡РёС‚Р°РµС‚СЃСЏ СЌРєРёРїРёСЂРѕРІР°РЅРЅРѕР№:
+ * NPC РЅРµ В«РїРµСЂРµРѕРґРµРІР°РµС‚СЃСЏВ», Рё Р±РµР· СЌС‚РѕРіРѕ Р±СЂРѕРЅСЏ, РґРѕР±Р°РІР»РµРЅРЅР°СЏ РІ Р»РёСЃС‚ NPC, РЅРµ РґР°РІР°Р»Р°
+ * Р±С‹ DR Рё РЅРµ РїРѕРєР°Р·С‹РІР°Р»Р°СЃСЊ РІ HUD. Р”Р»СЏ РіРµСЂРѕРµРІ РїРѕ-РїСЂРµР¶РЅРµРјСѓ РІР°Р¶РµРЅ С„Р»Р°Рі equipped. */
 function _equippedArmor(actor) {
     const npcAll = actor?.type === "npc";
     return (actor?.items ?? []).filter(i => i.type === "armor" && (npcAll || i.system?.equipped));
 }
 
-/* Только «живая» броня: экипированная и с ненулевым запасом прочности. */
+/* РўРѕР»СЊРєРѕ В«Р¶РёРІР°СЏВ» Р±СЂРѕРЅСЏ: СЌРєРёРїРёСЂРѕРІР°РЅРЅР°СЏ Рё СЃ РЅРµРЅСѓР»РµРІС‹Рј Р·Р°РїР°СЃРѕРј РїСЂРѕС‡РЅРѕСЃС‚Рё. */
 function _activeArmor(actor) {
     return _equippedArmor(actor).filter(i => (Number(i.system?.armorHp?.value) || 0) > 0);
 }
 
-/* Суммарный DR активной (не истраченной) брони. */
-function _actorArmorTotal(actor) {
-    return _activeArmor(actor).reduce((sum, i) => sum + (Number(i.system?.damageReduction) || 0), 0);
+/* Р­РєРёРїРёСЂРѕРІР°РЅРЅС‹Рµ С‰РёС‚С‹ СЃ РЅРµРЅСѓР»РµРІС‹Рј HP. */
+function _activeShields(actor) {
+    const npcAll = actor?.type === "npc";
+    return (actor?.items ?? []).filter(i => _isShield(i) && (npcAll || i.system?.equipped) && (Number(i.system?.armorHp?.value) || 0) > 0);
 }
 
-/* Снимает 1 запас прочности с первой активной брони.
- * Возвращает true, если запас был снят. */
-async function _reduceArmorHp(actor) {
+/* РЎСѓРјРјР°СЂРЅС‹Р№ DR Р°РєС‚РёРІРЅРѕР№ (РЅРµ РёСЃС‚СЂР°С‡РµРЅРЅРѕР№) Р±СЂРѕРЅРё СЃ СѓС‡С‘С‚РѕРј stacking. */
+function _actorArmorTotal(actor) {
+    const armorStacking = game.settings.get('tinyd6v14', 'enableArmorStacking');
     const active = _activeArmor(actor);
+
+    if (armorStacking) {
+        // РЎС‚Р°РєРёРЅРі: СЃСѓРјРјРёСЂСѓРµРј DR РІСЃРµР№ Р±СЂРѕРЅРё.
+        return active.reduce((sum, i) => sum + (Number(i.system?.damageReduction) || 0), 0);
+    } else {
+        // Р‘РµР· СЃС‚Р°РєРёРЅРіР°: С‚РѕР»СЊРєРѕ РјР°РєСЃРёРјР°Р»СЊРЅС‹Р№ DR РѕРґРЅРѕР№ Р±СЂРѕРЅРё.
+        let maxDr = 0;
+        for (const i of active) {
+            const dr = Number(i.system?.damageReduction) || 0;
+            if (dr > maxDr) maxDr = dr;
+        }
+        return maxDr;
+    }
+}
+
+/* РЎРЅРёРјР°РµС‚ 1 Р·Р°РїР°СЃ РїСЂРѕС‡РЅРѕСЃС‚Рё: СЃРЅР°С‡Р°Р»Р° СЃ С‰РёС‚Р°, РїРѕС‚РѕРј СЃ Р±СЂРѕРЅРё.
+ * Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё Р·Р°РїР°СЃ Р±С‹Р» СЃРЅСЏС‚. */
+async function _reduceArmorHp(actor) {
+    const breakMsg = game.settings.get('tinyd6v14', 'enableArmorBreakMessages');
+
+    // РЎРЅР°С‡Р°Р»Р° С‰РёС‚С‹
+    const shields = _activeShields(actor);
+    if (shields.length) {
+        const item = shields[0];
+        const current = Number(item.system?.armorHp?.value) || 0;
+        const newVal = Math.max(0, current - 1);
+        await item.update({ "system.armorHp.value": newVal });
+        if (breakMsg && newVal <= 0) {
+            await ChatMessage.create({
+                speaker: ChatMessage.getSpeaker({ actor }),
+                content: `<div class="tinyd6">${iconSvg("shield-halved")} ${game.i18n.format("tinyd6.armor.shieldBreak", { name: item.name, actor: actor.name })}</div>`
+            });
+        }
+        return true;
+    }
+    // РџРѕС‚РѕРј Р±СЂРѕРЅСЏ
+    const active = _activeArmor(actor).filter(i => i.type === "armor");
     if (!active.length) return false;
     const item = active[0];
     const current = Number(item.system?.armorHp?.value) || 0;
-    await item.update({ "system.armorHp.value": Math.max(0, current - 1) });
+    const newVal = Math.max(0, current - 1);
+    await item.update({ "system.armorHp.value": newVal });
+    if (breakMsg && newVal <= 0) {
+        await ChatMessage.create({
+            speaker: ChatMessage.getSpeaker({ actor }),
+            content: `<div class="tinyd6">${iconSvg("shield-halved")} ${game.i18n.format("tinyd6.armor.armorBreak", { name: item.name, actor: actor.name })}</div>`
+        });
+    }
     return true;
 }
 
-/* Урон атаки по конкретной цели с учётом её брони.
- * Броня в Tiny D6 всегда активна:
- *  - если урон <= DR активной брони — урон полностью поглощён (0),
- *    но с брони снимается 1 запас прочности;
- *  - если урон > DR — цель получает урон - DR, и с брони снимается 1 запас;
- *  - когда запас брони на нуле, она перестаёт защищать. */
+/* РЈСЂРѕРЅ Р°С‚Р°РєРё РїРѕ РєРѕРЅРєСЂРµС‚РЅРѕР№ С†РµР»Рё СЃ СѓС‡С‘С‚РѕРј РµС‘ Р±СЂРѕРЅРё.
+ * Р‘СЂРѕРЅСЏ РІ Tiny D6 РІСЃРµРіРґР° Р°РєС‚РёРІРЅР°:
+ *  - РµСЃР»Рё СѓСЂРѕРЅ <= DR Р°РєС‚РёРІРЅРѕР№ Р±СЂРѕРЅРё вЂ” СѓСЂРѕРЅ РїРѕР»РЅРѕСЃС‚СЊСЋ РїРѕРіР»РѕС‰С‘РЅ (0),
+ *    РЅРѕ СЃ Р±СЂРѕРЅРё СЃРЅРёРјР°РµС‚СЃСЏ 1 Р·Р°РїР°СЃ РїСЂРѕС‡РЅРѕСЃС‚Рё;
+ *  - РµСЃР»Рё СѓСЂРѕРЅ > DR вЂ” С†РµР»СЊ РїРѕР»СѓС‡Р°РµС‚ СѓСЂРѕРЅ - DR, Рё СЃ Р±СЂРѕРЅРё СЃРЅРёРјР°РµС‚СЃСЏ 1 Р·Р°РїР°СЃ;
+ *  - РєРѕРіРґР° Р·Р°РїР°СЃ Р±СЂРѕРЅРё РЅР° РЅСѓР»Рµ, РѕРЅР° РїРµСЂРµСЃС‚Р°С‘С‚ Р·Р°С‰РёС‰Р°С‚СЊ. */
 export function computeDamage(weaponDamage, targetActor) {
     let dmg = Number(weaponDamage) || 1;
     const armor = _actorArmorTotal(targetActor);
@@ -177,16 +228,16 @@ function _diceFace(result) {
     return "fa-dice-d6";
 }
 
-/* Открывает диалог атаки оружием: выбор режима броска (помеха/стандарт/
- * преимущество) и модификаторов Focus/Marksman. Общий для листа актёра и HUD. */
-/* Определяет рекомендуемый уровень броска атаки по профишенси актёра
+/* РћС‚РєСЂС‹РІР°РµС‚ РґРёР°Р»РѕРі Р°С‚Р°РєРё РѕСЂСѓР¶РёРµРј: РІС‹Р±РѕСЂ СЂРµР¶РёРјР° Р±СЂРѕСЃРєР° (РїРѕРјРµС…Р°/СЃС‚Р°РЅРґР°СЂС‚/
+ * РїСЂРµРёРјСѓС‰РµСЃС‚РІРѕ) Рё РјРѕРґРёС„РёРєР°С‚РѕСЂРѕРІ Focus/Marksman. РћР±С‰РёР№ РґР»СЏ Р»РёСЃС‚Р° Р°РєС‚С‘СЂР° Рё HUD. */
+/* РћРїСЂРµРґРµР»СЏРµС‚ СЂРµРєРѕРјРµРЅРґСѓРµРјС‹Р№ СѓСЂРѕРІРµРЅСЊ Р±СЂРѕСЃРєР° Р°С‚Р°РєРё РїРѕ РїСЂРѕС„РёС€РµРЅСЃРё Р°РєС‚С‘СЂР°
  * (Homerule: TinyD6+ + enableAttackProficiency):
- *  - оружие, имя которого есть в masteredWeapons → преимущество (3d6);
- *  - владелец обучен типу оружия → стандарт (2d6);
- *  - необучен → помеха (1d6);
- *  - NPC без заполненных профишенси → стандарт.
- * Возвращает 1 | 2 | 3. Используется только как «подсказка» в диалоге —
- * игрок может выбрать любой уровень вручную. */
+ *  - РѕСЂСѓР¶РёРµ, РёРјСЏ РєРѕС‚РѕСЂРѕРіРѕ РµСЃС‚СЊ РІ masteredWeapons в†’ РїСЂРµРёРјСѓС‰РµСЃС‚РІРѕ (3d6);
+ *  - РІР»Р°РґРµР»РµС† РѕР±СѓС‡РµРЅ С‚РёРїСѓ РѕСЂСѓР¶РёСЏ в†’ СЃС‚Р°РЅРґР°СЂС‚ (2d6);
+ *  - РЅРµРѕР±СѓС‡РµРЅ в†’ РїРѕРјРµС…Р° (1d6);
+ *  - NPC Р±РµР· Р·Р°РїРѕР»РЅРµРЅРЅС‹С… РїСЂРѕС„РёС€РµРЅСЃРё в†’ СЃС‚Р°РЅРґР°СЂС‚.
+ * Р’РѕР·РІСЂР°С‰Р°РµС‚ 1 | 2 | 3. РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ С‚РѕР»СЊРєРѕ РєР°Рє В«РїРѕРґСЃРєР°Р·РєР°В» РІ РґРёР°Р»РѕРіРµ вЂ”
+ * РёРіСЂРѕРє РјРѕР¶РµС‚ РІС‹Р±СЂР°С‚СЊ Р»СЋР±РѕР№ СѓСЂРѕРІРµРЅСЊ РІСЂСѓС‡РЅСѓСЋ. */
 export function suggestAttackDice(actor, weapon) {
     if (!actor || !weapon) return 2;
     if (actor.type === "npc")
@@ -197,20 +248,20 @@ export function suggestAttackDice(actor, weapon) {
     }
 
     const masteredRaw = (actor.system?.proficiencies?.masteredWeapons || "").trim();
-    // Мастерство хранится как ID оружия из директории мира (game.items),
-    // выбранного в окне (кнопка на листе). У инвентарной копии оружия свой
-    // id, поэтому сравниваем по имени: имя оружия директории (по id) должно
-    // совпасть с именем атакующего оружия. Старый textbox-формат хранил
-    // имена через запятую — матчим по именам напрямую.
+    // РњР°СЃС‚РµСЂСЃС‚РІРѕ С…СЂР°РЅРёС‚СЃСЏ РєР°Рє ID РѕСЂСѓР¶РёСЏ РёР· РґРёСЂРµРєС‚РѕСЂРёРё РјРёСЂР° (game.items),
+    // РІС‹Р±СЂР°РЅРЅРѕРіРѕ РІ РѕРєРЅРµ (РєРЅРѕРїРєР° РЅР° Р»РёСЃС‚Рµ). РЈ РёРЅРІРµРЅС‚Р°СЂРЅРѕР№ РєРѕРїРёРё РѕСЂСѓР¶РёСЏ СЃРІРѕР№
+    // id, РїРѕСЌС‚РѕРјСѓ СЃСЂР°РІРЅРёРІР°РµРј РїРѕ РёРјРµРЅРё: РёРјСЏ РѕСЂСѓР¶РёСЏ РґРёСЂРµРєС‚РѕСЂРёРё (РїРѕ id) РґРѕР»Р¶РЅРѕ
+    // СЃРѕРІРїР°СЃС‚СЊ СЃ РёРјРµРЅРµРј Р°С‚Р°РєСѓСЋС‰РµРіРѕ РѕСЂСѓР¶РёСЏ. РЎС‚Р°СЂС‹Р№ textbox-С„РѕСЂРјР°С‚ С…СЂР°РЅРёР»
+    // РёРјРµРЅР° С‡РµСЂРµР· Р·Р°РїСЏС‚СѓСЋ вЂ” РјР°С‚С‡РёРј РїРѕ РёРјРµРЅР°Рј РЅР°РїСЂСЏРјСѓСЋ.
     const weaponName = (weapon.name || "").trim().toLowerCase();
     const weaponId = (weapon.id || "").toLowerCase();
     if (weaponId === masteredRaw.toLowerCase()) return 3;
-    // Новый формат: id оружия директории → берём его имя.
+    // РќРѕРІС‹Р№ С„РѕСЂРјР°С‚: id РѕСЂСѓР¶РёСЏ РґРёСЂРµРєС‚РѕСЂРёРё в†’ Р±РµСЂС‘Рј РµРіРѕ РёРјСЏ.
     const dirItem = game.items.get(masteredRaw);
     if (dirItem) {
         if (dirItem.name.trim().toLowerCase() === weaponName) return 3;
     }
-    // Старый формат: имена через запятую.
+    // РЎС‚Р°СЂС‹Р№ С„РѕСЂРјР°С‚: РёРјРµРЅР° С‡РµСЂРµР· Р·Р°РїСЏС‚СѓСЋ.
     else {
         const names = masteredRaw.split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
         if (names.includes(weaponName)) return 3;
@@ -222,8 +273,8 @@ export function suggestAttackDice(actor, weapon) {
     return 1;
 }
 
-/* Ключ профишенси для оружия: по weaponType (TinyD6+) или по
- * группе/типу урона (базовый режим). Возвращает ключ или null. */
+/* РљР»СЋС‡ РїСЂРѕС„РёС€РµРЅСЃРё РґР»СЏ РѕСЂСѓР¶РёСЏ: РїРѕ weaponType (TinyD6+) РёР»Рё РїРѕ
+ * РіСЂСѓРїРїРµ/С‚РёРїСѓ СѓСЂРѕРЅР° (Р±Р°Р·РѕРІС‹Р№ СЂРµР¶РёРј). Р’РѕР·РІСЂР°С‰Р°РµС‚ РєР»СЋС‡ РёР»Рё null. */
 function _weaponProficiencyKey(weapon) {
     const s = weapon.system ?? {};
     const wt = s.weaponType;
@@ -241,9 +292,9 @@ export function openAttackDialog(actor, weapon) {
     const focusLabel = game.i18n.localize("tinyd6.dice.modifier.focus");
     const marksmanLabel = game.i18n.localize("tinyd6.dice.modifier.marksman");
 
-    // Homerule: TinyD6+ + Auto weapon proficiency — рекомендуемый уровень
-    // подсвечивается в диалоге, но все кнопки остаются активными, чтобы
-    // игрок мог переопределить под ситуацию (НРИ, а не авто-игра).
+    // Homerule: TinyD6+ + Auto weapon proficiency вЂ” СЂРµРєРѕРјРµРЅРґСѓРµРјС‹Р№ СѓСЂРѕРІРµРЅСЊ
+    // РїРѕРґСЃРІРµС‡РёРІР°РµС‚СЃСЏ РІ РґРёР°Р»РѕРіРµ, РЅРѕ РІСЃРµ РєРЅРѕРїРєРё РѕСЃС‚Р°СЋС‚СЃСЏ Р°РєС‚РёРІРЅС‹РјРё, С‡С‚РѕР±С‹
+    // РёРіСЂРѕРє РјРѕРі РїРµСЂРµРѕРїСЂРµРґРµР»РёС‚СЊ РїРѕРґ СЃРёС‚СѓР°С†РёСЋ (РќР Р, Р° РЅРµ Р°РІС‚Рѕ-РёРіСЂР°).
     let suggested = 2;
     if (game.settings.get('tinyd6v14', 'enableTinyD6Plus')
         && game.settings.get('tinyd6v14', 'enableAttackProficiency'))
@@ -251,9 +302,9 @@ export function openAttackDialog(actor, weapon) {
         suggested = suggestAttackDice(actor, weapon);
     }
 
-    // Кнопки диалога в Foundry v14 получают cssClass из key/default, а не из
-    // переданного className — поэтому рекомендуемую кнопку подсвечиваем
-    // вручную через render-колбэк (класс attack-suggest).
+    // РљРЅРѕРїРєРё РґРёР°Р»РѕРіР° РІ Foundry v14 РїРѕР»СѓС‡Р°СЋС‚ cssClass РёР· key/default, Р° РЅРµ РёР·
+    // РїРµСЂРµРґР°РЅРЅРѕРіРѕ className вЂ” РїРѕСЌС‚РѕРјСѓ СЂРµРєРѕРјРµРЅРґСѓРµРјСѓСЋ РєРЅРѕРїРєСѓ РїРѕРґСЃРІРµС‡РёРІР°РµРј
+    // РІСЂСѓС‡РЅСѓСЋ С‡РµСЂРµР· render-РєРѕР»Р±СЌРє (РєР»Р°СЃСЃ attack-suggest).
     const suggestButtons = { 1: "disadvantage", 2: "standard", 3: "advantage" };
     const suggestKey = suggestButtons[suggested] ?? null;
 
@@ -302,8 +353,10 @@ export function openAttackDialog(actor, weapon) {
                 }
             }
         },
+        default: suggestKey || "standard",
+        close: () => {},
         render: (html) => {
-            // Подсветка рекомендуемого уровня броска (если включено).
+            // РџРѕРґСЃРІРµС‚РєР° СЂРµРєРѕРјРµРЅРґСѓРµРјРѕРіРѕ СѓСЂРѕРІРЅСЏ Р±СЂРѕСЃРєР° (РµСЃР»Рё РІРєР»СЋС‡РµРЅРѕ).
             if (suggestKey && game.settings.get('tinyd6v14', 'enableTinyD6Plus')
                 && game.settings.get('tinyd6v14', 'enableAttackProficiency')) {
                 html.find(`.dialog-button[data-button="${suggestKey}"]`).addClass("attack-suggest");
@@ -314,28 +367,30 @@ export function openAttackDialog(actor, weapon) {
                 if (!enabled) html.find(".toggle-marksman").prop("checked", false);
             });
         }
+    }, {
+        classes: ['tinyd6', 'attack-dialog']
     }).render(true);
 }
 
-/* Полный бросок атаки: валидирует таргеты, кидает d6cs>=5,
- * рендерит attack-card в чат. Урон применяется кнопкой на карточке.
- * dice: 1 = помеха, 2 = стандарт, 3 = преимущество.
- * focusAction / marksmanTrait снижают порог успеха на 1 каждый.
- * Homerule: TinyD6+ — у оружия с reload тратится 1 заряд (даже при
- * промахе); при 0 зарядов атака блокируется и в чат идёт заглушка. */
+/* РџРѕР»РЅС‹Р№ Р±СЂРѕСЃРѕРє Р°С‚Р°РєРё: РІР°Р»РёРґРёСЂСѓРµС‚ С‚Р°СЂРіРµС‚С‹, РєРёРґР°РµС‚ d6cs>=5,
+ * СЂРµРЅРґРµСЂРёС‚ attack-card РІ С‡Р°С‚. РЈСЂРѕРЅ РїСЂРёРјРµРЅСЏРµС‚СЃСЏ РєРЅРѕРїРєРѕР№ РЅР° РєР°СЂС‚РѕС‡РєРµ.
+ * dice: 1 = РїРѕРјРµС…Р°, 2 = СЃС‚Р°РЅРґР°СЂС‚, 3 = РїСЂРµРёРјСѓС‰РµСЃС‚РІРѕ.
+ * focusAction / marksmanTrait СЃРЅРёР¶Р°СЋС‚ РїРѕСЂРѕРі СѓСЃРїРµС…Р° РЅР° 1 РєР°Р¶РґС‹Р№.
+ * Homerule: TinyD6+ вЂ” Сѓ РѕСЂСѓР¶РёСЏ СЃ reload С‚СЂР°С‚РёС‚СЃСЏ 1 Р·Р°СЂСЏРґ (РґР°Р¶Рµ РїСЂРё
+ * РїСЂРѕРјР°С…Рµ); РїСЂРё 0 Р·Р°СЂСЏРґРѕРІ Р°С‚Р°РєР° Р±Р»РѕРєРёСЂСѓРµС‚СЃСЏ Рё РІ С‡Р°С‚ РёРґС‘С‚ Р·Р°РіР»СѓС€РєР°. */
 export async function performWeaponAttack(actor, weapon, dice = 2, { focusAction = false, marksmanTrait = false } = {}) {
     const homerule = game.settings.get('tinyd6v14', 'enableTinyD6Plus');
     const showNpcMessages = game.settings.get('tinyd6v14', 'showNpcReloadMessages');
     const isNpc = actor?.type === "npc";
 
-    // Homerule: TinyD6+ — выведенный из строя персонаж не может атаковать.
+    // Homerule: TinyD6+ вЂ” РІС‹РІРµРґРµРЅРЅС‹Р№ РёР· СЃС‚СЂРѕСЏ РїРµСЂСЃРѕРЅР°Р¶ РЅРµ РјРѕР¶РµС‚ Р°С‚Р°РєРѕРІР°С‚СЊ.
     if (game.settings.get('tinyd6v14', 'enableTinyD6Plus') && isDowned(actor))
     {
         ui.notifications.warn(game.i18n.localize("tinyd6.death.cannotAct"));
         return;
     }
 
-    // Homerule: TinyD6+ — проверка зарядов перед атакой.
+    // Homerule: TinyD6+ вЂ” РїСЂРѕРІРµСЂРєР° Р·Р°СЂСЏРґРѕРІ РїРµСЂРµРґ Р°С‚Р°РєРѕР№.
     let weaponReload = false;
     let weaponMax = 0;
     let weaponCharges = 0;
@@ -346,7 +401,7 @@ export async function performWeaponAttack(actor, weapon, dice = 2, { focusAction
         weaponCharges = (weapon.system.charges !== undefined && weapon.system.charges !== null)
             ? Number(weapon.system.charges) : weaponMax;
 
-        // Не показываем заглушки для NPC, если отключено в настройках.
+        // РќРµ РїРѕРєР°Р·С‹РІР°РµРј Р·Р°РіР»СѓС€РєРё РґР»СЏ NPC, РµСЃР»Рё РѕС‚РєР»СЋС‡РµРЅРѕ РІ РЅР°СЃС‚СЂРѕР№РєР°С….
         const announce = showNpcMessages || !isNpc;
         if (weaponCharges <= 0)
         {
@@ -354,7 +409,7 @@ export async function performWeaponAttack(actor, weapon, dice = 2, { focusAction
             {
                 ChatMessage.create({
                     speaker: ChatMessage.getSpeaker({ actor }),
-                    content: `<div class="tinyd6 reload-stub">⚠ <b>${weapon.name}</b> (${actor.name}): ${game.i18n.localize("tinyd6.reload.outOfAmmo")}</div>`
+                    content: `<div class="tinyd6 reload-stub">вљ  <b>${weapon.name}</b> (${actor.name}): ${game.i18n.localize("tinyd6.reload.outOfAmmo")}</div>`
                 });
             }
             ui.notifications.warn(game.i18n.localize("tinyd6.reload.outOfAmmo"));
@@ -383,21 +438,25 @@ export async function performWeaponAttack(actor, weapon, dice = 2, { focusAction
     const targetNames = targets.map(t => t.actor.name).join(", ");
     const results = roll.dice[0].results;
 
-    // Homerule: Crit Advantage-Normal — при выпадении одинаковых 6-ок на всех
-    // кубах (2d6 или 3d6 в зависимости от настройки) урон удваивается.
+    // Homerule: Crit Advantage-Normal вЂ” РїСЂРё РІС‹РїР°РґРµРЅРёРё РѕРґРёРЅР°РєРѕРІС‹С… 6-РѕРє РЅР° РІСЃРµС…
+    // РєСѓР±Р°С… (2d6 РёР»Рё 3d6 РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ РЅР°СЃС‚СЂРѕР№РєРё) СѓСЂРѕРЅ СѓРґРІР°РёРІР°РµС‚СЃСЏ.
     let isCrit = false;
     const critMode = game.settings.get('tinyd6v14', 'critAdvantage');
     if (critMode !== "off" && isHit && results.length > 0)
     {
         const allSixes = results.every(r => r.result === 6);
-        const applies = (critMode === "both") ||
+        const applies = (critMode === "both" && (dice === 2 || dice === 3)) ||
             (critMode === "two" && dice === 2) ||
             (critMode === "three" && dice === 3);
         isCrit = allSixes && applies;
     }
-    const cardDamage = isCrit ? weaponDamage * 2 : weaponDamage;
+    // Доп. урон из листа героя (homebrew.damageBonus): плоская прибавка
+    // к урону атаки, добавляется и к криту («Урон, добавляемый к любому
+    // случайному броску урона» — настройка на листе персонажа).
+    const damageBonus = Number(actor?.system?.homebrew?.damageBonus) || 0;
+    const cardDamage = (isCrit ? weaponDamage * 2 : weaponDamage) + damageBonus;
 
-    // Homerule: TinyD6+ — тратим 1 заряд после броска (и при промахе).
+    // Homerule: TinyD6+ вЂ” С‚СЂР°С‚РёРј 1 Р·Р°СЂСЏРґ РїРѕСЃР»Рµ Р±СЂРѕСЃРєР° (Рё РїСЂРё РїСЂРѕРјР°С…Рµ).
     let reloadedToEmpty = false;
     if (weaponReload)
     {
@@ -406,7 +465,7 @@ export async function performWeaponAttack(actor, weapon, dice = 2, { focusAction
         reloadedToEmpty = (newCharges <= 0);
     }
 
-    const content = await renderTemplate("systems/tinyd6v14/templates/partials/attack-card.hbs", {
+    const content = await renderTemplate("systems/tinyd6v14/templates/partials/td6-attack-card.hbs", {
         attackId: foundry.utils.randomID(8),
         actorId: actor.id,
         actorName: actor.name,
@@ -422,14 +481,14 @@ export async function performWeaponAttack(actor, weapon, dice = 2, { focusAction
         weaponDamage,
         faces: results.map(r => _diceFace(r.result)),
         roll,
-        // Кнопка «Вернуть ресурс» — только у ranged+reload оружия.
+        // РљРЅРѕРїРєР° В«Р’РµСЂРЅСѓС‚СЊ СЂРµСЃСѓСЂСЃВ» вЂ” С‚РѕР»СЊРєРѕ Сѓ ranged+reload РѕСЂСѓР¶РёСЏ.
         showUndoResource: weaponReload,
         weaponId: weapon?.id || "",
-        // Для поиска оружия у unlinked NPC-токена (актёр не в game.actors).
+        // Р”Р»СЏ РїРѕРёСЃРєР° РѕСЂСѓР¶РёСЏ Сѓ unlinked NPC-С‚РѕРєРµРЅР° (Р°РєС‚С‘СЂ РЅРµ РІ game.actors).
         attackerToken: (actor?.token && actor.token.parent)
             ? JSON.stringify({ sceneId: actor.token.parent.id, tokenId: actor.token.id })
             : "",
-        // Сообщение «патроны кончились» в момент опустошения.
+        // РЎРѕРѕР±С‰РµРЅРёРµ В«РїР°С‚СЂРѕРЅС‹ РєРѕРЅС‡РёР»РёСЃСЊВ» РІ РјРѕРјРµРЅС‚ РѕРїСѓСЃС‚РѕС€РµРЅРёСЏ.
         ranOut: reloadedToEmpty,
         announceRanOut: showNpcMessages || !isNpc
     });
@@ -440,45 +499,44 @@ export async function performWeaponAttack(actor, weapon, dice = 2, { focusAction
     });
 }
 
-/* Находит ammo-гир для перезарядки оружия.
- * Ищет по ammoType оружия; если тип не задан или задан но не найден —
- * по fallback: сначала тот же тип у любого гира, при пустой цели — любой
- * ammo-гир. Возвращает первый подходящий предмет или null. */
+/* РќР°С…РѕРґРёС‚ ammo-РіРёСЂ РґР»СЏ РїРµСЂРµР·Р°СЂСЏРґРєРё РѕСЂСѓР¶РёСЏ.
+ * РС‰РµС‚ РїРѕ ammoType РѕСЂСѓР¶РёСЏ. Р•СЃР»Рё С‚РёРї РЅРµ Р·Р°РґР°РЅ вЂ” РЅРµ_consumes ammo (РїСЂРѕСЃС‚РѕР№ reset).
+ * Р’РѕР·РІСЂР°С‰Р°РµС‚ РїРѕРґС…РѕРґСЏС‰РёР№ РїСЂРµРґРјРµС‚ РёР»Рё null. */
 export function findAmmoItem(actor, weapon) {
     if (!weapon?.system?.reload) return null;
+    const type = weapon.system.ammoType;
+    if (!type) return null;
     const ammoItems = (actor?.items ?? []).filter(i => i.type === "gear" && i.system?.category === "ammo" && (Number(i.system.quantity?.value) || 0) > 0);
     if (!ammoItems.length) return null;
-    const type = weapon.system.ammoType;
-    if (type) {
-        return ammoItems.find(i => i.system.ammoType === type) ?? null;
-    }
-    return ammoItems[0] ?? null;
+    return ammoItems.find(i => i.system.ammoType === type) ?? null;
 }
 
-/* Перезарядка оружия с учётом ammo-гира: списывает 1 рожок и заполняет
- * магазин (charges = uses). Возвращает { ok, weapon, ammo } где
- * ammo — использованный гир либо null. Если ammo нет — возвращает { ok:false }
- * (рожок не списывается, заряды не трогаются). */
+/* РџРµСЂРµР·Р°СЂСЏРґРєР° РѕСЂСѓР¶РёСЏ СЃ СѓС‡С‘С‚РѕРј ammo-РіРёСЂР°: СЃРїРёСЃС‹РІР°РµС‚ 1 СЂРѕР¶РѕРє Рё Р·Р°РїРѕР»РЅСЏРµС‚
+ * РјР°РіР°Р·РёРЅ (charges = uses). Р•СЃР»Рё Сѓ РѕСЂСѓР¶РёСЏ РЅРµС‚ ammoType вЂ” РїСЂРѕСЃС‚РѕР№ reset
+ * Р±РµР· consumo ammo. Р’РѕР·РІСЂР°С‰Р°РµС‚ { ok, weapon, ammo } РіРґРµ
+ * ammo вЂ” РёСЃРїРѕР»СЊР·РѕРІР°РЅРЅС‹Р№ РіРёСЂ Р»РёР±Рѕ null. */
 export async function reloadWeapon(actor, weapon, { render = true } = {}) {
-    const ammo = findAmmoItem(actor, weapon);
     const weaponReload = Boolean(weapon?.system?.reload);
+    if (!weaponReload) return { ok: false, weapon, ammo: null, reason: "notReload" };
 
-    // Если не reload либо ammo-гир не нужен/не найден — обычный сброс (резерв).
-    if (!weaponReload || !ammo) {
-        if (!weaponReload) return { ok: false, weapon, ammo: null, reason: "notReload" };
+    const ammo = findAmmoItem(actor, weapon);
+    const hasAmmoType = Boolean(weapon.system?.ammoType);
+
+    if (hasAmmoType && !ammo) {
         return { ok: false, weapon, ammo: null, reason: "no-ammo" };
     }
 
-    const qty = Number(ammo.system.quantity?.value) || 0;
-    if (qty <= 0) return { ok: false, weapon, ammo, reason: "empty" };
+    if (ammo) {
+        const qty = Number(ammo.system.quantity?.value) || 0;
+        if (qty <= 0) return { ok: false, weapon, ammo, reason: "empty" };
+        await ammo.update({ "system.quantity.value": qty - 1 }, { render: false });
+    }
 
-    await ammo.update({ "system.quantity.value": qty - 1 }, { render: false });
     await weapon.update({ "system.charges": Number(weapon.system.uses) || 0 }, { render });
-
     return { ok: true, weapon, ammo };
 }
 
-/* Оформление сообщения об исходе перезарядки. */
+/* РћС„РѕСЂРјР»РµРЅРёРµ СЃРѕРѕР±С‰РµРЅРёСЏ РѕР± РёСЃС…РѕРґРµ РїРµСЂРµР·Р°СЂСЏРґРєРё. */
 export async function postReloadMessage(actor, weapon, ammo, { showForNpc = false } = {}) {
     const isNpc = actor?.type === "npc";
     const announce = showForNpc || !isNpc;
@@ -491,13 +549,13 @@ export async function postReloadMessage(actor, weapon, ammo, { showForNpc = fals
 }
 
 /* ============================================================
-   Лечение (Homerule: TinyD6+ / gear.category = heal)
+   Р›РµС‡РµРЅРёРµ (Homerule: TinyD6+ / gear.category = heal)
    ============================================================ */
 
-/* Разбирает формулу лечения heal-гира:
- *  - фикс: число ("4", "10");
- *  - кубы: "NdM" или "NdM±B" ("2d4", "1d6", "2d4+2").
- * Возвращает null, если формула не распознана. */
+/* Р Р°Р·Р±РёСЂР°РµС‚ С„РѕСЂРјСѓР»Сѓ Р»РµС‡РµРЅРёСЏ heal-РіРёСЂР°:
+ *  - С„РёРєСЃ: С‡РёСЃР»Рѕ ("4", "10");
+ *  - РєСѓР±С‹: "NdM" РёР»Рё "NdMВ±B" ("2d4", "1d6", "2d4+2").
+ * Р’РѕР·РІСЂР°С‰Р°РµС‚ null, РµСЃР»Рё С„РѕСЂРјСѓР»Р° РЅРµ СЂР°СЃРїРѕР·РЅР°РЅР°. */
 export function parseHealFormula(formula) {
     const f = String(formula ?? "").trim().toLowerCase();
     if (!f) return null;
@@ -513,7 +571,7 @@ export function parseHealFormula(formula) {
     return null;
 }
 
-/* Компактное отображение формулы ("4" или "2d4+2"). */
+/* РљРѕРјРїР°РєС‚РЅРѕРµ РѕС‚РѕР±СЂР°Р¶РµРЅРёРµ С„РѕСЂРјСѓР»С‹ ("4" РёР»Рё "2d4+2"). */
 export function formatHealFormula(formula) {
     const p = parseHealFormula(formula);
     if (!p) return "";
@@ -524,8 +582,8 @@ export function formatHealFormula(formula) {
     return s;
 }
 
-/* Кубики формулы лечения для карточки в чате: список { face, result }.
- * Для фикса возвращает один элемент без грани куба. */
+/* РљСѓР±РёРєРё С„РѕСЂРјСѓР»С‹ Р»РµС‡РµРЅРёСЏ РґР»СЏ РєР°СЂС‚РѕС‡РєРё РІ С‡Р°С‚Рµ: СЃРїРёСЃРѕРє { face, result }.
+ * Р”Р»СЏ С„РёРєСЃР° РІРѕР·РІСЂР°С‰Р°РµС‚ РѕРґРёРЅ СЌР»РµРјРµРЅС‚ Р±РµР· РіСЂР°РЅРё РєСѓР±Р°. */
 function _healRollFaces(parsed) {
     if (parsed.kind === "fixed") return [{ face: null, result: parsed.value }];
     const faces = [];
@@ -533,25 +591,25 @@ function _healRollFaces(parsed) {
     return faces;
 }
 
-/* Может ли текущий пользователь менять актёра (игроки — только своих, GM — всех). */
+/* РњРѕР¶РµС‚ Р»Рё С‚РµРєСѓС‰РёР№ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РјРµРЅСЏС‚СЊ Р°РєС‚С‘СЂР° (РёРіСЂРѕРєРё вЂ” С‚РѕР»СЊРєРѕ СЃРІРѕРёС…, GM вЂ” РІСЃРµС…). */
 function _canEditActor(target) {
     if (game.user?.isGM) return true;
     try { return Boolean(target?.testUserPermission?.(game.user, CONST.DOCUMENT_PERMISSION_LEVELS.OWNER)); }
     catch (err) { return false; }
 }
 
-/* Экранирует JSON для атрибута data-* карточки. */
+/* Р­РєСЂР°РЅРёСЂСѓРµС‚ JSON РґР»СЏ Р°С‚СЂРёР±СѓС‚Р° data-* РєР°СЂС‚РѕС‡РєРё. */
 function _jsonAttr(value) {
     let s = JSON.stringify(value ?? {});
     s = s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
     return s;
 }
 
-/* Применяет heal-гир к цели: бросает формулу (если кубовая), восстанавливает
- * HP (не выше max), списывает 1 шт. и постит карточку в чат. Если у текущего
- * игрока нет прав на цель — применяет через GM-прокси (socketlib, настройка
- * enableHealStabProxy), а если прокси недоступен — постит карточку-подтверждение
- * для GM. Возвращает { ok, reason, healed, applied, target, item, needConfirm }. */
+/* РџСЂРёРјРµРЅСЏРµС‚ heal-РіРёСЂ Рє С†РµР»Рё: Р±СЂРѕСЃР°РµС‚ С„РѕСЂРјСѓР»Сѓ (РµСЃР»Рё РєСѓР±РѕРІР°СЏ), РІРѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµС‚
+ * HP (РЅРµ РІС‹С€Рµ max), СЃРїРёСЃС‹РІР°РµС‚ 1 С€С‚. Рё РїРѕСЃС‚РёС‚ РєР°СЂС‚РѕС‡РєСѓ РІ С‡Р°С‚. Р•СЃР»Рё Сѓ С‚РµРєСѓС‰РµРіРѕ
+ * РёРіСЂРѕРєР° РЅРµС‚ РїСЂР°РІ РЅР° С†РµР»СЊ вЂ” РїСЂРёРјРµРЅСЏРµС‚ С‡РµСЂРµР· GM-РїСЂРѕРєСЃРё (socketlib, РЅР°СЃС‚СЂРѕР№РєР°
+ * enableHealStabProxy), Р° РµСЃР»Рё РїСЂРѕРєСЃРё РЅРµРґРѕСЃС‚СѓРїРµРЅ вЂ” РїРѕСЃС‚РёС‚ РєР°СЂС‚РѕС‡РєСѓ-РїРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ
+ * РґР»СЏ GM. Р’РѕР·РІСЂР°С‰Р°РµС‚ { ok, reason, healed, applied, target, item, needConfirm }. */
 export async function useHealItem(healer, healItem, target, { showForNpc = false, healerRef = null, targetRef = null } = {}) {
     const homerule = game.settings.get('tinyd6v14', 'enableTinyD6Plus');
     if (!homerule) return { ok: false, reason: "disabled" };
@@ -569,7 +627,7 @@ export async function useHealItem(healer, healItem, target, { showForNpc = false
     const max = Number(target.system?.wounds?.max) || current;
     if (current >= max) return { ok: false, reason: "full" };
 
-    // Бросок: кубы + бонус, либо фикс.
+    // Р‘СЂРѕСЃРѕРє: РєСѓР±С‹ + Р±РѕРЅСѓСЃ, Р»РёР±Рѕ С„РёРєСЃ.
     let healed = 0;
     let rolls = [];
     let roll = null;
@@ -586,9 +644,9 @@ export async function useHealItem(healer, healItem, target, { showForNpc = false
     }
     healed = Math.max(0, Math.floor(healed));
 
-    // Цель чужая и у игрока нет прав — применяем через GM-прокси (socketlib),
-    // если включена настройка enableHealStabProxy. Иначе — fallback на
-    // карточку-подтверждение, которую применяет владелец/GM вручную.
+    // Р¦РµР»СЊ С‡СѓР¶Р°СЏ Рё Сѓ РёРіСЂРѕРєР° РЅРµС‚ РїСЂР°РІ вЂ” РїСЂРёРјРµРЅСЏРµРј С‡РµСЂРµР· GM-РїСЂРѕРєСЃРё (socketlib),
+    // РµСЃР»Рё РІРєР»СЋС‡РµРЅР° РЅР°СЃС‚СЂРѕР№РєР° enableHealStabProxy. РРЅР°С‡Рµ вЂ” fallback РЅР°
+    // РєР°СЂС‚РѕС‡РєСѓ-РїРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ, РєРѕС‚РѕСЂСѓСЋ РїСЂРёРјРµРЅСЏРµС‚ РІР»Р°РґРµР»РµС†/GM РІСЂСѓС‡РЅСѓСЋ.
     if (!_canEditActor(target))
     {
         const refs = {
@@ -611,7 +669,7 @@ export async function useHealItem(healer, healItem, target, { showForNpc = false
         return { ok: true, needConfirm: true, healed, target, item: healItem };
     }
 
-    // Списываем гир только при реальном лечении.
+    // РЎРїРёСЃС‹РІР°РµРј РіРёСЂ С‚РѕР»СЊРєРѕ РїСЂРё СЂРµР°Р»СЊРЅРѕРј Р»РµС‡РµРЅРёРё.
     await healItem.update({ "system.quantity.value": Math.max(0, qty - 1) }, { render: false });
     const applied = Math.min(max - current, healed);
     const wasted = Math.max(0, healed - applied);
@@ -633,8 +691,8 @@ export async function useHealItem(healer, healItem, target, { showForNpc = false
     return { ok: true, healed, applied, wasted, target, item: healItem };
 }
 
-/* Карточка-подтверждение хила для GM: игрок без прав на цель инициирует
- * лечение, а мастер кликает «Применить», чтобы списать HP и заряд. */
+/* РљР°СЂС‚РѕС‡РєР°-РїРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ С…РёР»Р° РґР»СЏ GM: РёРіСЂРѕРє Р±РµР· РїСЂР°РІ РЅР° С†РµР»СЊ РёРЅРёС†РёРёСЂСѓРµС‚
+ * Р»РµС‡РµРЅРёРµ, Р° РјР°СЃС‚РµСЂ РєР»РёРєР°РµС‚ В«РџСЂРёРјРµРЅРёС‚СЊВ», С‡С‚РѕР±С‹ СЃРїРёСЃР°С‚СЊ HP Рё Р·Р°СЂСЏРґ. */
 export async function postHealConfirmation(healer, healItem, target, { healerRef = null, targetRef = null } = {}, { healed, rolls = [], roll = null, faces = [] } = {}) {
     const speaker = ChatMessage.getSpeaker({ actor: healer });
     const formula = formatHealFormula(healItem.system?.heal);
@@ -651,7 +709,7 @@ export async function postHealConfirmation(healer, healItem, target, { healerRef
         data-heal-item-id="${healItem.id}"
         data-healed="${healed}">
         <div class="death-mini-body">
-            <span class="death-mini-title">${game.i18n.localize("tinyd6.heal.confirmTitle")} — <b>${healItem.name}</b></span>
+            <span class="death-mini-title">${game.i18n.localize("tinyd6.heal.confirmTitle")} вЂ” <b>${healItem.name}</b></span>
             <span class="death-mini-sub"><b>${healer.name}</b> ${game.i18n.localize("tinyd6.heal.usesOn")} <b>${target.name}</b>: +${healed} HP (${formula || ""})</span>
             ${facesHtml ? `<div class="death-mini-rolls">${facesHtml}</div>` : ""}
             <button type="button" class="heal-apply" data-action="confirm-heal">
@@ -666,9 +724,9 @@ export async function postHealConfirmation(healer, healItem, target, { healerRef
     await ChatMessage.create(chatData);
 }
 
-/* Применяет подтверждённый GM хил: списывает заряд гира и HP цели.
- * Работает по референсам (healerRef/targetRef) — вызывает и GM-кнопка
- * подтверждения, и socket-обработчик (GM-прокси). */
+/* РџСЂРёРјРµРЅСЏРµС‚ РїРѕРґС‚РІРµСЂР¶РґС‘РЅРЅС‹Р№ GM С…РёР»: СЃРїРёСЃС‹РІР°РµС‚ Р·Р°СЂСЏРґ РіРёСЂР° Рё HP С†РµР»Рё.
+ * Р Р°Р±РѕС‚Р°РµС‚ РїРѕ СЂРµС„РµСЂРµРЅСЃР°Рј (healerRef/targetRef) вЂ” РІС‹Р·С‹РІР°РµС‚ Рё GM-РєРЅРѕРїРєР°
+ * РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ, Рё socket-РѕР±СЂР°Р±РѕС‚С‡РёРє (GM-РїСЂРѕРєСЃРё). */
 export async function applyHealRefs({ healerRef, targetRef, healItemId, healed }) {
     if (!healerRef || !targetRef || !healItemId) return null;
 
@@ -693,8 +751,8 @@ export async function applyHealRefs({ healerRef, targetRef, healItemId, healed }
     return { ok: true, applied, healed, wasted, target, item: healItem };
 }
 
-/* Применяет подтверждённый GM хил с карточки-подтверждения (fallback,
- * когда GM-прокси через socket недоступен). */
+/* РџСЂРёРјРµРЅСЏРµС‚ РїРѕРґС‚РІРµСЂР¶РґС‘РЅРЅС‹Р№ GM С…РёР» СЃ РєР°СЂС‚РѕС‡РєРё-РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ (fallback,
+ * РєРѕРіРґР° GM-РїСЂРѕРєСЃРё С‡РµСЂРµР· socket РЅРµРґРѕСЃС‚СѓРїРµРЅ). */
 export async function applyHealConfirmation(card) {
     const healerRef = card.dataset.healer ? JSON.parse(card.dataset.healer) : null;
     const targetRef = card.dataset.target ? JSON.parse(card.dataset.target) : null;
@@ -703,8 +761,8 @@ export async function applyHealConfirmation(card) {
     return applyHealRefs({ healerRef, targetRef, healItemId, healed });
 }
 
-/* Находит актёра по референсу из карточки: сначала через токен сцены
- * (для unlinked NPC-копий), потом по id актёра в директории. */
+/* РќР°С…РѕРґРёС‚ Р°РєС‚С‘СЂР° РїРѕ СЂРµС„РµСЂРµРЅСЃСѓ РёР· РєР°СЂС‚РѕС‡РєРё: СЃРЅР°С‡Р°Р»Р° С‡РµСЂРµР· С‚РѕРєРµРЅ СЃС†РµРЅС‹
+ * (РґР»СЏ unlinked NPC-РєРѕРїРёР№), РїРѕС‚РѕРј РїРѕ id Р°РєС‚С‘СЂР° РІ РґРёСЂРµРєС‚РѕСЂРёРё. */
 function _resolveRefActor(ref) {
     if (!ref) return null;
     if (ref.sceneId && ref.tokenId)
@@ -717,7 +775,7 @@ function _resolveRefActor(ref) {
     return null;
 }
 
-/* Карточка лечения в чат (death-mini в «зелёном» варианте). */
+/* РљР°СЂС‚РѕС‡РєР° Р»РµС‡РµРЅРёСЏ РІ С‡Р°С‚ (death-mini РІ В«Р·РµР»С‘РЅРѕРјВ» РІР°СЂРёР°РЅС‚Рµ). */
 export async function postHealMessage(healer, healItem, target, { applied, healed, wasted = 0, rolls = [], roll = null, faces = [] } = {}) {
     const speaker = ChatMessage.getSpeaker({ actor: healer });
     const formula = formatHealFormula(healItem.system?.heal);
@@ -734,7 +792,7 @@ export async function postHealMessage(healer, healItem, target, { applied, heale
 
     const content = `<div class="tinyd6 death-mini heal-mini">
         <div class="death-mini-body">
-            <span class="death-mini-title">${game.i18n.localize("tinyd6.heal.heal")} — <b>${healItem.name}</b></span>
+            <span class="death-mini-title">${game.i18n.localize("tinyd6.heal.heal")} вЂ” <b>${healItem.name}</b></span>
             <span class="death-mini-sub"><b>${healer.name}</b> ${game.i18n.localize("tinyd6.heal.usesOn")} <b>${target.name}</b>: +${applied} HP (${formula || ""})${wastage}</span>
         </div>
     </div>`;
@@ -744,17 +802,17 @@ export async function postHealMessage(healer, healItem, target, { applied, heale
     await ChatMessage.create(chatData);
 }
 
-/* Находит heal-гир по id (среди предметов актёра). */
+/* РќР°С…РѕРґРёС‚ heal-РіРёСЂ РїРѕ id (СЃСЂРµРґРё РїСЂРµРґРјРµС‚РѕРІ Р°РєС‚С‘СЂР°). */
 export function findHealItem(actor, itemId) {
     return (actor?.items ?? []).get(itemId) ?? null;
 }
 
-/* Применяет урон атаки к целям из карточки чата с учётом брони цели.
- * Каждая цель идентифицируется по (sceneId, tokenId): урон идёт именно
- * этому токену, поэтому для unlinked NPC-токенов HP меняется только у
- * конкретной копии, а не у шаблона в директории.
- * Если у игрока нет прав на цель (чужой герой) — HP не меняется,
- * но урон возвращается в `reported`, чтобы вывести его в чат. */
+/* РџСЂРёРјРµРЅСЏРµС‚ СѓСЂРѕРЅ Р°С‚Р°РєРё Рє С†РµР»СЏРј РёР· РєР°СЂС‚РѕС‡РєРё С‡Р°С‚Р° СЃ СѓС‡С‘С‚РѕРј Р±СЂРѕРЅРё С†РµР»Рё.
+ * РљР°Р¶РґР°СЏ С†РµР»СЊ РёРґРµРЅС‚РёС„РёС†РёСЂСѓРµС‚СЃСЏ РїРѕ (sceneId, tokenId): СѓСЂРѕРЅ РёРґС‘С‚ РёРјРµРЅРЅРѕ
+ * СЌС‚РѕРјСѓ С‚РѕРєРµРЅСѓ, РїРѕСЌС‚РѕРјСѓ РґР»СЏ unlinked NPC-С‚РѕРєРµРЅРѕРІ HP РјРµРЅСЏРµС‚СЃСЏ С‚РѕР»СЊРєРѕ Сѓ
+ * РєРѕРЅРєСЂРµС‚РЅРѕР№ РєРѕРїРёРё, Р° РЅРµ Сѓ С€Р°Р±Р»РѕРЅР° РІ РґРёСЂРµРєС‚РѕСЂРёРё.
+ * Р•СЃР»Рё Сѓ РёРіСЂРѕРєР° РЅРµС‚ РїСЂР°РІ РЅР° С†РµР»СЊ (С‡СѓР¶РѕР№ РіРµСЂРѕР№) вЂ” HP РЅРµ РјРµРЅСЏРµС‚СЃСЏ,
+ * РЅРѕ СѓСЂРѕРЅ РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ РІ `reported`, С‡С‚РѕР±С‹ РІС‹РІРµСЃС‚Рё РµРіРѕ РІ С‡Р°С‚. */
 export async function applyAttackDamage({ actorId, targetIds, damage, isCrit = false }) {
     const applied = [];
     const reported = [];
@@ -785,29 +843,29 @@ export async function applyAttackDamage({ actorId, targetIds, damage, isCrit = f
 
         const finalDamage = computeDamage(damage, targetActor);
 
-        // Игрок может менять только своих акторов; GM — всех.
-        // Для токена права берём из токена (важно для unlinked копий).
+        // РРіСЂРѕРє РјРѕР¶РµС‚ РјРµРЅСЏС‚СЊ С‚РѕР»СЊРєРѕ СЃРІРѕРёС… Р°РєС‚РѕСЂРѕРІ; GM вЂ” РІСЃРµС….
+        // Р”Р»СЏ С‚РѕРєРµРЅР° РїСЂР°РІР° Р±РµСЂС‘Рј РёР· С‚РѕРєРµРЅР° (РІР°Р¶РЅРѕ РґР»СЏ unlinked РєРѕРїРёР№).
         const canApply = game.user.isGM || (targetToken ? targetToken.isOwner : targetActor.testUserPermission(game.user, CONST.DOCUMENT_PERMISSION_LEVELS.OWNER));
         if (!canApply)
         {
-            // Чужая цель: применяем через GM-прокси (socketlib, настройка
-            // enablePlayerDamageProxy), иначе — только отчитываемся.
+            // Р§СѓР¶Р°СЏ С†РµР»СЊ: РїСЂРёРјРµРЅСЏРµРј С‡РµСЂРµР· GM-РїСЂРѕРєСЃРё (socketlib, РЅР°СЃС‚СЂРѕР№РєР°
+            // enablePlayerDamageProxy), РёРЅР°С‡Рµ вЂ” С‚РѕР»СЊРєРѕ РѕС‚С‡РёС‚С‹РІР°РµРјСЃСЏ.
             proxyTargets.push({ ref, name: targetActor.name, finalDamage });
             continue;
         }
 
-        // Блок брони: серое всплывающее число поглощённого урона (DR).
+        // Р‘Р»РѕРє Р±СЂРѕРЅРё: СЃРµСЂРѕРµ РІСЃРїР»С‹РІР°СЋС‰РµРµ С‡РёСЃР»Рѕ РїРѕРіР»РѕС‰С‘РЅРЅРѕРіРѕ СѓСЂРѕРЅР° (DR).
         const absorbed = Math.max(0, Number(damage) - finalDamage);
         if (absorbed > 0 && isAnimFxEnabled())
         {
             const refTokenId = targetToken?.id ?? ref?.tokenId ?? null;
             const tok = refTokenId ? (game.canvas?.scene ? canvas.tokens.get(refTokenId) ?? null : null) : null;
-            if (tok) spawnFloatingNumber(tok, targetActor, `<i class="fas fa-shield-alt"></i> ${absorbed}`, "block", { html: true });
+            if (tok) spawnFloatingNumber(tok, targetActor, `${iconSvg("shield-halved")} ${absorbed}`, "block", { html: true });
             const sceneId = ref?.sceneId ?? game.canvas?.scene?.id ?? null;
-            if (sceneId) fxEvents.push({ kind: "float", sceneId, tokenId: refTokenId, text: `<i class="fas fa-shield-alt"></i> ${absorbed}`, type: "block", html: true });
+            if (sceneId) fxEvents.push({ kind: "float", sceneId, tokenId: refTokenId, text: `${iconSvg("shield-halved")} ${absorbed}`, type: "block", html: true });
         }
 
-        // Крит на сцене: золотая вспышка над токеном цели.
+        // РљСЂРёС‚ РЅР° СЃС†РµРЅРµ: Р·РѕР»РѕС‚Р°СЏ РІСЃРїС‹С€РєР° РЅР°Рґ С‚РѕРєРµРЅРѕРј С†РµР»Рё.
         if (isCrit && ref?.tokenId && isAnimFxEnabled())
         {
             const tok = game.canvas?.scene ? canvas.tokens.get(ref.tokenId) ?? null : null;
@@ -819,22 +877,22 @@ export async function applyAttackDamage({ actorId, targetIds, damage, isCrit = f
         const current = Number(targetActor.system?.wounds?.value) || 0;
         const newValue = Math.max(0, current - finalDamage);
 
-        // Привязываем всплывающее число к КОНКРЕТНОМУ токену-цели: для
-        // unlinked NPC у всех копий actor.id одинаковый, поэтому без явного
-        // токена число показалось бы над всеми копиями сразу.
+        // РџСЂРёРІСЏР·С‹РІР°РµРј РІСЃРїР»С‹РІР°СЋС‰РµРµ С‡РёСЃР»Рѕ Рє РљРћРќРљР Р•РўРќРћРњРЈ С‚РѕРєРµРЅСѓ-С†РµР»Рё: РґР»СЏ
+        // unlinked NPC Сѓ РІСЃРµС… РєРѕРїРёР№ actor.id РѕРґРёРЅР°РєРѕРІС‹Р№, РїРѕСЌС‚РѕРјСѓ Р±РµР· СЏРІРЅРѕРіРѕ
+        // С‚РѕРєРµРЅР° С‡РёСЃР»Рѕ РїРѕРєР°Р·Р°Р»РѕСЃСЊ Р±С‹ РЅР°Рґ РІСЃРµРјРё РєРѕРїРёСЏРјРё СЃСЂР°Р·Сѓ.
         const refTokenId = targetToken?.id ?? ref?.tokenId ?? null;
         if (refTokenId) _setPendingFloat(targetActor.id, refTokenId);
 
         await targetActor.update({ "system.wounds.value": newValue });
 
-        // Снять 1 запас прочности брони (если она была и защитила/пострадала).
+        // РЎРЅСЏС‚СЊ 1 Р·Р°РїР°СЃ РїСЂРѕС‡РЅРѕСЃС‚Рё Р±СЂРѕРЅРё (РµСЃР»Рё РѕРЅР° Р±С‹Р»Р° Рё Р·Р°С‰РёС‚РёР»Р°/РїРѕСЃС‚СЂР°РґР°Р»Р°).
         const hadArmor = _actorArmorTotal(targetActor) > 0;
         if (hadArmor) await _reduceArmorHp(targetActor);
 
         applied.push({ name: targetActor.name, damage: finalDamage });
     }
 
-    // Чужие цели: GM-прокси применяет их урон за игрока.
+    // Р§СѓР¶РёРµ С†РµР»Рё: GM-РїСЂРѕРєСЃРё РїСЂРёРјРµРЅСЏРµС‚ РёС… СѓСЂРѕРЅ Р·Р° РёРіСЂРѕРєР°.
     if (proxyTargets.length && proxyEnabled)
     {
         const result = await gmProxy("applyDamage", {
@@ -856,14 +914,14 @@ export async function applyAttackDamage({ actorId, targetIds, damage, isCrit = f
     return { applied, reported };
 }
 
-/* Всплывающее число урона/лечения над токеном (анимация .float-num в css).
- * Создаём .float-num в document.body: CSS анимирует подъём и затухание,
- * JS сам удаляет элемент после завершения. Позиция — client viewport
- * координаты, чуть выше центра токена */
+/* Р’СЃРїР»С‹РІР°СЋС‰РµРµ С‡РёСЃР»Рѕ СѓСЂРѕРЅР°/Р»РµС‡РµРЅРёСЏ РЅР°Рґ С‚РѕРєРµРЅРѕРј (Р°РЅРёРјР°С†РёСЏ .float-num РІ css).
+ * РЎРѕР·РґР°С‘Рј .float-num РІ document.body: CSS Р°РЅРёРјРёСЂСѓРµС‚ РїРѕРґСЉС‘Рј Рё Р·Р°С‚СѓС…Р°РЅРёРµ,
+ * JS СЃР°Рј СѓРґР°Р»СЏРµС‚ СЌР»РµРјРµРЅС‚ РїРѕСЃР»Рµ Р·Р°РІРµСЂС€РµРЅРёСЏ. РџРѕР·РёС†РёСЏ вЂ” client viewport
+ * РєРѕРѕСЂРґРёРЅР°С‚С‹, С‡СѓС‚СЊ РІС‹С€Рµ С†РµРЅС‚СЂР° С‚РѕРєРµРЅР° */
 export function spawnFloatingNumber(token, actor, text, type = "dmg", { html = false } = {}) {
     try {
-        // Если передан токен — используем его; иначе (правка HP на листе,
-        // без привязки к конкретной копии) ищем на сцене по актёру.
+        // Р•СЃР»Рё РїРµСЂРµРґР°РЅ С‚РѕРєРµРЅ вЂ” РёСЃРїРѕР»СЊР·СѓРµРј РµРіРѕ; РёРЅР°С‡Рµ (РїСЂР°РІРєР° HP РЅР° Р»РёСЃС‚Рµ,
+        // Р±РµР· РїСЂРёРІСЏР·РєРё Рє РєРѕРЅРєСЂРµС‚РЅРѕР№ РєРѕРїРёРё) РёС‰РµРј РЅР° СЃС†РµРЅРµ РїРѕ Р°РєС‚С‘СЂСѓ.
         const matches = [];
         if (token)
         {
@@ -873,10 +931,10 @@ export function spawnFloatingNumber(token, actor, text, type = "dmg", { html = f
         else
         {
             const list = game.canvas?.scene && canvas.tokens ? canvas.tokens.placeables : [];
-            // Сначала точное совпадение по экземпляру (linked-токены: t.actor —
-            // тот же объект, что и актёр). Если экземпляр не совпал ни у кого,
-            // но совпал id — показываем ТОЛЬКО если такая копия одна (иначе
-            // для unlinked NPC-копий число всплыло бы над всеми сразу).
+            // РЎРЅР°С‡Р°Р»Р° С‚РѕС‡РЅРѕРµ СЃРѕРІРїР°РґРµРЅРёРµ РїРѕ СЌРєР·РµРјРїР»СЏСЂСѓ (linked-С‚РѕРєРµРЅС‹: t.actor вЂ”
+            // С‚РѕС‚ Р¶Рµ РѕР±СЉРµРєС‚, С‡С‚Рѕ Рё Р°РєС‚С‘СЂ). Р•СЃР»Рё СЌРєР·РµРјРїР»СЏСЂ РЅРµ СЃРѕРІРїР°Р» РЅРё Сѓ РєРѕРіРѕ,
+            // РЅРѕ СЃРѕРІРїР°Р» id вЂ” РїРѕРєР°Р·С‹РІР°РµРј РўРћР›Р¬РљРћ РµСЃР»Рё С‚Р°РєР°СЏ РєРѕРїРёСЏ РѕРґРЅР° (РёРЅР°С‡Рµ
+            // РґР»СЏ unlinked NPC-РєРѕРїРёР№ С‡РёСЃР»Рѕ РІСЃРїР»С‹Р»Рѕ Р±С‹ РЅР°Рґ РІСЃРµРјРё СЃСЂР°Р·Сѓ).
             for (const t of list) {
                 if (t.actor === actor) matches.push(t);
             }
@@ -897,8 +955,8 @@ export function spawnFloatingNumber(token, actor, text, type = "dmg", { html = f
     }
 }
 
-/* Вспышка над токеном (урон/лечение/крит/смерть). Создаёт .fx-flash
- * в body поверх токена. Позиция — client viewport координаты. */
+/* Р’СЃРїС‹С€РєР° РЅР°Рґ С‚РѕРєРµРЅРѕРј (СѓСЂРѕРЅ/Р»РµС‡РµРЅРёРµ/РєСЂРёС‚/СЃРјРµСЂС‚СЊ). РЎРѕР·РґР°С‘С‚ .fx-flash
+ * РІ body РїРѕРІРµСЂС… С‚РѕРєРµРЅР°. РџРѕР·РёС†РёСЏ вЂ” client viewport РєРѕРѕСЂРґРёРЅР°С‚С‹. */
 export function spawnTokenFlash(token, type = "dmg") {
     try {
         if (!isAnimFxEnabled()) return;
@@ -920,7 +978,7 @@ export function spawnTokenFlash(token, type = "dmg") {
     }
 }
 
-/* Затемнение токена при смерти. Создаёт .fx-death поверх токена. */
+/* Р—Р°С‚РµРјРЅРµРЅРёРµ С‚РѕРєРµРЅР° РїСЂРё СЃРјРµСЂС‚Рё. РЎРѕР·РґР°С‘С‚ .fx-death РїРѕРІРµСЂС… С‚РѕРєРµРЅР°. */
 export function spawnTokenDeath(token) {
     try {
         if (!isAnimFxEnabled()) return;
@@ -943,7 +1001,7 @@ export function spawnTokenDeath(token) {
     }
 }
 
-/* Прямоугольник токена в клиентских координатах. */
+/* РџСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРє С‚РѕРєРµРЅР° РІ РєР»РёРµРЅС‚СЃРєРёС… РєРѕРѕСЂРґРёРЅР°С‚Р°С…. */
 function _tokenScreenRect(placeable) {
     if (!placeable) return null;
     const has = placeable.x !== undefined && placeable.y !== undefined
@@ -967,7 +1025,7 @@ function _tokenScreenRect(placeable) {
     return { x, y, w: Math.abs(br.x - tl.x), h: Math.abs(br.y - tl.y) };
 }
 
-/* Точка появления числа: 3/4 от низа токена (чуть выше центра). */
+/* РўРѕС‡РєР° РїРѕСЏРІР»РµРЅРёСЏ С‡РёСЃР»Р°: 3/4 РѕС‚ РЅРёР·Р° С‚РѕРєРµРЅР° (С‡СѓС‚СЊ РІС‹С€Рµ С†РµРЅС‚СЂР°). */
 function _floatAnchor(placeable) {
     if (!placeable) return null;
     const has = placeable.h !== undefined && placeable.y !== undefined;
@@ -979,8 +1037,8 @@ function _floatAnchor(placeable) {
 }
 
 function _spawnFloat(center, text, type, { html = false } = {}) {
-    // Конвертируем координаты канваса в клиентские (viewport), т.к. элемент
-    // позиционируется position:fixed. В v14 это canvas.clientCoordinatesFromCanvas.
+    // РљРѕРЅРІРµСЂС‚РёСЂСѓРµРј РєРѕРѕСЂРґРёРЅР°С‚С‹ РєР°РЅРІР°СЃР° РІ РєР»РёРµРЅС‚СЃРєРёРµ (viewport), С‚.Рє. СЌР»РµРјРµРЅС‚
+    // РїРѕР·РёС†РёРѕРЅРёСЂСѓРµС‚СЃСЏ position:fixed. Р’ v14 СЌС‚Рѕ canvas.clientCoordinatesFromCanvas.
     let point = null;
     try {
         if (canvas.clientCoordinatesFromCanvas) {

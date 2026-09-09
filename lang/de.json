@@ -1,10 +1,32 @@
 {
     "tinyd6": {
+        "mech": {
+            "sheet": "Blatt",
+            "mechanics": "Einstellungen",
+            "actions": "Aktionen",
+            "actionsMax": "Max. Aktionen",
+            "woundsMax": "Max. Wunden",
+            "corruptionMax": "Max. Verderbnis",
+            "masteredCount": "Gemeisterte Waffen",
+            "masteredHint": "Anzahl der Waffen, die der Held gleichzeitig meistern kann (erfordert das Regelwerk „Gemeisterte Waffen“).",
+            "death": "Tod & Sterben",
+            "deathDie": "Todeswürfel",
+            "worldDefault": "d6 (Weltstandard)",
+            "deathRounds": "Todesrunden",
+            "deathThreshold": "Schwelle des Todesrettungswurfs",
+            "emptyWorld": "Leer lassen, um den Weltstandard zu verwenden.",
+            "damageBonus": "Schadensbonus",
+            "damageBonusHint": "Bonus, der zu allen Waffenschadenswürfen addiert wird."
+        },
         "TinyD6HeroSheet": "Held",
         "TinyD6NpcSheet": "NSC",
         "TokenWeapons": "Waffen",
         "TokenHeal": "Heilen & Stabilisieren",
         "TokenActions": "Aktionen",
+        "TokenArmor": "Panzerung",
+        "ArmorRestore": "Panzerung wiederherstellen",
+        "Attack": "Angriff",
+        "Reload": "Nachladen",
         "system": {
             "name": "Tiny D6 2E",
             "dieRoller": "Wurfelbecher",
@@ -33,7 +55,8 @@
                     "default": "Dunkel (Standard)",
                     "perkament": "Pergament пїЅ Folklor",
                     "noir": "Noir пїЅ Kupfer",
-                    "minimal": "Minimal пїЅ Hell"
+                    "minimal": "Minimal пїЅ Hell",
+                    "cyberpunk": "Cyberpunk пїЅ Neon"
                 }
             },
             "rollerInCharsheet": {
@@ -121,7 +144,7 @@
             },
             "deathRounds": {
                 "name": "Todeswurf: Runden bis zum Tod",
-                "hint": "Anzahl der Kampfrunden, die ein Sterbender ohne Heilung uberlebt (Standard 3)."
+                "hint": "Runden bis zum Tod nach 0 TP. Zahl (3) oder Formel eintragen, die bei 0 TP gewürfelt wird, z. B. 1d6+2 oder 2d5 – jede Sterbephase dauert anders."
             },
             "deathSaveThreshold": {
                 "name": "Todeswurf: Erfolgs-Schwelle",
@@ -142,7 +165,33 @@
             "enableAttackProficiency": {
                 "name": "Auto-Waffenfertigkeit",
                 "hint": "TinyD6+: schlägt automatisch die Würfelzahl für den Angriff basierend auf der Waffenfertigkeit vor (Meisterwaffe = Vorteil, untrainiert = Nachteil). Der Spieler kann jede Stufe manuell wählen."
+            },
+            "enableArmorStacking": {
+                "name": "Rüstungsstapelung aktivieren",
+                "hint": "Wenn aktiviert, stapeln mehrere angelegte Rüstungen ihren Schutz. Wenn deaktiviert, gilt nur die Rüstung mit dem höchsten Schutz."
+            },
+            "animFx": {
+                "name": "Kampfanimationen",
+                "hint": "Zeigt schwebende Schadenszahlen, Token-Blitze, kritische Hervorhebungen und Todeffekte. Deaktivieren Sie dies für leistungs schwache Geräte oder minimalen visuellen Lärm."
+            },
+            "enableArmorBreakMessages": {
+                "name": "Rüstungsbruch-Nachrichten",
+                "hint": "Postet eine Chat-Nachricht, wenn ein Schild oder ein Rüstungsteil zerbricht (HP erreicht 0)."
             }
+        },
+        "attack": {
+            "attack": "Angriff",
+            "hit": "Treffer",
+            "miss": "Verfehlung",
+            "crit": "Kritisch",
+            "targets": "Ziele",
+            "damage": "Schaden",
+            "noTarget": "Zieltoken auswählen (oder Tokens auswählen), bevor du angreifst.",
+            "applyDamage": "Schaden anwenden",
+            "weapon": "Waffe",
+            "mode": "Wurf",
+            "roll": "Angriff",
+            "cancel": "Abbrechen"
         },
         "dice": {
             "modifier": {
@@ -179,7 +228,9 @@
             "newItem": "Neuer Gegenstand",
             "description": "Beschreibung",
             "none": "nichts",
-            "noWeapons": "Keine Waffen im Item-Verzeichnis der Welt gefunden."
+            "noWeapons": "Keine Waffen im Item-Verzeichnis der Welt gefunden.",
+            "unequip": "Ausrüsten",
+            "delete": "Löschen"
         },
         "actor": {
             "name": "Name",
@@ -256,10 +307,20 @@
                 "mastered": "Gemeistert"
             },
             "gear": "Inventar",
+            "preferredWeapons": "Bevorzugte Waffen",
+            "noPreferredWeapons": "Klicken, um eine bevorzugte Waffe zuzuweisen",
+            "removePreferred": "Aus Bevorzugten entfernen",
+            "addAmmo": "Munition hinzufugen",
+            "addAmmoTitle": "Munition hinzufugen",
+            "ammoType": "Munitionstyp",
+            "selectWeapon": "Waffe auswahlen",
             "equipped": "Ausgerustet",
+            "equipment": "Waffen",
             "weaponry": "Bewaffnung",
             "wearing": "Kleidung",
             "important": "Wichtiger NPC",
+            "money": "Wahrung",
+            "noMoney": "Keine Wahrung",
             "actions": {
                 "editTrait": "Eigenschaft editieren",
                 "chatTrait": "",
@@ -280,7 +341,8 @@
             "none": "",
             "light": "Leicht",
             "medium": "Medium",
-            "heavy": "Schwer"
+            "heavy": "Schwer",
+            "shield": "Schild"
         },
         "corruptionTests": {
             "none": "nichts",
@@ -330,10 +392,12 @@
             "self": "eigener Todeswurf",
             "stabilized": "Stabilisiert",
             "stabilizedHint": "Der Charakter liegt danieder, ist aber am Leben und stabilisiert.",
-            "dyingHint": "Der Charakter liegt im Sterben und stirbt in {rounds} Runden, wenn er nicht geheilt wird.",
+            "dyingHint": "Der Charakter liegt im Sterben und stirbt in {rounds} {word}, wenn er nicht geheilt wird.",
             "defeated": "ist besiegt.",
             "died": "ist gestorben.",
-            "turnsLeft": "{actor} stirbt in {n} Zugen."
+            "turnsLeft": "{actor} stirbt in {n} {word}.",
+            "stabilizedRest": "fällt, aber ihm droht keine Gefahr mehr.",
+            "dyingRest": "fällt und verblutet. Ohne Hilfe tritt der Tod in {n} {word} ein."
         },
         "stabilize": {
             "title": "Stabilisieren",
@@ -373,7 +437,18 @@
             "slots": "Gengenstand Slots",
             "depletion": "Verschlei?",
             "description": "Beschreibung",
-            "none": "Keine Rustung"
+            "none": "Keine Rustung",
+            "armor": "Rüstung",
+            "shieldBreak": "Schild von {actor} {name} ist zerbrochen!",
+            "armorBreak": "Rüstung von {actor} {name} ist zerbrochen!"
+        },
+        "shield": {
+            "name": "Name",
+            "damageReduction": "Verringerung",
+            "armorHp": "Schild-HP",
+            "shields": "Schilde",
+            "none": "Kein Schild",
+            "description": "Beschreibung"
         },
         "gear": {
             "name": "Name",
@@ -402,6 +477,20 @@
         "trait": {
             "name": "Name",
             "description": "Beschreibung"
+        },
+        "plural": {
+            "round": {
+                "one": "Runde",
+                "few": "Runden",
+                "many": "Runden",
+                "other": "Runden"
+            },
+            "turn": {
+                "one": "Zug",
+                "few": "Zügen",
+                "many": "Zügen",
+                "other": "Zügen"
+            }
         }
     }
 }

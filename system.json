@@ -29,14 +29,13 @@
       "url": "https://github.com/MrCaptain2B"
     }
   ],
-  "version": "14.0.4",
+  "version": "14.0.5",
   "compatibility": {
     "minimum": 14,
     "verified": 14
   },
-  "esmodules": [
-    "module/tinyd6.js",
-    "module/settings.js"
+"esmodules": [
+    "module/tinyd6.js"
   ],
   "styles": [
     "css/tinyd6.css"
@@ -71,6 +70,11 @@
       "lang": "pt-BR",
       "name": "Português (Brasil)",
       "path": "lang/pt-br.json"
+    },
+    {
+      "lang": "ru",
+      "name": "Русский",
+      "path": "lang/ru.json"
     }
   ],
   "socket": true,
@@ -88,7 +92,7 @@
     ]
   },
   "manifest": "https://raw.githubusercontent.com/MrCaptain2B/TinyD6V14-Unofficial-by-Captain2B-/main/system.json",
-  "download": "https://github.com/MrCaptain2B/TinyD6V14-Unofficial-by-Captain2B-/archive/refs/tags/v14.0.4.zip",
+  "download": "https://github.com/MrCaptain2B/TinyD6V14-Unofficial-by-Captain2B-/releases/latest/download/tinyd6v14-14.0.5.zip",
   "protected": false,
   "initiative": "2d6",
   "grid": {

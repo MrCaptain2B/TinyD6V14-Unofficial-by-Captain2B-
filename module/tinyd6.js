@@ -1,4 +1,4 @@
-import { registerGameSettings } from "./settings.js";
+import { registerGameSettings, registerWorldSettingsReload } from "./settings.js";
 import { tinyd6 } from "./config.js";
 import TinyD6ItemSheet from "./sheets/TinyD6ItemSheet.js";
 import TinyD6HeroSheet from "./sheets/TinyD6HeroSheet.js";
@@ -8,6 +8,7 @@ import DieRoller from "./applications/DieRoller.js";
 import * as Dice from "./helpers/dice.js";
 import { registerDeathStatusEffects, handleZeroHp, clearDeathState, tickDeathTimers, applyStabilizeConfirmation } from "./helpers/death.js";
 import { registerSystemSocket, broadcastFx, gmProxy } from "./helpers/socket.js";
+import { iconSvg } from "./helpers/icons.js";
 
 export class TinyD6System {
     static SYSTEM = "tinyd6v14";
@@ -28,8 +29,22 @@ export class TinyD6System {
         CONFIG.Token.hudClass = TinyD6TokenHUD;
 
         registerGameSettings();
+        // Мировые правила меняются → перезагрузка клиента (F5), чтобы
+        // новые значения гарантированно применились.
+        registerWorldSettingsReload();
         this._preloadHandlebarsTemplates();
         registerDeathStatusEffects();
+
+        // Carolingian UI и тематизация чата — регистрируем уже в init():
+        // хук ready() не срабатывает, если инициализация канваса упала
+        // (сломанный модуль/старый Chromium), а листы и чат тогда остаются
+        // без нашей темы.
+        TinyD6System._injectCarolingianCompat();
+        TinyD6System._ensureUnlayeredStyles();
+        Hooks.on("renderActorSheet", () => TinyD6System._injectCarolingianCompat());
+        Hooks.on("renderTokenHUD", () => TinyD6System._injectCarolingianCompat());
+        Hooks.on("renderChatLog", () => TinyD6System._injectCarolingianCompat());
+        Hooks.on("renderChatMessage", (message, html) => TinyD6System._onRenderChatMessage(message, html));
     
         Handlebars.registerHelper("times", function(n, content)
         {
@@ -43,6 +58,16 @@ export class TinyD6System {
         });
     
         Handlebars.registerHelper("face", Dice.diceToFaces);
+
+        Handlebars.registerHelper("td6icon", (name, opts) => iconSvg?.(name, (opts && opts.hash) || {}));
+
+        Handlebars.registerHelper("add", function(a, b) {
+            return (Number(a) || 0) + (Number(b) || 0);
+        });
+
+        Handlebars.registerHelper("includes", function(arr, val) {
+            return Array.isArray(arr) && arr.includes(val);
+        });
 
         this._patchTokenBarAttributes();
     }
@@ -107,6 +132,8 @@ export class TinyD6System {
         registerSystemSocket();
         TinyD6System.displayFloatingDieRollerApplication();
         TinyD6System.patchCoinTexture();
+        TinyD6System._migrateShieldItems();
+        TinyD6System._injectCarolingianCompat();
 
         // Применяем выключатель анимаций к текущему клиенту при старте.
         const animFx = game.settings.get('tinyd6v14', 'animFx');
@@ -114,32 +141,35 @@ export class TinyD6System {
         // CONFIG.statusEffects перезаписывается при setup — повторно
         // регистрируем статусы смерти на ready, чтобы токены их видели.
         registerDeathStatusEffects();
+    }
 
-        // Тематизация чат-карточек: вешаем текущий sheetStyle на сообщение,
-        // чтобы внешние карточки (бросок/атака/предмет) брали палитру темы.
-        Hooks.on("renderChatMessage", (message, html) => {
-            if (!html.find(".tinyd6").length) return;
-            const sheetStyle = game.settings.get(TinyD6System.SYSTEM, "sheetStyle");
-            html.addClass(sheetStyle);
+    /* Тематизация одной чат-карточки: вешаем текущий sheetStyle на
+     * сообщение, чтобы карточки (бросок/атака/предмет) брали палитру темы.
+     * Вынесено из ready() — хук регистрируется в init(), чтобы тематизация
+     * работала даже если инициализация канваса упала. */
+    static _onRenderChatMessage(message, html)
+    {
+        if (!html.find(".tinyd6").length) return;
+        const sheetStyle = game.settings.get(TinyD6System.SYSTEM, "sheetStyle");
+        html.addClass(sheetStyle);
 
-            // Идентификатор сообщения на карточке: чтобы её синхронно
-            // обновлять через ChatMessage.update() (кнопка применения урона,
-            // отчёт и т.п.) — тогда Foundry перерисует сразу у всех клиентов.
-            const card = html.find(".attack-card, .heal-confirm, .stab-confirm").first();
-            if (card.length) card.attr("data-message-id", message.id);
+        // Идентификатор сообщения на карточке: чтобы её синхронно
+        // обновлять через ChatMessage.update() (кнопка применения урона,
+        // отчёт и т.п.) — тогда Foundry перерисует сразу у всех клиентов.
+        const card = html.find(".td6-attack-card, .heal-confirm, .stab-confirm").first();
+        if (card.length) card.attr("data-message-id", message.id);
 
-            // Применение урона — только GM, либо игроки, если включён
-            // GM-прокси урона (enablePlayerDamageProxy). Подтверждение
-            // хила/стабилизации (fallback без socket) — только GM.
-            if (!game.user.isGM)
-            {
-                const damageProxy = game.settings.get('tinyd6v14', 'enableTinyD6Plus')
-                    && game.settings.get('tinyd6v14', 'enablePlayerDamageProxy');
-                if (!damageProxy) html.find(".attack-apply").remove();
-                html.find(".heal-apply").remove();
-                html.find(".stab-apply").remove();
-            }
-        });
+        // Применение урона — только GM, либо игроки, если включён
+        // GM-прокси урона (enablePlayerDamageProxy). Подтверждение
+        // хила/стабилизации (fallback без socket) — только GM.
+        if (!game.user.isGM)
+        {
+            const damageProxy = game.settings.get('tinyd6v14', 'enableTinyD6Plus')
+                && game.settings.get('tinyd6v14', 'enablePlayerDamageProxy');
+            if (!damageProxy) html.find(".attack-apply").remove();
+            html.find(".heal-apply").remove();
+            html.find(".stab-apply").remove();
+        }
     }
 
     /* Кастомная текстура монеты для модуля «Dice So Nice!». Спрайт-атлас
@@ -170,10 +200,164 @@ export class TinyD6System {
         });
     }
 
+    /* Инжектим CSS-оверрайды ПОСЛЕ загрузки всех модулей.
+     * Carolingian UI вставляет свой <style> через JS в ready,
+     * поэтому наш компилированный CSS (tinyd6.css) всегда
+     * перекрывается. Решение: добавить наш <style> позже всех. */
+    /* Foundry v14 грузит CSS систем внутри @layer(system), а CSS ядра
+     * (например, «themed»-стили кнопок) и модулей (Carolingian) — БЕЗ слоя.
+     * Безслойные обычные правила бьют слоёные при любой специфичности,
+     * из-за чего кнопки/карточки теряют нашу тему (серые ромбы действий,
+     * серые задники сообщений). Лечение: подключаем тот же tinyd6.css
+     * вторым безслойным <link> — он стоит в <head> позже всех и каскад
+     * возвращается к дов14-поведению. */
+    static _ensureUnlayeredStyles() {
+        let link = document.getElementById("tinyd6-unlayered");
+        if (!link) {
+            link = document.createElement("link");
+            link.id = "tinyd6-unlayered";
+            link.rel = "stylesheet";
+            link.href = `systems/${TinyD6System.SYSTEM}/css/tinyd6.css?v=${game.system.version}`;
+            document.head.appendChild(link);
+        } else {
+            document.head.appendChild(link);
+        }
+    }
+
+    static _injectCarolingianCompat() {
+        let style = document.getElementById("tinyd6-crlngn-compat");
+        if (style) {
+            document.head.appendChild(style);
+        } else {
+            style = document.createElement("style");
+            style.id = "tinyd6-crlngn-compat";
+            style.textContent = `
+/* ================================================================
+   TinyD6 × Carolingian UI
+   1) Propagate theme variables from sheet to :root
+   2) Fix FontAwesome icon font-family
+   3) Minimal targeted overrides for Carolingian core selectors
+   ================================================================ */
+
+/* ---- FontAwesome icons: Foundry v14 = Font Awesome 7 (--_fa-family).
+   "Font Awesome 6 Free" не существует на v14 — его жёсткое прописывание
+   давало «тофу» вместо иконок. Семейство берём из переменной ядра,
+   вес не трогаем (900 у .far ломает обычные иконки). ---- */
+body.crlngn-ui .tinyd6 i.fas,
+body.crlngn-ui .tinyd6 span.fas,
+body.crlngn-ui .tinyd6 .fa-solid,
+body.crlngn-ui #token-hud i.fas,
+body.crlngn-ui #token-hud span.fas,
+body.crlngn-ui #token-hud .fa-solid,
+body.crlngn-ui .float-num i.fas,
+body.crlngn-ui .float-num span.fas,
+body.crlngn-ui .float-num .fa-solid {
+    font-family: var(--_fa-family, "Font Awesome 7 Pro") !important;
+    font-style: normal !important;
+}
+
+/* ---- Акцентные цвета: свои, а не от темы Carolingian.
+   Специфичность выше, чем у body.crlngn-ui.game .app из crlngn,
+   и стиль инжектится без слоя и позже — поэтому побеждаем. ---- */
+body.crlngn-ui .app.tinyd6.sheet,
+body.crlngn-ui .chat-message .tinyd6 {
+    --color-warm-1: var(--td-accent-soft) !important;
+    --color-warm-2: var(--td-accent) !important;
+    --color-warm-3: var(--td-accent-soft) !important;
+}
+
+/* ---- Attack card in chat: keep our themed styling ---- */
+body.crlngn-ui .chat-message .tinyd6 .td6-attack-card {
+    background: var(--td-card) !important;
+    border-color: var(--td-border) !important;
+    color: var(--td-text) !important;
+}
+body.crlngn-ui .chat-message .tinyd6 .td6-attack-card .attack-apply {
+    background: var(--td-accent) !important;
+    color: #fff !important;
+}
+body.crlngn-ui .chat-message .tinyd6 .td6-attack-card .attack-apply:hover {
+    background: var(--td-accent-soft) !important;
+}
+
+/* ---- Roll results: keep themed success/danger ---- */
+body.crlngn-ui .tinyd6 .td6-roll-result.bg-success {
+    background-color: var(--td-ok) !important;
+    color: #fff !important;
+}
+body.crlngn-ui .tinyd6 .td6-roll-result.bg-danger {
+    background-color: var(--td-danger) !important;
+    color: #fff !important;
+}
+
+/* ---- Dice breakdown in chat ---- */
+body.crlngn-ui .chat-message .tinyd6 .td6-dice-breakdown {
+    background: var(--td-card) !important;
+    color: var(--td-text) !important;
+    border-color: var(--td-border) !important;
+}
+body.crlngn-ui .chat-message .tinyd6 .td6-dice-breakdown .fas {
+    color: var(--td-accent-soft) !important;
+}
+
+/* ---- Reload stub in chat ---- */
+body.crlngn-ui .chat-message .tinyd6.reload-stub {
+    background: var(--td-card) !important;
+    border-color: var(--td-border) !important;
+    color: var(--td-text) !important;
+}
+body.crlngn-ui .chat-message .tinyd6.reload-stub i.fas {
+    color: var(--td-accent) !important;
+}
+
+/* ---- Attack dialog: theme the suggest button ---- */
+.tinyd6.attack-dialog .dialog-button.attack-suggest {
+    background: var(--td-accent) !important;
+    border-color: var(--td-accent) !important;
+    color: #fff !important;
+}
+.tinyd6.attack-dialog .dialog-button.attack-suggest:hover {
+    background: var(--td-accent-soft) !important;
+}
+
+/* ---- Window header: keep our theme ---- */
+body.crlngn-ui .tinyd6.window-app .window-header {
+    background: var(--td-bg) !important;
+    color: var(--td-text) !important;
+}
+body.crlngn-ui .tinyd6.sheet .window-content {
+    background-color: var(--td-bg) !important;
+    background-image: none !important;
+    color: var(--td-text) !important;
+}
+
+/* ---- Token HUD buttons ---- */
+body.crlngn-ui #token-hud .hp-stepper,
+body.crlngn-ui #token-hud .wbtn,
+body.crlngn-ui #token-hud .wcard {
+    pointer-events: all !important;
+}
+`;
+            document.head.appendChild(style);
+        }
+
+        /* Propagate computed CSS variables from the sheet to :root,
+         * so Carolingian's :root overrides don't kill our theme. */
+        const sheet = document.querySelector(".tinyd6.sheet");
+        if (sheet) {
+            const cs = getComputedStyle(sheet);
+            const root = document.documentElement;
+            for (const prop of ["--td-accent","--td-accent-soft","--td-bg","--td-text","--td-strong","--td-border","--td-card-bg","--td-card","--td-input-bg","--td-field","--td-hover","--td-muted","--td-ok","--td-danger","--td-radius","--td-font"]) {
+                const val = cs.getPropertyValue(prop).trim();
+                if (val) root.style.setProperty(prop, val);
+            }
+        }
+    }
+
     static async displayFloatingDieRollerApplication() {
         new DieRoller(DieRoller.defaultOptions, { excludeTextLabels: true }).render(true);
     }
-    
+
     static async _preloadHandlebarsTemplates() {
         const templatePaths = [
             "systems/tinyd6v14/templates/partials/trait-block.hbs",
@@ -181,11 +365,41 @@ export class TinyD6System {
             "systems/tinyd6v14/templates/partials/item-header.hbs",
             "systems/tinyd6v14/templates/partials/inventory-card.hbs",
             "systems/tinyd6v14/templates/partials/item-card.hbs",
-            "systems/tinyd6v14/templates/partials/attack-card.hbs",
+            "systems/tinyd6v14/templates/partials/td6-attack-card.hbs",
             "systems/tinyd6v14/templates/partials/action-tracker.hbs"
         ];
     
         return loadTemplates(templatePaths);
+    }
+
+    /* Миграция: старые предметы типа "shield" → armor с group: "shield". */
+    static async _migrateShieldItems() {
+        if (!game.user.isGM) return;
+
+        // 1. Мировые предметы (game.items)
+        const worldShields = game.items?.filter(i => i.type === "shield") ?? [];
+        if (worldShields.length) {
+            const updates = worldShields.map(i => ({
+                _id: i.id,
+                type: "armor",
+                "system.group": "shield"
+            }));
+            console.log(`tinyd6 | Migrating ${updates.length} world shield item(s) to armor type`);
+            await Item.updateDocuments(updates);
+        }
+
+        // 2. Предметы на актёрах
+        for (const actor of game.actors ?? []) {
+            const actorShields = actor.items.filter(i => i.type === "shield");
+            if (!actorShields.length) continue;
+            const updates = actorShields.map(i => ({
+                _id: i.id,
+                type: "armor",
+                "system.group": "shield"
+            }));
+            console.log(`tinyd6 | Migrating ${updates.length} shield(s) on actor "${actor.name}"`);
+            await actor.updateEmbeddedDocuments("Item", updates);
+        }
     }
 }
 
@@ -233,24 +447,62 @@ Hooks.on("preCreateActor", (document, data, options, userId) => {
     if (document.type !== "hero" && document.type !== "npc") return;
     const def = Number(game.settings.get(TinyD6System.SYSTEM, "defaultActions"));
     if (Number.isNaN(def) || def < 0) return;
-    if (foundry.utils.getProperty(document, "system.actions.max") !== undefined) return;
     document.updateSource({ "system.actions": { value: def, max: def } });
+
+    // Мастерство оружия: у героя всегда есть минимум 1 слот (по умолчанию).
+    if (document.type === "hero" && !document.system?.homebrew)
+    {
+        document.updateSource({ "system.homebrew": {
+            masteredCount: 1,
+            deathDie: "",
+            deathRounds: "",
+            deathSaveThreshold: "",
+            damageBonus: 0
+        } });
+    }
 });
 
 /* При изменении максимального HP (wounds.max) текущее HP не должно
  * превышать новое значение максимума. Аналогично для действий. */
+/* Нормализует значение в число, вытаскивая его из массива/строки с мусором
+ * (массивы попадали в данные из-за дублей name в форме). Для max-полей
+ * дополнительно обрезаем до целого (дробные max бессмысленны). */
+function _coerceNumber(value, { integer = false } = {}) {
+    let n;
+    if (typeof value === "number") n = value;
+    else if (Array.isArray(value) && value.length) n = _coerceNumber(value[value.length - 1], { integer });
+    else n = Number(String(value ?? "").replace(/,/g, ".").trim());
+    if (Number.isNaN(n)) return NaN;
+    return integer ? Math.trunc(n) : n;
+}
+
 Hooks.on("preUpdateActor", (actor, changes, options, userId) => {
     const newMax = foundry.utils.getProperty(changes, "system.wounds.max");
     if (newMax !== undefined)
     {
-        const max = Number(newMax);
+        const max = _coerceNumber(newMax, { integer: true });
         if (!Number.isNaN(max))
         {
+            foundry.utils.setProperty(changes, "system.wounds.max", max);
             const currentValue = Number(actor.system?.wounds?.value) || 0;
             if (currentValue > max) {
                 foundry.utils.setProperty(changes, "system.wounds.value", max);
             }
         }
+    }
+
+    // Те же дубли name портили и эти поля — приводим к числам при обновлении.
+    const corruptionMax = foundry.utils.getProperty(changes, "system.corruptionThreshold.max");
+    if (corruptionMax !== undefined)
+    {
+        const cmax = _coerceNumber(corruptionMax, { integer: true });
+        if (!Number.isNaN(cmax)) foundry.utils.setProperty(changes, "system.corruptionThreshold.max", cmax);
+    }
+    const xpMax = foundry.utils.getProperty(changes, "system.xp.max");
+    if (xpMax !== undefined)
+    {
+        const xmax = _coerceNumber(xpMax, { integer: true });
+        if (!Number.isNaN(xmax)) foundry.utils.setProperty(changes, "system.xp.max", xmax);
     }
 
     const newActionMax = foundry.utils.getProperty(changes, "system.actions.max");
@@ -264,6 +516,55 @@ Hooks.on("preUpdateActor", (actor, changes, options, userId) => {
                 foundry.utils.setProperty(changes, "system.actions.value", amax);
             }
         }
+    }
+});
+
+/* Миграция: лечит актёров, у которых числовые поля системы были испорчены
+ * массивом/строкой (дубли name в форме херо-листа). Затрагиваем только
+ * заведомо битые значения, обычные числа и строки из цифр не трогаем. */
+Hooks.once("ready", async () => {
+    const NUMERIC_PATHS = {
+        "system.wounds.max": { integer: true },
+        "system.wounds.value": { integer: true },
+        "system.corruptionThreshold.max": { integer: true },
+        "system.xp.max": { integer: true }
+    };
+    const isOk = (raw) => (typeof raw === "number" && Number.isFinite(raw)) || /^\s*-?\d+\s*$/.test(String(raw ?? ""));
+    const updates = [];
+    for (const actor of game.actors)
+    {
+        if (actor.type !== "hero" && actor.type !== "npc") continue;
+        const patch = {};
+        for (const [p, opts] of Object.entries(NUMERIC_PATHS))
+        {
+            const raw = foundry.utils.getProperty(actor, p);
+            if (raw === undefined || raw === null || raw === "") continue;
+            if (isOk(raw)) continue;
+            const n = _coerceNumber(raw, opts);
+            if (!Number.isNaN(n)) patch[p] = n;
+        }
+        if (Object.keys(patch).length) updates.push({ _id: actor.id, ...patch });
+
+        // Мастерство оружия: если у героя вовсе нет homebrew.masteredCount,
+        // выставляем дефолт 1, чтобы слоты мастерства отображались всегда.
+        if (actor.type === "hero")
+        {
+            const mc = foundry.utils.getProperty(actor, "system.homebrew.masteredCount");
+            if (mc === undefined || mc === null || mc === "")
+            {
+                if (!patch["system.homebrew.masteredCount"])
+                {
+                    const existing = updates.find(u => u._id === actor.id);
+                    if (existing) existing["system.homebrew.masteredCount"] = 1;
+                    else updates.push({ _id: actor.id, "system.homebrew.masteredCount": 1 });
+                }
+            }
+        }
+    }
+    if (updates.length)
+    {
+        console.log(`tinyd6 | Healed corrupted numeric fields / seeded mastery on ${updates.length} actor(s)`);
+        await game.actors.updateDocuments(updates, { render: false });
     }
 });
 
@@ -514,93 +815,108 @@ Hooks.on("updateItem", (item, changes, options, userId) => {
     if (hud?.rendered && hud.document?.actor?.id === actor?.id) hud.render();
 });
 
-Hooks.on("renderChatLog", (chatLog, html) => {
-    const log = html instanceof HTMLElement ? html : html[0] || html;
-    log.addEventListener("click", async (event) => {
-        // Кнопка «Вернуть ресурс»: откат случайно потраченного заряда оружия.
-        const undo = event.target.closest(".attack-undo");
-        if (undo)
-        {
-            event.preventDefault();
-            const card = undo.closest(".attack-card");
-            if (!card) return;
-
-            // Атакующий: для unlinked NPC-токена актёр находится через токен сцены.
-            let actor = null;
-            let attackerRef = null;
-            try { attackerRef = JSON.parse(card.dataset.attackerToken || "null"); } catch (err) { attackerRef = null; }
-            if (attackerRef && attackerRef.tokenId)
-            {
-                const scene = game.scenes.get(attackerRef.sceneId);
-                actor = scene?.tokens.get(attackerRef.tokenId)?.actor ?? null;
-            }
-            if (!actor)
-            {
-                const actorId = card.dataset.actorId;
-                actor = actorId ? game.actors.get(actorId) : null;
-            }
-
-            const weaponId = undo.dataset.weaponId;
-            const weapon = actor?.items?.get(weaponId);
-            if (!actor || !weapon) return;
-
-            const max = Number(weapon.system.uses) || 0;
-            const current = (weapon.system.charges !== undefined && weapon.system.charges !== null)
-                ? Number(weapon.system.charges) : max;
-            await weapon.update({ "system.charges": Math.min(max, current + 1) }, { render: false });
-            undo.closest(".attack-card-undo")?.remove();
-            _syncCardToMessage(card, card);
-            return;
-        }
-
-        const button = event.target.closest(".attack-apply");
-        if (!button) return;
+/* ============================================================
+   Кнопки чат-карточек (Применить урон / Вернуть ресурс / хилы /
+   стабилизация). Регистрируются на ДВУХ контейнерах:
+   1) основной лог чата #chat — через renderChatLog: html корня
+      пересоздаётся ядром, поэтому вешаем на каждый свежий элемент;
+   2) плавающие нотификации справа #chat-notifications — это
+      ОТДЕЛЬНЫЙ контейнер сайдбара (ядро копирует сообщения туда
+      самостоятельно, они не лежат внутри #chat), поэтому без
+      второго слушателя кнопки там мёртвые. При message.update()
+      ядро перерисовывает и основную карточку, и её копию в
+      нотификациях → дубликатов не возникает.
+   ============================================================ */
+async function _onAttackCardClick(event) {
+    // Кнопка «Вернуть ресурс»: откат случайно потраченного заряда оружия.
+    const undo = event.target.closest(".attack-undo");
+    if (undo)
+    {
         event.preventDefault();
-        const card = button.closest(".attack-card");
+        const card = undo.closest(".td6-attack-card");
         if (!card) return;
 
-        let targetIds = [];
-        try { targetIds = JSON.parse(card.dataset.targets || "[]"); } catch (err) { targetIds = []; }
-        if (!targetIds.length) return;
-        const damage = Number(card.dataset.damage) || 1;
-        const actorId = card.dataset.actorId;
-        const isCrit = card.dataset.isCrit === "true";
+        // Заряд возвращается только один раз: до re-render ставим флаг,
+        // чтобы двойной клик (или ре-рендер карточки) не дал +2 и больше.
+        if (card.dataset.undoApplied === "true") return;
+        card.dataset.undoApplied = "true";
+        undo.disabled = true;
 
-        const { applied, reported } = await Dice.applyAttackDamage({ actorId, targetIds, damage, isCrit });
-        if (!applied.length && !reported.length) return;
-
-        card.querySelector(".attack-apply")?.remove();
-        const footer = card.querySelector(".attack-card-footer");
-
-        const parts = [];
-        if (applied.length) parts.push(applied.map(u => `${u.name} -${u.damage}`).join(", "));
-        if (reported.length) parts.push(reported.map(u => `${u.name} -${u.damage} (урон не списан)`).join(", "));
-
-        if (footer && parts.length)
+        // Атакующий: для unlinked NPC-токена актёр находится через токен сцены.
+        let actor = null;
+        let attackerRef = null;
+        try { attackerRef = JSON.parse(card.dataset.attackerToken || "null"); } catch (err) { attackerRef = null; }
+        if (attackerRef && attackerRef.tokenId)
         {
-            const report = document.createElement("span");
-            report.className = "attack-report";
-            report.textContent = parts.join("; ");
-            footer.appendChild(report);
+            const scene = game.scenes.get(attackerRef.sceneId);
+            actor = scene?.tokens.get(attackerRef.tokenId)?.actor ?? null;
+        }
+        if (!actor)
+        {
+            const actorId = card.dataset.actorId;
+            actor = actorId ? game.actors.get(actorId) : null;
         }
 
-        // Синхронизируем карточку на всех клиентах: убираем кнопку и
-        // показываем отчёт у каждого, а не только у нажавшего.
+        const weaponId = undo.dataset.weaponId;
+        const weapon = actor?.items?.get(weaponId);
+        if (!actor || !weapon) return;
+
+        const max = Number(weapon.system.uses) || 0;
+        const current = (weapon.system.charges !== undefined && weapon.system.charges !== null)
+            ? Number(weapon.system.charges) : max;
+        await weapon.update({ "system.charges": Math.min(max, current + 1) }, { render: false });
+        undo.closest(".attack-card-undo")?.remove();
         _syncCardToMessage(card, card);
+        return;
+    }
 
-        // Для чужих героев (урон не списан) — выводим отдельное сообщение в чат.
-        if (reported.length)
-        {
-            const attackerName = card.dataset.actorName || game.actors.get(actorId)?.name || "Атака";
-            await ChatMessage.create({
-                speaker: ChatMessage.getSpeaker(),
-                content: reported.map(u =>
-                    `<div class="tinyd6 attack-report-chat"><b>${attackerName}</b> наносит <b>${u.damage}</b> урона персонажу <b>${u.name}</b> (HP не списан)</div>`
-                ).join("")
-            });
-        }
-    });
-});
+    const button = event.target.closest(".attack-apply");
+    if (!button) return;
+    event.preventDefault();
+    const card = button.closest(".td6-attack-card");
+    if (!card) return;
+
+    let targetIds = [];
+    try { targetIds = JSON.parse(card.dataset.targets || "[]"); } catch (err) { targetIds = []; }
+    if (!targetIds.length) return;
+    const damage = Number(card.dataset.damage) || 1;
+    const actorId = card.dataset.actorId;
+    const isCrit = card.dataset.isCrit === "true";
+
+    const { applied, reported } = await Dice.applyAttackDamage({ actorId, targetIds, damage, isCrit });
+    if (!applied.length && !reported.length) return;
+
+    card.querySelector(".attack-apply")?.remove();
+    const footer = card.querySelector(".td6-attack-card-footer");
+
+    const parts = [];
+    if (applied.length) parts.push(applied.map(u => `${u.name} -${u.damage}`).join(", "));
+    if (reported.length) parts.push(reported.map(u => `${u.name} -${u.damage} (урон не списан)`).join(", "));
+
+    if (footer && parts.length)
+    {
+        const report = document.createElement("span");
+        report.className = "attack-report";
+        report.textContent = parts.join("; ");
+        footer.appendChild(report);
+    }
+
+    // Синхронизируем карточку на всех клиентах: убираем кнопку и
+    // показываем отчёт у каждого, а не только у нажавшего.
+    _syncCardToMessage(card, card);
+
+    // Для чужих героев (урон не списан) — выводим отдельное сообщение в чат.
+    if (reported.length)
+    {
+        const attackerName = card.dataset.actorName || game.actors.get(actorId)?.name || "Атака";
+        await ChatMessage.create({
+            speaker: ChatMessage.getSpeaker(),
+            content: reported.map(u =>
+                `<div class="tinyd6 attack-report-chat"><b>${attackerName}</b> наносит <b>${u.damage}</b> урона персонажу <b>${u.name}</b> (HP не списан)</div>`
+            ).join("")
+        });
+    }
+}
 
 // Обновляет содержимое сообщения карточки (chat card) у ВСЕХ клиентов.
 // Мутации в tinyd6 меняют только локальный DOM нажавшего; чтобы Foundry
@@ -617,73 +933,87 @@ function _syncCardToMessage(card, sourceCard) {
 
 // Подтверждение хила из карточки heal-confirm: применяет только GM
 // (кнопка скрыта у игроков через renderChatMessage).
-Hooks.on("renderChatLog", (chatLog, html) => {
-    const log = html instanceof HTMLElement ? html : html[0] || html;
-    log.addEventListener("click", async (event) => {
-        const button = event.target.closest(".heal-apply");
-        if (!button) return;
-        event.preventDefault();
-        if (!game.user.isGM) return;
+async function _onHealConfirmClick(event) {
+    const button = event.target.closest(".heal-apply");
+    if (!button) return;
+    event.preventDefault();
+    if (!game.user.isGM) return;
 
-        const card = button.closest(".heal-confirm");
-        if (!card) return;
+    const card = button.closest(".heal-confirm");
+    if (!card) return;
 
-        const result = await Dice.applyHealConfirmation(card);
-        if (!result)
-        {
-            ui.notifications.warn(game.i18n.localize("tinyd6.heal.noTarget"));
-            return;
-        }
-        if (!result.ok)
-        {
-            const msg = result.reason === "full"
-                ? game.i18n.localize("tinyd6.heal.full")
-                : game.i18n.localize("tinyd6.heal.noTarget");
-            ui.notifications.warn(msg);
-            return;
-        }
+    const result = await Dice.applyHealConfirmation(card);
+    if (!result)
+    {
+        ui.notifications.warn(game.i18n.localize("tinyd6.heal.noTarget"));
+        return;
+    }
+    if (!result.ok)
+    {
+        const msg = result.reason === "full"
+            ? game.i18n.localize("tinyd6.heal.full")
+            : game.i18n.localize("tinyd6.heal.noTarget");
+        ui.notifications.warn(msg);
+        return;
+    }
 
-        button.remove();
-        const body = card.querySelector(".death-mini-body");
-        if (body)
-        {
-            const done = document.createElement("div");
-            done.className = "heal-confirm-done";
-            done.textContent = game.i18n.localize("tinyd6.heal.confirmed");
-            body.appendChild(done);
-        }
-        _syncCardToMessage(card, card);
-    });
-});
+    button.remove();
+    const body = card.querySelector(".death-mini-body");
+    if (body)
+    {
+        const done = document.createElement("div");
+        done.className = "heal-confirm-done";
+        done.textContent = game.i18n.localize("tinyd6.heal.confirmed");
+        body.appendChild(done);
+    }
+    _syncCardToMessage(card, card);
+}
 
 // Подтверждение стабилизации из карточки stab-confirm: применяет только GM.
+async function _onStabConfirmClick(event) {
+    const button = event.target.closest(".stab-apply");
+    if (!button) return;
+    event.preventDefault();
+    if (!game.user.isGM) return;
+
+    const card = button.closest(".stab-confirm");
+    if (!card) return;
+
+    const result = await applyStabilizeConfirmation(card);
+    if (!result || !result.ok)
+    {
+        ui.notifications.warn(game.i18n.localize("tinyd6.stabilize.noTarget"));
+        return;
+    }
+
+    button.remove();
+    const body = card.querySelector(".death-mini-body");
+    if (body)
+    {
+        const done = document.createElement("div");
+        done.className = "heal-confirm-done";
+        done.textContent = game.i18n.localize("tinyd6.heal.confirmed");
+        body.appendChild(done);
+    }
+    _syncCardToMessage(card, card);
+}
+
+// Вешает обработчики карточек на контейнер (идемпотентно).
+function _attachChatCardHandlers(root) {
+    if (!root || root.dataset.tinyd6Cards === "1") return;
+    root.dataset.tinyd6Cards = "1";
+    root.addEventListener("click", _onAttackCardClick);
+    root.addEventListener("click", _onHealConfirmClick);
+    root.addEventListener("click", _onStabConfirmClick);
+}
+
 Hooks.on("renderChatLog", (chatLog, html) => {
     const log = html instanceof HTMLElement ? html : html[0] || html;
-    log.addEventListener("click", async (event) => {
-        const button = event.target.closest(".stab-apply");
-        if (!button) return;
-        event.preventDefault();
-        if (!game.user.isGM) return;
+    _attachChatCardHandlers(log);
+    // Нотификации могут пересоздаваться ядром — перевешиваем идемпотентно.
+    _attachChatCardHandlers(document.getElementById("chat-notifications"));
+});
 
-        const card = button.closest(".stab-confirm");
-        if (!card) return;
-
-        const result = await applyStabilizeConfirmation(card);
-        if (!result || !result.ok)
-        {
-            ui.notifications.warn(game.i18n.localize("tinyd6.stabilize.noTarget"));
-            return;
-        }
-
-        button.remove();
-        const body = card.querySelector(".death-mini-body");
-        if (body)
-        {
-            const done = document.createElement("div");
-            done.className = "heal-confirm-done";
-            done.textContent = game.i18n.localize("tinyd6.heal.confirmed");
-            body.appendChild(done);
-        }
-        _syncCardToMessage(card, card);
-    });
+Hooks.on("ready", () => {
+    _attachChatCardHandlers(document.getElementById("chat-notifications"));
 });

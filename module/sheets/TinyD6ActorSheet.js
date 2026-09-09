@@ -3,6 +3,36 @@ import { openStabilizeDialog, getStabilizeTarget } from "../helpers/death.js";
 import MasteredWeaponSelector from "../applications/MasteredWeaponSelector.js";
 
 export default class TinyD6ActorSheet extends ActorSheet {
+    /**
+     * Core issue workaround: opening a sheet by double-clicking a token passes
+     * the TokenDocument itself in the render options. Application#_render merges
+     * those options into this.options with mergeObject, and once the document is
+     * stored there, any later re-render tries to write its read-only _id
+     * property, throwing
+     * "Cannot assign to read only property '_id' of object '#<TokenDocument>'"
+     * Keep the token document out of the merged options instead.
+     */
+    async _render(force = false, options = {}) {
+        const isDocument = (value) => value instanceof foundry.abstract.Document;
+
+        if (options.token && isDocument(options.token)) {
+            this._tokenDocument = options.token;
+            options = { ...options };
+            delete options.token;
+        }
+
+        if (this.options.token && isDocument(this.options.token)) {
+            this._tokenDocument ??= this.options.token;
+            delete this.options.token;
+        }
+
+        return super._render(force, options);
+    }
+
+    get token() {
+        return this._tokenDocument ?? super.token;
+    }
+
     async getData() {
         const data = super.getData();
 
@@ -29,7 +59,8 @@ export default class TinyD6ActorSheet extends ActorSheet {
         // У NPC вся броня и всё оружие всегда считаются экипированными.
         const npcAll = this.actor.type === "npc";
         data.data.system.weapons = data.data.items.filter(item => { return item.type === "weapon" && (npcAll || item.system.equipped) });
-        data.data.system.armor = data.data.items.filter(item => { return item.type === "armor" && (npcAll || item.system.equipped) });
+        data.data.system.armor = data.data.items.filter(item => { return item.type === "armor" && item.system?.group !== "shield" && (npcAll || item.system.equipped) });
+        data.data.system.shields = data.data.items.filter(item => { return item.type === "armor" && item.system?.group === "shield" && (npcAll || item.system.equipped) });
 
         // Мастерство оружия — кнопка открывает окно выбора (в стиле dnd5e).
         // Список оружий собирается из директории мира (game.items), а не из
@@ -39,10 +70,19 @@ export default class TinyD6ActorSheet extends ActorSheet {
         data.data.system.masteredWeaponId = masteredId;
         data.data.system.masteredWeaponName = masteredItem?.name ?? "";
         data.data.system.gear = data.data.items.filter(item => { return item.type !== "trait" && item.type !== "heritage" });
+        data.data.system.currencies = data.data.items.filter(item => { return item.type === "gear" && item.system?.category === "money" });
+        data.data.system.nonMoneyGear = data.data.items.filter(item => {
+            if (item.type === "trait" || item.type === "heritage") return false;
+            if (item.type === "gear" && item.system?.category === "money") return false;
+            if (item.type === "weapon" && (npcAll || item.system.equipped)) return false;
+            if (item.type === "armor" && item.system?.group !== "shield" && (npcAll || item.system.equipped)) return false;
+            return true;
+        });
         data.data.system.heritage = data.data.items.find(item => { return item.type === "heritage" }) ?? null;
 
         data.rollData = this.actor.getRollData();
-        data.descriptionHTML = await TextEditor.enrichHTML(this.actor.system.description,
+        const TextEditorImpl = foundry.applications.ux.TextEditor.implementation ?? TextEditor;
+        data.descriptionHTML = await TextEditorImpl.enrichHTML(this.actor.system.description,
             { secrets: this.actor.isOwner, async: true, rollData: data.rollData });
 
         return data;
@@ -68,21 +108,44 @@ export default class TinyD6ActorSheet extends ActorSheet {
         html.find(".stab-btn").click(this._onStabilize.bind(this));
         html.find(".item-use").click(this._onUseHeal.bind(this));
 
-        html.find(".money-input").on('change', this._onMoneyEdit.bind(this));
+        html.find(".currency-input").on('change', this._onMoneyEdit.bind(this));
 
         html.find(".action-meter .act").on('click', this._setCurrentAction.bind(this));
         html.find(".actions-btns .plus").click(this._onActionPlus.bind(this));
         html.find(".actions-btns .minus").click(this._onActionMinus.bind(this));
 
         html.find(".mastered-weapon-picker").click(this._onMasteredWeaponPicker.bind(this));
+        html.find(".mastered-slot-clear").click(this._onMasteredSlotClear.bind(this));
+
+        html.find(".inline-num").on("change", this._onInlineEdit.bind(this));
+        html.find(".inv-row-btn.attack").click(this._onWeaponAttack.bind(this));
+        html.find(".inv-row-btn.delete").click(this._onItemDelete.bind(this));
+        html.find(".inv-row-img, .inv-row-name").click(this._onInvRowOpen.bind(this));
+        html.find(".inv-section-toggle").click(this._onSectionToggle.bind(this));
     }
 
     /* Кнопка «мастерское оружие» открывает окно выбора из директории мира. */
     _onMasteredWeaponPicker(event)
     {
         event.preventDefault();
-        const app = new MasteredWeaponSelector(this.actor);
+        const slotEl = event.currentTarget.closest(".mastered-slot");
+        const slotIndex = slotEl ? Number(slotEl.dataset.slot) : null;
+        const app = new MasteredWeaponSelector(this.actor, { slotIndex: Number.isNaN(slotIndex) ? null : slotIndex });
         app.render(true);
+    }
+
+    /* Очистка ячейки мастерства: убираем выбранное оружие из списка. */
+    async _onMasteredSlotClear(event)
+    {
+        event.preventDefault();
+        const slotEl = event.currentTarget.closest(".mastered-slot");
+        if (!slotEl) return;
+        const idx = Number(slotEl.dataset.slot);
+        const ids = ((this.actor.system?.proficiencies?.masteredWeapons) || "")
+            .split(",").map(s => s.trim()).filter(Boolean);
+        if (Number.isNaN(idx) || idx < 0 || idx >= ids.length) return;
+        ids.splice(idx, 1);
+        await this.actor.update({ "system.proficiencies.masteredWeapons": ids.join(",") });
     }
 
     async _onDieRoll(event)
@@ -350,7 +413,7 @@ export default class TinyD6ActorSheet extends ActorSheet {
     }
 
     /* Полное восстановление запаса прочности всей экипированной брони
-     * (armorHp.value = armorHp.max) для всех предметов брони актёра. */
+     * (armorHp.value = armorHp.max) для всех предметов брони и щитов актёра. */
     async _onArmorRestore(event)
     {
         event.preventDefault();
@@ -470,5 +533,68 @@ export default class TinyD6ActorSheet extends ActorSheet {
             { _id: itemId, "system.quantity.value": value }
         ]);
         this.render(false);
+    }
+
+    async _onInlineEdit(event)
+    {
+        const input = event.currentTarget;
+
+        // Поле самого актёра из панели настроек (data-path): пишем сразу,
+        // не полагаясь на сабмит формы. Так не возникает дублей name,
+        // из-за которых Foundry собирала значение в массив.
+        const path = input.dataset.path;
+        if (path)
+        {
+            if (input.tagName === "SELECT")
+            {
+                const raw = input.value;
+                if (foundry.utils.getProperty(this.actor.system, path) === raw) return;
+                await this.actor.update({ [path]: raw }, { render: false });
+                this.render(false);
+                return;
+            }
+            const min = input.min !== undefined && input.min !== "" ? Number(input.min) : 0;
+            let value = Number(input.value);
+            if (Number.isNaN(value)) return;
+            if (Number.isFinite(min)) value = Math.max(min, value);
+            const max = input.max !== undefined && input.max !== "" ? Number(input.max) : Infinity;
+            if (Number.isFinite(max)) value = Math.min(value, max);
+            if (foundry.utils.getProperty(this.actor.system, path) === value) return;
+            await this.actor.update({ [path]: value }, { render: false });
+            this.render(false);
+            return;
+        }
+
+        const itemId = input.dataset.itemId;
+        const field = input.dataset.field;
+        if (!itemId || !field) return;
+        const item = this.actor.items.get(itemId);
+        if (!item) return;
+        const max = input.max ? Number(input.max) : Infinity;
+        let value = Math.max(0, Number(input.value) || 0);
+        if (max !== Infinity) value = Math.min(value, max);
+        if (Number(foundry.utils.getProperty(item, field)) === value) return;
+        await this.actor.updateEmbeddedDocuments("Item", [
+            { _id: itemId, [field]: value }
+        ]);
+        this.render(false);
+    }
+
+    _onInvRowOpen(event)
+    {
+        const row = event.currentTarget.closest(".inv-row");
+        if (!row) return;
+        if (event.target.classList.contains("inline-num")) return;
+        const itemId = row.dataset.itemId;
+        if (!itemId) return;
+        const item = this.actor.items.get(itemId);
+        if (item) item.sheet.render(true);
+    }
+
+    _onSectionToggle(event)
+    {
+        const toggle = event.currentTarget;
+        const section = toggle.closest(".inv-collapsible");
+        if (section) section.classList.toggle("collapsed");
     }
 }

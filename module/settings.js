@@ -133,6 +133,15 @@ export const registerGameSettings = function () {
         type: Boolean
     });
 
+    game.settings.register(systemName, "enableArmorStacking", {
+        name: game.i18n.localize("tinyd6.settings.enableArmorStacking.name"),
+        hint:  game.i18n.localize("tinyd6.settings.enableArmorStacking.hint"),
+        scope: "world",
+        config: true,
+        default: false,
+        type: Boolean
+    });
+
     game.settings.register(systemName, "critAdvantage", {
         name: game.i18n.localize("tinyd6.settings.critAdvantage.name"),
         hint:  game.i18n.localize("tinyd6.settings.critAdvantage.hint"),
@@ -157,8 +166,8 @@ export const registerGameSettings = function () {
         hint:  game.i18n.localize("tinyd6.settings.deathRounds.hint"),
         scope: "world",
         config: true,
-        default: 3,
-        type: Number
+        default: "3",
+        type: String
     });
 
     game.settings.register(systemName, "deathSaveThreshold", {
@@ -204,4 +213,51 @@ export const registerGameSettings = function () {
         default: 5,
         type: Number
     });
+
+    game.settings.register(systemName, "enableArmorBreakMessages", {
+        name: game.i18n.localize("tinyd6.settings.enableArmorBreakMessages.name"),
+        hint:  game.i18n.localize("tinyd6.settings.enableArmorBreakMessages.hint"),
+        scope: "world",
+        config: true,
+        default: false,
+        type: Boolean
+    });
 };
+
+/* ============================================================
+   Перезагрузка мира после изменения правил.
+   Любая мировая настройка tinyd6 (в т.ч. включение/выключение
+   гомерулов) перезапускает клиент (эквивалент F5), чтобы новые
+   правила гарантированно применились во всех открытых данных.
+   Дебаунс: пачка изменений из формы настроек проскакивает одним
+   перезапуском, а не серией.
+   ============================================================ */
+let _reloadTimer = null;
+function _reloadWorldAfterChange() {
+    clearTimeout(_reloadTimer);
+    _reloadTimer = setTimeout(() => window.location.reload(), 500);
+}
+
+export function registerWorldSettingsReload() {
+    const reloadFor = (setting) => {
+        const key = typeof setting?.key === "string" ? setting.key : "";
+        if (!key.startsWith("tinyd6v14.")) return;
+        _reloadWorldAfterChange();
+    };
+
+    // Дополняем onChange каждого мирового ключа системы (вызывается ядром
+    // при game.settings.set) — надёжно, поверх любых существующих колбэков.
+    for (const [key, cfg] of game.settings.settings)
+    {
+        if (!key.startsWith("tinyd6v14.") || cfg.scope !== "world") continue;
+        const prev = cfg.onChange ?? null;
+        cfg.onChange = (...args) => {
+            try { if (typeof prev === "function") prev(...args); }
+            finally { _reloadWorldAfterChange(); }
+        };
+    }
+
+    // На всякий случай — хук документа Setting (мировые настройки хранятся
+    // как документы Setting в коллекции мира).
+    Hooks.on("updateSetting", reloadFor);
+}

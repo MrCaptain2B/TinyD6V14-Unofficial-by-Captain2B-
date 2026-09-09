@@ -1,10 +1,32 @@
 {
     "tinyd6": {
+        "mech": {
+            "sheet": "Ficha",
+            "mechanics": "Configurações",
+            "actions": "Ações",
+            "actionsMax": "Ações máximas",
+            "woundsMax": "Ferimentos máximos",
+            "corruptionMax": "Corrupção máxima",
+            "masteredCount": "Armas dominadas",
+            "masteredHint": "Número de armas que o herói pode dominar ao mesmo tempo (requer a regra «Armas dominadas»).",
+            "death": "Morte e agonia",
+            "deathDie": "Dado de morte",
+            "worldDefault": "d6 (padrão do mundo)",
+            "deathRounds": "Rodadas de agonia",
+            "deathThreshold": "Limiar do teste de morte",
+            "emptyWorld": "Deixe em branco para usar o padrão do mundo.",
+            "damageBonus": "Bônus de dano",
+            "damageBonusHint": "Bônus adicionado a todas as rolagens de dano de armas."
+        },
         "TinyD6HeroSheet": "Heroi",
         "TinyD6NpcSheet": "NPC",
         "TokenWeapons": "Armas",
         "TokenHeal": "Curar e estabilizar",
         "TokenActions": "Acoes",
+        "TokenArmor": "Armadura",
+        "ArmorRestore": "Restaurar armadura",
+        "Attack": "Ataque",
+        "Reload": "Recarregar",
         "system": {
             "name": "Tiny D6 2e",
             "dieRoller": "Rolador de Dados",
@@ -33,7 +55,8 @@
                     "default": "Escuro (padrao)",
                     "perkament": "Pergaminho пїЅ Folclore",
                     "noir": "Noir пїЅ Cobre",
-                    "minimal": "Minimal пїЅ Claro"
+                    "minimal": "Minimal пїЅ Claro",
+                    "cyberpunk": "Cyberpunk пїЅ Neon"
                 }
             },
             "rollerInCharsheet": {
@@ -121,7 +144,7 @@
             },
             "deathRounds": {
                 "name": "Salvacao: rounds para morrer",
-                "hint": "Rounds de combate que um agonizante sobrevive sem cura (padrao 3)."
+                "hint": "Turnos até a morte após 0 PV. Digite um número (3) ou uma fórmula rolada ao chegar a 0, por exemplo 1d6+2 ou 2d5, para uma duração aleatória a cada vez."
             },
             "deathSaveThreshold": {
                 "name": "Salvacao: limite de sucesso",
@@ -142,7 +165,33 @@
             "enableAttackProficiency": {
                 "name": "Proficiência de arma automática",
                 "hint": "TinyD6+: sugere automaticamente os dados de ataque conforme a proficiência da arma (arma dominada = vantagem, sem treino = desvantagem). O jogador pode escolher qualquer nível manualmente."
+            },
+            "enableArmorStacking": {
+                "name": "Empilhamento de armaduras",
+                "hint": "Quando habilitado, múltiplas armaduras equipadas acumulam seu DR. Quando desabilitado, apenas a armadura com o maior DR se aplica."
+            },
+            "animFx": {
+                "name": "Animações de combate",
+                "hint": "Mostra números de dano flutuantes, flashes de token, destaques críticos e efeitos de morte. Desativar para máquinas de baixa performance ou ruído visual mínimo."
+            },
+            "enableArmorBreakMessages": {
+                "name": "Mensagens de chat de quebra de armadura",
+                "hint": "Publica uma mensagem de chat quando um escudo ou peça de armadura quebra (HP chega a 0)."
             }
+        },
+        "attack": {
+            "attack": "Ataque",
+            "hit": "Acerto",
+            "miss": "Errado",
+            "crit": "Crítico",
+            "targets": "Alvos",
+            "damage": "Dano",
+            "noTarget": "Selecione um token alvo antes de atacar.",
+            "applyDamage": "Aplicar dano",
+            "weapon": "Arma",
+            "mode": "Jogar",
+            "roll": "Ataque",
+            "cancel": "Cancelar"
         },
         "dice": {
             "modifier": {
@@ -179,7 +228,9 @@
             "newItem": "Novo Item",
             "description": "Descricao",
             "none": "Nenhum",
-            "noWeapons": "Nenhuma arma encontrada no diretório de itens do mundo."
+            "noWeapons": "Nenhuma arma encontrada no diretório de itens do mundo.",
+            "unequip": "Des equipar",
+            "delete": "Excluir"
         },
         "actor": {
             "name": "Nome",
@@ -256,10 +307,20 @@
                 "mastered": "Especialidade"
             },
             "gear": "Inventario",
+            "preferredWeapons": "Armas Preferidas",
+            "noPreferredWeapons": "Clique para atribuir uma arma preferida",
+            "removePreferred": "Remover das preferidas",
+            "addAmmo": "Adicionar Municao",
+            "addAmmoTitle": "Adicionar Municao",
+            "ammoType": "Tipo de Municao",
+            "selectWeapon": "Selecionar Arma",
             "equipped": "Equipado",
+            "equipment": "Armas",
             "weaponry": "Armamento",
             "wearing": "Vestimenta",
             "important": "NPC importante",
+            "money": "Moeda",
+            "noMoney": "Sem moeda",
             "actions": {
                 "editTrait": "Editar Traco",
                 "chatTrait": "",
@@ -280,7 +341,8 @@
             "none": "",
             "light": "Leve",
             "medium": "Media",
-            "heavy": "Pesada"
+            "heavy": "Pesada",
+            "shield": "Escudo"
         },
         "corruptionTests": {
             "none": "Nenhum",
@@ -330,10 +392,12 @@
             "self": "sua propria salvacao",
             "stabilized": "Estabilizado",
             "stabilizedHint": "O personagem esta caido mas vivo e estabilizado.",
-            "dyingHint": "O personagem agoniza e morrera em {rounds} rounds se nao for curado.",
+            "dyingHint": "O personagem agoniza e morrerá em {rounds} {word} se não for curado.",
             "defeated": "e derrotado.",
             "died": "morreu.",
-            "turnsLeft": "{actor} morrera em {n} turnos."
+            "turnsLeft": "{actor} morrerá em {n} {word}.",
+            "stabilizedRest": "cai, mas nada mais o ameaça.",
+            "dyingRest": "cai e sangra. Sem ajuda, a morte virá em {n} {word}."
         },
         "stabilize": {
             "title": "Estabilizar",
@@ -373,7 +437,18 @@
             "slots": "Vagas",
             "depletion": "Desgaste",
             "description": "Descricao",
-            "none": "Sem Armadura"
+            "none": "Sem Armadura",
+            "armor": "Armadura",
+            "shieldBreak": "O escudo {name} de {actor} quebrou!",
+            "armorBreak": "A armadura {name} de {actor} quebrou!"
+        },
+        "shield": {
+            "name": "Nome",
+            "damageReduction": "Redução",
+            "armorHp": "HP do escudo",
+            "shields": "Escudos",
+            "none": "Sem escudo",
+            "description": "Descrição"
         },
         "gear": {
             "name": "Nome",
@@ -402,6 +477,20 @@
         "trait": {
             "name": "Nome",
             "description": "Descricao"
+        },
+        "plural": {
+            "round": {
+                "one": "rodada",
+                "few": "rodadas",
+                "many": "rodadas",
+                "other": "rodadas"
+            },
+            "turn": {
+                "one": "turno",
+                "few": "turnos",
+                "many": "turnos",
+                "other": "turnos"
+            }
         }
     }
 }

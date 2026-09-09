@@ -1,0 +1,26 @@
+<section class="pref-selector-body">
+    {{#unless weapons.[0]}}
+        <p class="pref-empty">{{localize "tinyd6.sheet.noWeapons"}}</p>
+    {{else}}
+        <p class="pref-hint">Select up to 2 preferred weapons</p>
+        <ul class="pref-list">
+            {{#each weapons}}
+                <li>
+                    <label class="pref-row">
+                        <input type="checkbox" name="preferredWeapons" value="{{this.id}}" {{#if (includes ../currentIds this.id)}}checked{{/if}}/>
+                        <img src="{{this.img}}" width="28" height="28"/>
+                        <span class="pref-name">{{this.name}}</span>
+                        {{#if (includes ../currentIds this.id)}}
+                            <i class="fas fa-check"></i>
+                        {{else}}
+                            <i class="fas fa-check" style="opacity:0.2;"></i>
+                        {{/if}}
+                    </label>
+                </li>
+            {{/each}}
+        </ul>
+        <button type="submit" class="pref-save">
+            <i class="fas fa-check"></i> {{localize "SETTINGS.Save"}}
+        </button>
+    {{/unless}}
+</section>

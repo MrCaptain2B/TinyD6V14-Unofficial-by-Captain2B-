@@ -5,7 +5,6 @@ export default class DieRoller extends FormApplication {
     constructor(options) {
 	    super(options);
 
-        console.log("tinyd6 | building DieRoller");
         //game.user.setFlag(TinyD6System.SYSTEM, "dieRollerPosition", null);
     }
 
@@ -24,10 +23,7 @@ export default class DieRoller extends FormApplication {
     /** @override */
     getData(options)
     {
-        console.log("tinyd6 | getData");
         const data = super.getData();
-        //console.log(data);
-
         data.config = CONFIG.tinyd6;
         data.config.heritageHeaderPath = `tinyd6.actor.${data.config.theme}.heritage.header`;
 
@@ -44,7 +40,6 @@ export default class DieRoller extends FormApplication {
         }
 
         //let pos = this.getPos();
-        //console.log("tinyd6 | getData", pos);        
         //data.pos = pos;
         this.setPos();
     
@@ -52,8 +47,6 @@ export default class DieRoller extends FormApplication {
     }
 
     getPos() {
-        console.log("tinyd6 | getting position");
-
         this.pos = game.user.getFlag(TinyD6System.SYSTEM, "dieRollerPosition");
 
         if (!this.pos || (this.pos.length === 0)) {
@@ -77,8 +70,6 @@ export default class DieRoller extends FormApplication {
     }
 
     setPos() {
-        console.log("tinyd6 | setting position", this.pos);
-
         let cssPosition = this.getPos();
         let position = this.pos;
         // if ((position === null) || (position.length === 0)) {
@@ -138,7 +129,6 @@ export default class DieRoller extends FormApplication {
 
         let elmnt = html.find("#die-roller-move-handle");
         let dieRoller = elmnt.closest('.window-app');
-        //console.log("tinyd6 | element", dieRoller);
         let newPosX = 0, newPosY = 0, startPosX = 0, startPosY = 0;
 
         elmnt.on("mousedown", e => {
@@ -152,7 +142,6 @@ export default class DieRoller extends FormApplication {
             // Set settings if they don't exist
         
             dieRoller[0].style = dieRoller[0].style ?? { top: (''+ math.round(startPosY) + 'px'), left: (''+ Math.round(startPosX) + 'px') };
-            //console.log("tinyd6 | element", dieRoller[0].style);
 
             document.onmousemove = mouseMove;
             document.onmouseup = () => {
@@ -274,7 +263,6 @@ export default class DieRoller extends FormApplication {
     _setFocusAction(event)
     {
         const element = event.currentTarget;
-        //console.log("tinyd6 | _setFocusAction", element);
 
         const form = $(element.closest("form"));
         Dice.setFocusOption(form, element);
@@ -283,7 +271,6 @@ export default class DieRoller extends FormApplication {
     _setMarksmanTrait(event)
     {
         const element = event.currentTarget;
-        //console.log("tinyd6 | _setMarksmanTrait", element);
 
         const form = $(element.closest("form"));
         Dice.setMarksmanOption(form, element);

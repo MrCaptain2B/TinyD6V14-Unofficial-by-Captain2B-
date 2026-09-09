@@ -1,10 +1,32 @@
 {
     "tinyd6": {
+        "mech": {
+            "sheet": "Fiche",
+            "mechanics": "Paramètres",
+            "actions": "Actions",
+            "actionsMax": "Actions max",
+            "woundsMax": "Blessures max",
+            "corruptionMax": "Corruption max",
+            "masteredCount": "Armes maîtrisées",
+            "masteredHint": "Nombre d'armes que le héros peut maîtriser simultanément (nécessite la règle « Armes maîtrisées »).",
+            "death": "Mort et agonie",
+            "deathDie": "Dé de mort",
+            "worldDefault": "d6 (par défaut du monde)",
+            "deathRounds": "Rounds d'agonie",
+            "deathThreshold": "Seuil de jet de survie",
+            "emptyWorld": "Laisser vide pour utiliser la valeur par défaut du monde.",
+            "damageBonus": "Bonus de dégâts",
+            "damageBonusHint": "Bonus ajouté à tous les jets de dégâts d'arme."
+        },
         "TinyD6HeroSheet": "PJ",
         "TinyD6NpcSheet": "PNJ",
         "TokenWeapons": "Armes",
         "TokenHeal": "Soigner et stabiliser",
         "TokenActions": "Actions",
+        "TokenArmor": "Armure",
+        "ArmorRestore": "Restaurer l'armure",
+        "Attack": "Attaque",
+        "Reload": "Recharger",
         "system": {
             "name": "Tiny D6 2e",
             "dieRoller": "Lanceur de des",
@@ -33,7 +55,8 @@
                     "default": "Sombre (par defaut)",
                     "perkament": "Parchemin пїЅ Folklore",
                     "noir": "Noir пїЅ Cuivre",
-                    "minimal": "Minimal пїЅ Clair"
+                    "minimal": "Minimal пїЅ Clair",
+                    "cyberpunk": "Cyberpunk пїЅ Neon"
                 }
             },
             "rollerInCharsheet": {
@@ -121,7 +144,7 @@
             },
             "deathRounds": {
                 "name": "Jet de survie: rounds avant la mort",
-                "hint": "Rounds de combat qu'un agonisant survit sans soin (standard 3)."
+                "hint": "Tours avant la mort après 0 PV. Saisissez un nombre (3) ou une formule lancée à 0 PV, p. ex. 1d6+2 ou 2d5, pour une durée aléatoire à chaque fois."
             },
             "deathSaveThreshold": {
                 "name": "Jet de survie: seuil de reussite",
@@ -142,7 +165,33 @@
             "enableAttackProficiency": {
                 "name": "Compétence d'arme auto",
                 "hint": "TinyD6+ : suggère automatiquement le nombre de dés d'attaque selon la compétence de l'arme (arme maîtrisée = avantage, non entraîné = désavantage). Le joueur peut choisir chaque niveau manuellement."
+            },
+            "enableArmorStacking": {
+                "name": "Empilement d'armures",
+                "hint": "Lorsque activé, plusieurs armures équipées cumulent leur DR. Lorsque désactivé, seule l'armure avec le DR le plus élevé s'applique."
+            },
+            "animFx": {
+                "name": "Animations de combat",
+                "hint": "Affiche des nombres de dégâts flottants, des éclairs de jeton, des surbrillances critiques et des effets de mort. Désactiver pour les machines d'entrée de gamme ou le bruit visuel minimal."
+            },
+            "enableArmorBreakMessages": {
+                "name": "Messages de chat de casse d'armure",
+                "hint": "Publie un message de chat lorsqu'un bouclier ou une pièce d'armure se brise (PV atteint 0)."
             }
+        },
+        "attack": {
+            "attack": "Attaque",
+            "hit": "Touché",
+            "miss": "Raté",
+            "crit": "Critique",
+            "targets": "Cibles",
+            "damage": "Dégâts",
+            "noTarget": "Sélectionnez un jeton cible avant d'attaquer.",
+            "applyDamage": "Appliquer les dégâts",
+            "weapon": "Arme",
+            "mode": "Lancer",
+            "roll": "Attaque",
+            "cancel": "Annuler"
         },
         "dice": {
             "modifier": {
@@ -179,7 +228,9 @@
             "newItem": "Nouvel Objet",
             "description": "Description",
             "none": "None",
-            "noWeapons": "Aucune arme trouvée dans le répertoire d'objets du monde."
+            "noWeapons": "Aucune arme trouvée dans le répertoire d'objets du monde.",
+            "unequip": "Déséquiper",
+            "delete": "Supprimer"
         },
         "actor": {
             "name": "Nom",
@@ -256,10 +307,20 @@
                 "mastered": "Expertise"
             },
             "gear": "Inventaire",
+            "preferredWeapons": "Armes Preferees",
+            "noPreferredWeapons": "Cliquez pour assigner une arme preferee",
+            "removePreferred": "Retirer des preferees",
+            "addAmmo": "Ajouter des Munitions",
+            "addAmmoTitle": "Ajouter des Munitions",
+            "ammoType": "Type de Munition",
+            "selectWeapon": "Choisir l'Arme",
             "equipped": "Equipe",
+            "equipment": "Armes",
             "weaponry": "Armement",
             "wearing": "Vetements",
             "important": "PNJ important",
+            "money": "Monnaie",
+            "noMoney": "Pas de monnaie",
             "actions": {
                 "editTrait": "Editer le Trait",
                 "chatTrait": "",
@@ -280,7 +341,8 @@
             "none": "",
             "light": "Legere",
             "medium": "Moyenne",
-            "heavy": "Lourde"
+            "heavy": "Lourde",
+            "shield": "Bouclier"
         },
         "corruptionTests": {
             "none": "Non",
@@ -330,10 +392,12 @@
             "self": "son propre jet de survie",
             "stabilized": "Stabilise",
             "stabilizedHint": "Le personnage est a terre mais vivant et stabilise.",
-            "dyingHint": "Le personnage agonise et mourra dans {rounds} rounds s'il n'est pas soigne.",
+            "dyingHint": "Le personnage agonise et mourra dans {rounds} {word} s'il n'est pas soigné.",
             "defeated": "est vaincu.",
             "died": "est mort.",
-            "turnsLeft": "{actor} mourra dans {n} tours."
+            "turnsLeft": "{actor} mourra dans {n} {word}.",
+            "stabilizedRest": "tombe, mais plus rien ne le menace.",
+            "dyingRest": "tombe et saigne. Sans aide, la mort surviendra dans {n} {word}."
         },
         "stabilize": {
             "title": "Stabiliser",
@@ -373,7 +437,18 @@
             "slots": "Emplacements d'Objet",
             "depletion": "Usure",
             "description": "Description",
-            "none": "Aucune"
+            "none": "Aucune",
+            "armor": "Armure",
+            "shieldBreak": "Le bouclier {name} de {actor} s'est brisé!",
+            "armorBreak": "L'armure {name} de {actor} s'est brisée!"
+        },
+        "shield": {
+            "name": "Nom",
+            "damageReduction": "Réduction",
+            "armorHp": "HP du bouclier",
+            "shields": "Boucliers",
+            "none": "Pas de bouclier",
+            "description": "Description"
         },
         "gear": {
             "name": "Nom",
@@ -402,6 +477,20 @@
         "trait": {
             "name": "Nom",
             "description": "Description"
+        },
+        "plural": {
+            "round": {
+                "one": "tour",
+                "few": "tours",
+                "many": "tours",
+                "other": "tours"
+            },
+            "turn": {
+                "one": "tour",
+                "few": "tours",
+                "many": "tours",
+                "other": "tours"
+            }
         }
     }
 }

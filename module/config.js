@@ -30,7 +30,8 @@ tinyd6.sheetStyles = {
     "td-sheet-default": "tinyd6.settings.sheetStyle.choices.default",
     "td-sheet-minimal": "tinyd6.settings.sheetStyle.choices.minimal",
     "td-sheet-perkament": "tinyd6.settings.sheetStyle.choices.perkament",
-    "td-sheet-noir": "tinyd6.settings.sheetStyle.choices.noir"
+    "td-sheet-noir": "tinyd6.settings.sheetStyle.choices.noir",
+    "td-sheet-cyberpunk": "tinyd6.settings.sheetStyle.choices.cyberpunk"
 }
 
 tinyd6.advancementMethods = {
@@ -58,7 +59,8 @@ tinyd6.armorTypes = {
     none: "",
     light: "tinyd6.armorTypes.light",
     medium: "tinyd6.armorTypes.medium",
-    heavy: "tinyd6.armorTypes.heavy"
+    heavy: "tinyd6.armorTypes.heavy",
+    shield: "tinyd6.armorTypes.shield"
 }
 
 tinyd6.corruptionTests = {

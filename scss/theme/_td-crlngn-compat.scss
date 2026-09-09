@@ -1,0 +1,43 @@
+/* ============================================================
+   Carolingian UI compatibility overrides (compiled baseline).
+   ВАЖНО (Foundry v14): CSS системы грузится в @layer(system),
+   а CSS модулей (в т.ч. crlngn-ui-v14.css) — БЕЗ слоя. Безслойные
+   обычные правила бьют слоёные, поэтому всё «защитное» пишем с
+   !important (важное из слоя бьёт безслойное обычное).
+
+   Тяжёлая часть делается в JS (_injectCarolingianCompat в
+   module/tinyd6.js, инжектится ПОСЛЕ <style> Carolingian).
+   Этот файл — базовый слой, который живёт в tinyd6.css.
+   ============================================================ */
+
+/* ---- Иконки FontAwesome --------------------------------------------
+   Foundry v14 поставляет Font Awesome 7 (семейство в --_fa-family,
+   фактически "Font Awesome 7 Pro"). Семейства "Font Awesome 6 Free"
+   на сервере НЕТ — жёсткое его прописывание даёт «тофу» (квадратики)
+   вместо иконок. Поэтому семейство берём только из переменной ядра,
+   вес не трогаем (900 у .far ломает обычные иконки). */
+body.crlngn-ui .tinyd6 i.fas,
+body.crlngn-ui .tinyd6 span.fas,
+body.crlngn-ui .tinyd6 .fa-solid,
+body.crlngn-ui #token-hud i.fas,
+body.crlngn-ui #token-hud span.fas,
+body.crlngn-ui #token-hud .fa-solid,
+body.crlngn-ui .float-num i.fas,
+body.crlngn-ui .float-num span.fas,
+body.crlngn-ui .float-num .fa-solid {
+    font-family: var(--_fa-family, "Font Awesome 7 Pro") !important;
+    font-style: normal !important;
+}
+
+/* ---- Акцентные цвета: свои, а не от темы Carolingian ----------------
+   Carolingian переопределяет акцентные переменные Foundry
+   (--color-warm-*) на :root. Перебиваем их НА элементе листа/чата:
+   по наследованию наша ближайшая установка всегда сильнее :root,
+   и никакие безслойные правила модуля её не перебьют. */
+.tinyd6.sheet,
+.chat-message .tinyd6
+{
+    --color-warm-1: var(--td-accent-soft);
+    --color-warm-2: var(--td-accent);
+    --color-warm-3: var(--td-accent-soft);
+}

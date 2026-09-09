@@ -1,7 +1,9 @@
-/** Facilitate a bootstrap grid */
+/** Bootstrap grid — mixins and variables must stay global (they generate
+ *  code and define color tokens), but the actual grid/utility classes are
+ *  scoped under .tinyd6 to avoid leaking into Foundry core and other modules. */
+@import "../node_modules/bootstrap/scss/functions";
+@import "../node_modules/bootstrap/scss/variables";
 @import "../node_modules/bootstrap/scss/mixins";
-@import "../node_modules/bootstrap/scss/bootstrap-grid";
-@import "../node_modules/bootstrap/scss/utilities";
 
 @import "common/functions";
 @import "common/variables";
@@ -10,6 +12,9 @@
 
 .tinyd6
 {
+  @import "../node_modules/bootstrap/scss/bootstrap-grid";
+  @import "../node_modules/bootstrap/scss/utilities";
+
   @import "partial/trait-block";
   @import "partial/test-result";
 
@@ -24,3 +29,4 @@
 @import "theme/td-redesign";
 @import "theme/td-themes";
 @import "theme/td-animations";
+@import "theme/td-crlngn-compat";

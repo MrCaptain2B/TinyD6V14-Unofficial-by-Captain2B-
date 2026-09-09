@@ -5,8 +5,8 @@
 .tinyd6 input:hover,.tinyd6 input:focus,.tinyd6 select:hover,.tinyd6 select:focus,.tinyd6 textarea:hover,.tinyd6 textarea:focus{background-color:#2f2f36;border:1px solid #4a52ca;color:#e8e9ea}
 .tinyd6 h1,.tinyd6 h2,.tinyd6 h3,.tinyd6 h4,.tinyd6 h5,.tinyd6 h6{color:#e8e9ea}
 .tinyd6 .help{color:#8a8b92}
-.tinyd6 .section-header{color:#e8e9ea}
-.tinyd6.sheet .border-bottom{border-bottom-color:#3b3b44!important}
+.tinyd6 .td6-section-header{color:#e8e9ea}
+.tinyd6.sheet .td6-border-bottom{border-bottom-color:#3b3b44!important}
 .tinyd6 .actor-items>.actor-item{border-bottom-color:#3b3b44}
 .tinyd6 .actor-item .trait-image{background-color:#2f2f36}
 .tinyd6 .actor-item .item-equip.equipped{color:#6ea8fe}
@@ -14,17 +14,17 @@
 .tinyd6 .editor .editor-content,.tinyd6 .editor [role=application],.tinyd6 .editor .ProseMirror{color:#d7d8dc}
 .tiny-cthulhu.hero .character,.tiny-cthulhu.hero .traits:not(.standalone),.tiny-cthulhu.hero .inventory,.tiny-cthulhu.npc .character,.tiny-cthulhu.npc .traits:not(.standalone),.tiny-cthulhu.npc .inventory{border:1px solid #3b3b44;border-radius:4px;background-color:#24242a;padding:.75rem}
 .tiny-cthulhu.hero .character h1.floating-header,.tiny-cthulhu.hero .character h2.floating-header,.tiny-cthulhu.hero .character h3.floating-header,.tiny-cthulhu.hero .inventory h1.floating-header,.tiny-cthulhu.hero .inventory h2.floating-header,.tiny-cthulhu.hero .inventory h3.floating-header,.tiny-cthulhu.hero .traits:not(.standalone) h1.floating-header,.tiny-cthulhu.hero .traits:not(.standalone) h2.floating-header,.tiny-cthulhu.hero .traits:not(.standalone) h3.floating-header,.tiny-cthulhu.npc .character h1.floating-header,.tiny-cthulhu.npc .character h2.floating-header,.tiny-cthulhu.npc .character h3.floating-header,.tiny-cthulhu.npc .inventory h1.floating-header,.tiny-cthulhu.npc .inventory h2.floating-header,.tiny-cthulhu.npc .inventory h3.floating-header,.tiny-cthulhu.npc .traits:not(.standalone) h1.floating-header,.tiny-cthulhu.npc .traits:not(.standalone) h2.floating-header,.tiny-cthulhu.npc .traits:not(.standalone) h3.floating-header{position:static;top:auto!important;right:auto;color:#e8e9ea;background-color:transparent;padding:0 0 .25rem;clip-path:none;border-bottom:2px solid #4a52ca;margin-bottom:.5rem}
-.tiny-cthulhu.hero .character h1.section-header,.tiny-cthulhu.hero .character h2.section-header,.tiny-cthulhu.hero .character h3.section-header,.tiny-cthulhu.hero .inventory h1.section-header,.tiny-cthulhu.hero .inventory h2.section-header,.tiny-cthulhu.hero .inventory h3.section-header,.tiny-cthulhu.hero .traits:not(.standalone) h1.section-header,.tiny-cthulhu.hero .traits:not(.standalone) h2.section-header,.tiny-cthulhu.hero .traits:not(.standalone) h3.section-header,.tiny-cthulhu.npc .character h1.section-header,.tiny-cthulhu.npc .character h2.section-header,.tiny-cthulhu.npc .character h3.section-header,.tiny-cthulhu.npc .inventory h1.section-header,.tiny-cthulhu.npc .inventory h2.section-header,.tiny-cthulhu.npc .inventory h3.section-header,.tiny-cthulhu.npc .traits:not(.standalone) h1.section-header,.tiny-cthulhu.npc .traits:not(.standalone) h2.section-header,.tiny-cthulhu.npc .traits:not(.standalone) h3.section-header{color:#e8e9ea;border-bottom:1px solid #3b3b44;padding-bottom:.25rem;font-family:"Signika","Signika Negative",sans-serif}
+.tiny-cthulhu.hero .character h1.td6-section-header,.tiny-cthulhu.hero .character h2.td6-section-header,.tiny-cthulhu.hero .character h3.td6-section-header,.tiny-cthulhu.hero .inventory h1.td6-section-header,.tiny-cthulhu.hero .inventory h2.td6-section-header,.tiny-cthulhu.hero .inventory h3.td6-section-header,.tiny-cthulhu.hero .traits:not(.standalone) h1.td6-section-header,.tiny-cthulhu.hero .traits:not(.standalone) h2.td6-section-header,.tiny-cthulhu.hero .traits:not(.standalone) h3.td6-section-header,.tiny-cthulhu.npc .character h1.td6-section-header,.tiny-cthulhu.npc .character h2.td6-section-header,.tiny-cthulhu.npc .character h3.td6-section-header,.tiny-cthulhu.npc .inventory h1.td6-section-header,.tiny-cthulhu.npc .inventory h2.td6-section-header,.tiny-cthulhu.npc .inventory h3.td6-section-header,.tiny-cthulhu.npc .traits:not(.standalone) h1.td6-section-header,.tiny-cthulhu.npc .traits:not(.standalone) h2.td6-section-header,.tiny-cthulhu.npc .traits:not(.standalone) h3.td6-section-header{color:#e8e9ea;border-bottom:1px solid #3b3b44;padding-bottom:.25rem;font-family:"Signika","Signika Negative",sans-serif}
 .tiny-cthulhu.hero .traits:not(.standalone) .floating-action,.tiny-cthulhu.npc .traits:not(.standalone) .floating-action{position:absolute;top:.5rem;right:.75rem;left:auto;clip-path:none;background-color:transparent;color:#8a8b92;padding:0;z-index:2}
 .tiny-cthulhu.hero .traits:not(.standalone) .floating-action a:hover,.tiny-cthulhu.npc .traits:not(.standalone) .floating-action a:hover{color:#6ea8fe;text-shadow:none}
-.tinyd6 .stat-values label{font-family:"Signika","Signika Negative",sans-serif!important;color:#8a8b92!important}
-.tinyd6 .stat-values label span{display:inline-block;background-color:transparent!important;color:inherit!important;clip-path:none!important;padding:0!important}
+.tinyd6 .td6-stat-values label{font-family:"Signika","Signika Negative",sans-serif!important;color:#8a8b92!important}
+.tinyd6 .td6-stat-values label span{display:inline-block;background-color:transparent!important;color:inherit!important;clip-path:none!important;padding:0!important}
 .tiny-cthulhu.die-roller .window-content{background-image:none;background-color:#24242a;color:#d7d8dc}
 .tiny-cthulhu.die-roller button{background:#2f2f36;color:#d7d8dc;border:1px solid #3b3b44}
 .tiny-cthulhu.die-roller button:hover{background:#3b3b44;color:#fff}
 .tinyd6.die-roller .die-roller-collapsed{background:#2f2f36;color:#d7d8dc}
-.tinyd6.dice-breakdown{background-color:#24242a;color:#d7d8dc;border:1px solid #3b3b44;border-radius:4px}
-.tinyd6.roll-result{color:#e8e9ea;border-radius:4px}
-.tinyd6.roll-result.bg-success{background-color:#2e7d32;color:#fff}
-.tinyd6.roll-result.bg-danger{background-color:#8a6d1a;color:#fff}
+.tinyd6.td6-dice-breakdown{background-color:#24242a;color:#d7d8dc;border:1px solid #3b3b44;border-radius:4px}
+.tinyd6.td6-roll-result{color:#e8e9ea;border-radius:4px}
+.tinyd6.td6-roll-result.bg-success{background-color:#2e7d32;color:#fff}
+.tinyd6.td6-roll-result.bg-danger{background-color:#8a6d1a;color:#fff}
 .tiny-cthulhu h1,.tiny-cthulhu h2,.tiny-cthulhu h3,.tiny-cthulhu h4,.tiny-cthulhu h5,.tiny-cthulhu h6{font-family:"Signika","Signika Negative",sans-serif}
