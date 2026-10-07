@@ -1,496 +1,565 @@
 {
-    "tinyd6": {
-        "mech": {
-            "sheet": "Ficha",
-            "mechanics": "Configurações",
-            "actions": "Ações",
-            "actionsMax": "Ações máximas",
-            "woundsMax": "Ferimentos máximos",
-            "corruptionMax": "Corrupção máxima",
-            "masteredCount": "Armas dominadas",
-            "masteredHint": "Número de armas que o herói pode dominar ao mesmo tempo (requer a regra «Armas dominadas»).",
-            "death": "Morte e agonia",
-            "deathDie": "Dado de morte",
-            "worldDefault": "d6 (padrão do mundo)",
-            "deathRounds": "Rodadas de agonia",
-            "deathThreshold": "Limiar do teste de morte",
-            "emptyWorld": "Deixe em branco para usar o padrão do mundo.",
-            "damageBonus": "Bônus de dano",
-            "damageBonusHint": "Bônus adicionado a todas as rolagens de dano de armas."
-        },
-        "TinyD6HeroSheet": "Heroi",
-        "TinyD6NpcSheet": "NPC",
-        "TokenWeapons": "Armas",
-        "TokenHeal": "Curar e estabilizar",
-        "TokenActions": "Acoes",
-        "TokenArmor": "Armadura",
-        "ArmorRestore": "Restaurar armadura",
-        "Attack": "Ataque",
-        "Reload": "Recarregar",
-        "system": {
-            "name": "Tiny D6 2e",
-            "dieRoller": "Rolador de Dados",
-            "actions": "Acoes",
-            "actionAdd": "Adicionar acao",
-            "actionRemove": "Remover acao",
-            "collapse": "Recolher",
-            "expand": "Expandir"
-        },
-        "settings": {
-            "title": "Configuracoes do Sistema",
-            "label": "Configuracoes do Sistema",
-            "description": "Escolha as regras e mecanicas opcionais que voce deseja ativar nas opcoes abaixo.",
-            "theme": {
-                "name": "Tema",
-                "hint": "Escolha um tema especifico para o seu jogo no Tiny D6",
-                "choices": {
-                    "cthulhu": "Tiny Cthulhu",
-                    "dungeon": "Tiny Dungeon 2e"
-                }
-            },
-            "sheetStyle": {
-                "name": "Estilo da ficha",
-                "hint": "Escolha o estilo visual das fichas de personagens",
-                "choices": {
-                    "default": "Escuro (padrao)",
-                    "perkament": "Pergaminho пїЅ Folclore",
-                    "noir": "Noir пїЅ Cobre",
-                    "minimal": "Minimal пїЅ Claro",
-                    "cyberpunk": "Cyberpunk пїЅ Neon"
-                }
-            },
-            "rollerInCharsheet": {
-                "name": "Rolador de Dados na Ficha de Personagem",
-                "hint": "Ative para exibir o Rolador de Dados na Ficha de Personagem."
-            },
-            "enableCorruption": {
-                "name": "Rastrear Corrupcao",
-                "hint": "Adiciona um contador de Corrupcao a Ficha de Personagem."
-            },
-            "enableAdvancement": {
-                "name": "Progressao de Personagem",
-                "hint": "Progressao de Personagem baseada no numero de sessoes ou usando Pontos de Experiencia",
-                "choices": {
-                    "none": "Nenhuma",
-                    "minimalist": "Avanco Minimalista",
-                    "xp": "Pontos de Experiencia"
-                }
-            },
-            "enableItemTracking": {
-                "name": "Ativar Controle de Itens",
-                "hint": "Mostrar uso de vagas ocupadas pelo item no inventario e calcular as restantes."
-            },
-            "enableDepletionPoints": {
-                "name": "Habilitar Desgaste de Itens",
-                "hint": "Quando o item usar Pontos de Durabilidade, registra-los nos itens dos personagens."
-            },
-            "enableCriticalHits": {
-                "name": "Ativar Acertos Criticos",
-                "hint": "Marca um Teste como 'Acerto Critico' quando todos os dados cairem 6."
-            },
-            "enableCriticalFailure": {
-                "name": "Ativar Erros Criticos",
-                "hint": "Marca um Teste como 'Erro Critico' quando todos os dados cairem 1."
-            },
-            "enableVariableWeaponDamage": {
-                "name": "Dano de Arma Variavel",
-                "hint": "Calcula o dano de arma variavel em testes de ataque."
-            },
-            "enablePowerOrigin": {
-                "name": "Ativar Origem do Poder",
-                "hint": "Adiciona um campo de texto para a Origem do seu Super Poder."
-            },
-            "enableWeakness": {
-                "name": "Ativar Fraqueza",
-                "hint": "Adiciona um campo de texto para sua Super Fraqueza."
-            },
-            "enablePanic": {
-                "name": "Ativar Panico",
-                "hint": "Adiciona um contador de Panico."
-            },
-            "enableRadiation": {
-                "name": "Ativar Radiacao",
-                "hint": "Adiciona um contador de Radiacao."
-            },
-            "enableGrit": {
-                "name": "Ativar Coragem",
-                "hint": "Adiciona um contador de Coragem."
-            },
-            "independentNpcTokens": {
-                "name": "Tokens NPC independentes",
-                "hint": "Tokens colocados na cena a partir de um ator NPC tornam-se copias independentes com seu proprio HP e armadura."
-            },
-            "defaultActions": {
-                "name": "Acoes padrao",
-                "hint": "Maximo de acoes padrao para novos atores (padrao Tiny D6 e 1)."
-            },
-            "enableTinyD6Plus": {
-                "name": "Homerule: TinyD6+",
-                "hint": "Ativa as homerules de combate TinyD6+: recarga (municao por ataque), morte e derrotado (salvacao, agonizando com temporizador) e a paleta de armas no HUD do token."
-            },
-            "critAdvantage": {
-                "name": "Homerule: Vantagem critica",
-                "hint": "Quando todos os dados mostram 6 identicos em um ataque, o dano da arma e dobrado (Critico). Escolha se isso se aplica a 2d6, 3d6 ou ambos.",
-                "choices": {
-                    "off": "Desativado",
-                    "two": "apenas 2d6",
-                    "three": "apenas 3d6",
-                    "both": "2d6 e 3d6"
-                }
-            },
-            "showNpcReloadMessages": {
-                "name": "Mostrar mensagens de recarga NPC",
-                "hint": "Postar mensagens de recarga/sem municao de NPC no chat (desativado por padrao para reduzir ruido)."
-            },
-            "deathRounds": {
-                "name": "Salvacao: rounds para morrer",
-                "hint": "Turnos até a morte após 0 PV. Digite um número (3) ou uma fórmula rolada ao chegar a 0, por exemplo 1d6+2 ou 2d5, para uma duração aleatória a cada vez."
-            },
-            "deathSaveThreshold": {
-                "name": "Salvacao: limite de sucesso",
-                "hint": "Uma salvacao (1d6) tem sucesso se o resultado for pelo menos este valor (padrao 4)."
-            },
-            "showNpcDeathMessages": {
-                "name": "Mostrar mensagens de derrota NPC",
-                "hint": "Tambem postar mensagem quando um NPC normal e derrotado (desativado por padrao para reduzir ruido)."
-            },
-            "enableHealStabProxy": {
-                "name": "Proxy de Mestre: curar e estabilizar",
-                "hint": "Permite que jogadores curem ou estabilizem personagens/NPCs que não possuem. A mudança é aplicada pelo Mestre via socketlib (sem necessidade de posse)."
-            },
-            "enablePlayerDamageProxy": {
-                "name": "Proxy de Mestre: dano do jogador",
-                "hint": "Permite que jogadores apliquem dano de ataque em personagens/NPCs que não possuem. O dano é aplicado pelo Mestre via socketlib (sem necessidade de posse)."
-            },
-            "enableAttackProficiency": {
-                "name": "Proficiência de arma automática",
-                "hint": "TinyD6+: sugere automaticamente os dados de ataque conforme a proficiência da arma (arma dominada = vantagem, sem treino = desvantagem). O jogador pode escolher qualquer nível manualmente."
-            },
-            "enableArmorStacking": {
-                "name": "Empilhamento de armaduras",
-                "hint": "Quando habilitado, múltiplas armaduras equipadas acumulam seu DR. Quando desabilitado, apenas a armadura com o maior DR se aplica."
-            },
-            "animFx": {
-                "name": "Animações de combate",
-                "hint": "Mostra números de dano flutuantes, flashes de token, destaques críticos e efeitos de morte. Desativar para máquinas de baixa performance ou ruído visual mínimo."
-            },
-            "enableArmorBreakMessages": {
-                "name": "Mensagens de chat de quebra de armadura",
-                "hint": "Publica uma mensagem de chat quando um escudo ou peça de armadura quebra (HP chega a 0)."
-            }
-        },
-        "attack": {
-            "attack": "Ataque",
-            "hit": "Acerto",
-            "miss": "Errado",
-            "crit": "Crítico",
-            "targets": "Alvos",
-            "damage": "Dano",
-            "noTarget": "Selecione um token alvo antes de atacar.",
-            "applyDamage": "Aplicar dano",
-            "weapon": "Arma",
-            "mode": "Jogar",
-            "roll": "Ataque",
-            "cancel": "Cancelar"
-        },
-        "dice": {
-            "modifier": {
-                "focus": "Foco",
-                "marksman": "Atirador"
-            },
-            "roll": {
-                "disadvantage": "Desvantagem",
-                "standard": "Teste Padrao",
-                "advantage": "Vantagem",
-                "success": "Sucesso!",
-                "failure": "Falha",
-                "critical": "Acerto Critico!!",
-                "botch": "Erro Critico!!"
-            }
-        },
-        "sheet": {
-            "tab": {
-                "main": "Main"
-            },
-            "combat": "Combat",
-            "weaponProficiency": "Weapon Proficiency",
-            "wounds": "Wounds",
-            "armor": "Armor",
-            "corruption": "Corruption",
-            "xp": "XP",
-            "actions": {
-                "name": "Acoes",
-                "spend": "Gastar uma acao",
-                "restore": "Restaurar uma acao",
-                "plus": "Adicionar acao maxima (+1)",
-                "minus": "Remover acao maxima (-1)"
-            },
-            "newItem": "Novo Item",
-            "description": "Descricao",
-            "none": "Nenhum",
-            "noWeapons": "Nenhuma arma encontrada no diretório de itens do mundo.",
-            "unequip": "Des equipar",
-            "delete": "Excluir"
-        },
-        "actor": {
-            "name": "Nome",
-            "npc": "NPC",
-            "people": "Povo",
-            "traits": "Tracos",
-            "description": "Descricao",
-            "tiny-cthulhu": {
-                "character": "Bio",
-                "heritage": {
-                    "header": "Arquetipo",
-                    "traits": "Traco de Arquetipo",
-                    "delete": "Remover Arquetipo"
-                }
-            },
-            "tiny-dungeon": {
-                "character": "Personagem",
-                "heritage": {
-                    "header": "Heranca",
-                    "traits": "Traco de Heranca",
-                    "delete": "Remover Heranca"
-                }
-            },
-            "homeland": "Patria",
-            "age": "Idade",
-            "eyes": "Olhos",
-            "hair": "Cabelo",
-            "familyTrade": "Ramo da Familia",
-            "powerOrigin": "Origem do Poder",
-            "weakness": "Fraqueza",
-            "belief": "Crenca",
-            "xp": {
-                "header": "Experiencia",
-                "progression": "Progressao",
-                "total": "Total",
-                "spent": "Gasto",
-                "remaining": "Restante"
-            },
-            "wounds": {
-                "header": "PVs",
-                "current": "Atual",
-                "max": "Maximo:",
-                "increaseMax": "Aumentar Pontos de Vida Maximo",
-                "help": "Marque uma caixa quando sofrer dano. Desmarque quando for curado."
-            },
-            "radiation": {
-                "header": "Radiacao",
-                "current": "Atual",
-                "max": "Maxima:",
-                "increaseMax": "Aumentar Radiacao Maxima",
-                "help": "Marque uma caixa quando sofrer Radiacao."
-            },
-            "corruption": {
-                "test": "Teste de Corrupcao",
-                "header": "Corrupcao",
-                "current": "Atual",
-                "max": "Maxima:",
-                "increaseMax": "Aumentar Limite de Corrupcao",
-                "help": "Marque uma caixa quando sofrer corrupcao. Desmarque quando recuperar."
-            },
-            "panic": {
-                "test": "Teste de Panico",
-                "header": "Panico",
-                "current": "Atual",
-                "help": "Desmarque uma caixa quando sofrer Panico. Marque quando recuperar. Testes de Panico quando Panico chegar a 1."
-            },
-            "grit": {
-                "header": "Coragem",
-                "current": "Atual",
-                "help": "Desmarque uma caixa quando sofrer Panico."
-            },
-            "proficiencies": {
-                "header": "Proficiencia",
-                "mastered": "Especialidade"
-            },
-            "gear": "Inventario",
-            "preferredWeapons": "Armas Preferidas",
-            "noPreferredWeapons": "Clique para atribuir uma arma preferida",
-            "removePreferred": "Remover das preferidas",
-            "addAmmo": "Adicionar Municao",
-            "addAmmoTitle": "Adicionar Municao",
-            "ammoType": "Tipo de Municao",
-            "selectWeapon": "Selecionar Arma",
-            "equipped": "Equipado",
-            "equipment": "Armas",
-            "weaponry": "Armamento",
-            "wearing": "Vestimenta",
-            "important": "NPC importante",
-            "money": "Moeda",
-            "noMoney": "Sem moeda",
-            "actions": {
-                "editTrait": "Editar Traco",
-                "chatTrait": "",
-                "chatItem": "",
-                "deleteTrait": "Remover Traco"
-            }
-        },
-        "weaponCategories": {
-            "melee": "Corpo a Corpo",
-            "ranged": "A Distancia"
-        },
-        "weaponTypes": {
-            "none": "",
-            "light": "Leve",
-            "heavy": "Pesada"
-        },
-        "armorTypes": {
-            "none": "",
-            "light": "Leve",
-            "medium": "Media",
-            "heavy": "Pesada",
-            "shield": "Escudo"
-        },
-        "corruptionTests": {
-            "none": "Nenhum",
-            "disadvantage": "Desvantagem",
-            "standard": "Padrao"
-        },
-        "weapon": {
-            "name": "Nome",
-            "type": "Tipo de Arma",
-            "damage": "Dano",
-            "slots": "Vagas",
-            "description": "Descricao",
-            "light": "Leve",
-            "heavy": "Pesado",
-            "ranged": "A Distancia",
-            "lightMelee": "L. Corpo a Corpo",
-            "heavyMelee": "P. Corpo a Corpo",
-            "lightRanged": "L. A Distancia",
-            "heavyRanged": "P. A Distancia",
-            "lightShort": "L",
-            "heavyShort": "P",
-            "meleeShort": "C",
-            "rangedShort": "D",
-            "oneAttack": "Um ataque por rodada",
-            "reload": "Recarregar",
-            "uses": "Usos",
-            "ammoType": "Tipo de municao",
-            "ammoAny": "- qualquer municao"
-        },
-        "reload": {
-            "outOfAmmo": "Sem municao — recarregue!",
-            "ranOut": "Municao esgotada — recarregue para continuar.",
-            "reloadBtn": "Recarregar (reiniciar para o maximo)",
-            "reloaded": "recarregou",
-            "undoResource": "Restaurar recurso",
-            "noMag": "Nenhum carregador do tipo \"{type}\" no inventario.",
-            "emptyMag": "Carregador \"{type}\" vazio (0 restantes).",
-            "noMagAny": "Nenhum carregador (municao) no inventario.",
-            "ammoUsed": " (carregador {ammo})"
-        },
-        "death": {
-            "down": "Derrotado",
-            "dying": "Agonizando",
-            "dead": "Morto",
-            "cannotAct": "Personagens derrotados nao podem atacar.",
-            "thrown": "Salvacao",
-            "self": "sua propria salvacao",
-            "stabilized": "Estabilizado",
-            "stabilizedHint": "O personagem esta caido mas vivo e estabilizado.",
-            "dyingHint": "O personagem agoniza e morrerá em {rounds} {word} se não for curado.",
-            "defeated": "e derrotado.",
-            "died": "morreu.",
-            "turnsLeft": "{actor} morrerá em {n} {word}.",
-            "stabilizedRest": "cai, mas nada mais o ameaça.",
-            "dyingRest": "cai e sangra. Sem ajuda, a morte virá em {n} {word}."
-        },
-        "stabilize": {
-            "title": "Estabilizar",
-            "sheetHint": "Selecione um aliado caído (0 PV) e faça uma salvaguarda contra a morte.",
-            "subtitle": "faça uma salvaguarda contra a morte para estabilizar. Qualquer dado igual ou acima do limite é um sucesso.",
-            "self": "Você não pode se estabilizar.",
-            "noTarget": "Selecione primeiro um aliado caído (0 PV) como alvo.",
-            "notDowned": "Este alvo não está caído.",
-            "thrown": "Estabilização",
-            "target": "alvo",
-            "success": "Estabilizado",
-            "fail": "Falhou",
-            "roll": "Estabilizar",
-            "applyConfirm": "Aplicar"
-        },
-        "heal": {
-            "use": "Usar",
-            "heal": "Curar",
-            "usesOn": "usa",
-            "heals": "cura {hp} PV",
-            "noTarget": "Selecione um token alvo para curar ou use em si mesmo.",
-            "empty": "Este item de cura está sem usos.",
-            "emptyHint": "Nenhum item de cura. Selecione um aliado caído para estabilizar.",
-            "full": "O alvo está com PV cheios.",
-            "badFormula": "Fórmula de cura inválida neste item.",
-            "wasted": "(perdido: {wasted} PV)",
-            "useTooltip": "Cura o alvo por este valor (1 uso).",
-            "confirmTitle": "Confirmação de cura",
-            "applyConfirm": "Aplicar",
-            "confirmed": "Confirmado"
-        },
-        "armor": {
-            "name": "Nome",
-            "type": "Tipo de Armadura",
-            "damageReduction": "RD",
-            "armorHp": "HP Armadura",
-            "slots": "Vagas",
-            "depletion": "Desgaste",
-            "description": "Descricao",
-            "none": "Sem Armadura",
-            "armor": "Armadura",
-            "shieldBreak": "O escudo {name} de {actor} quebrou!",
-            "armorBreak": "A armadura {name} de {actor} quebrou!"
-        },
-        "shield": {
-            "name": "Nome",
-            "damageReduction": "Redução",
-            "armorHp": "HP do escudo",
-            "shields": "Escudos",
-            "none": "Sem escudo",
-            "description": "Descrição"
-        },
-        "gear": {
-            "name": "Nome",
-            "slots": "Vagas",
-            "depletion": "Desgaste",
-            "quantity": "Quantidade",
-            "description": "Descricao",
-            "category": "Categoria",
-            "ammoType": "Tipo de municao",
-            "ammoTypePlaceholder": "ex.: 9x19",
-            "heal": "Cura (PV)",
-            "healPlaceholder": "4 ou 2d4+2",
-            "categories": {
-                "item": "Item",
-                "ammo": "Municao",
-                "heal": "Cura",
-                "money": "Dinheiro"
-            },
-            "moneyTotal": "Dinheiro"
-        },
-        "heritage": {
-            "trait": "Traco de Heranca",
-            "startingHealth": "PV inicial",
-            "corruptionThreshold": "Limite de Corrupcao"
-        },
-        "trait": {
-            "name": "Nome",
-            "description": "Descricao"
-        },
-        "plural": {
-            "round": {
-                "one": "rodada",
-                "few": "rodadas",
-                "many": "rodadas",
-                "other": "rodadas"
-            },
-            "turn": {
-                "one": "turno",
-                "few": "turnos",
-                "many": "turnos",
-                "other": "turnos"
-            }
+  "tinyd6": {
+    "mech": {
+      "sheet": "Ficha",
+      "mechanics": "Configurações",
+      "actions": "Ações",
+      "actionsMax": "Ações máximas",
+      "woundsMax": "Ferimentos máximos",
+      "corruptionMax": "Corrupção máxima",
+      "masteredCount": "Armas dominadas",
+      "masteredHint": "Número de armas que o herói pode dominar ao mesmo tempo (requer a regra «Armas dominadas»).",
+      "death": "Morte e agonia",
+      "deathDie": "Dado de morte",
+      "worldDefault": "d6 (padrão do mundo)",
+      "deathRounds": "Rodadas de agonia",
+      "deathThreshold": "Limiar do teste de morte",
+      "emptyWorld": "Deixe em branco para usar o padrão do mundo.",
+      "damageBonus": "Bônus de dano",
+      "damageBonusHint": "Bônus adicionado a todas as rolagens de dano de armas.",
+      "groupSheet": "Ficha",
+      "groupRules": "Regras",
+      "stats": "Atributos",
+      "intro": "Regras pessoais do herói. Vazio ou 0 - usa o padrão do mundo.",
+      "fromWorld": "do mundo",
+      "fromWorldShort": "mundo:",
+      "actionsMaxHint": "Limite de ações por rodada. Restaurado no início da rodada.",
+      "woundsMaxHint": "Limite superior da trilha de saúde do herói.",
+      "corruptionMaxHint": "Tamanho da trilha que dispara a regra de corrupção.",
+      "xpTotalHint": "XP total acumulada pelo herói.",
+      "progressionHint": "Células de progresso geral do avanço.",
+      "deathDieHint": "Dado pessoal do teste de morte. Vazio - padrão do mundo.",
+      "deathRoundsHint": "Rodadas até a morte sem ajuda. Vazio ou 0 - padrão do mundo. Aceita fórmulas (2d5).",
+      "deathThresholdHint": "Resultado do dado para um teste de morte bem-sucedido. Vazio ou 0 - padrão do mundo."
+    },
+    "TinyD6HeroSheet": "Heroi",
+    "TinyD6NpcSheet": "NPC",
+    "TokenWeapons": "Armas",
+    "TokenHeal": "Curar e estabilizar",
+    "TokenActions": "Acoes",
+    "TokenArmor": "Armadura",
+    "ArmorRestore": "Restaurar armadura",
+    "Attack": "Ataque",
+    "Reload": "Recarregar",
+    "system": {
+      "name": "Tiny D6 2e",
+      "dieRoller": "Rolador de Dados",
+      "actions": "Acoes",
+      "actionAdd": "Adicionar acao",
+      "actionRemove": "Remover acao",
+      "collapse": "Recolher",
+      "expand": "Expandir"
+    },
+    "settings": {
+      "title": "Configuracoes do Sistema",
+      "label": "Configuracoes do Sistema",
+      "description": "Escolha as regras e mecanicas opcionais que voce deseja ativar nas opcoes abaixo.",
+      "theme": {
+        "name": "Tema",
+        "hint": "Escolha um tema especifico para o seu jogo no Tiny D6",
+        "choices": {
+          "cthulhu": "Tiny Cthulhu",
+          "dungeon": "Tiny Dungeon 2e"
         }
+      },
+      "sheetStyle": {
+        "name": "Estilo da ficha",
+        "hint": "Escolha o estilo visual das fichas de personagens",
+        "choices": {
+          "default": "Escuro (padrao)",
+          "perkament": "Pergaminho пїЅ Folclore",
+          "noir": "Noir пїЅ Cobre",
+          "minimal": "Minimal пїЅ Claro",
+          "cyberpunk": "Cyberpunk пїЅ Neon"
+        }
+      },
+      "rollerInCharsheet": {
+        "name": "Rolador de Dados na Ficha de Personagem",
+        "hint": "Ative para exibir o Rolador de Dados na Ficha de Personagem."
+      },
+      "enableCorruption": {
+        "name": "Rastrear Corrupcao",
+        "hint": "Adiciona um contador de Corrupcao a Ficha de Personagem."
+      },
+      "enableAdvancement": {
+        "name": "Progressao de Personagem",
+        "hint": "Progressao de Personagem baseada no numero de sessoes ou usando Pontos de Experiencia",
+        "choices": {
+          "none": "Nenhuma",
+          "minimalist": "Avanco Minimalista",
+          "xp": "Pontos de Experiencia"
+        }
+      },
+      "enableItemTracking": {
+        "name": "Ativar Controle de Itens",
+        "hint": "Mostrar uso de vagas ocupadas pelo item no inventario e calcular as restantes."
+      },
+      "enableDepletionPoints": {
+        "name": "Habilitar Desgaste de Itens",
+        "hint": "Quando o item usar Pontos de Durabilidade, registra-los nos itens dos personagens."
+      },
+      "enableCriticalHits": {
+        "name": "Ativar Acertos Criticos",
+        "hint": "Marca um Teste como 'Acerto Critico' quando todos os dados cairem 6."
+      },
+      "enableCriticalFailure": {
+        "name": "Ativar Erros Criticos",
+        "hint": "Marca um Teste como 'Erro Critico' quando todos os dados cairem 1."
+      },
+      "enableVariableWeaponDamage": {
+        "name": "Dano de Arma Variavel",
+        "hint": "Calcula o dano de arma variavel em testes de ataque."
+      },
+      "enablePowerOrigin": {
+        "name": "Ativar Origem do Poder",
+        "hint": "Adiciona um campo de texto para a Origem do seu Super Poder."
+      },
+      "enableWeakness": {
+        "name": "Ativar Fraqueza",
+        "hint": "Adiciona um campo de texto para sua Super Fraqueza."
+      },
+      "enablePanic": {
+        "name": "Ativar Panico",
+        "hint": "Adiciona um contador de Panico."
+      },
+      "enableRadiation": {
+        "name": "Ativar Radiacao",
+        "hint": "Adiciona um contador de Radiacao."
+      },
+      "enableGrit": {
+        "name": "Ativar Coragem",
+        "hint": "Adiciona um contador de Coragem."
+      },
+      "independentNpcTokens": {
+        "name": "Tokens NPC independentes",
+        "hint": "Tokens colocados na cena a partir de um ator NPC tornam-se copias independentes com seu proprio HP e armadura."
+      },
+      "defaultActions": {
+        "name": "Acoes padrao",
+        "hint": "Maximo de acoes padrao para novos atores (padrao Tiny D6 e 1)."
+      },
+      "enableTinyD6Plus": {
+        "name": "Homerule: TinyD6+",
+        "hint": "Ativa as homerules de combate TinyD6+: recarga (municao por ataque), morte e derrotado (salvacao, agonizando com temporizador) e a paleta de armas no HUD do token."
+      },
+      "critAdvantage": {
+        "name": "Homerule: Vantagem critica",
+        "hint": "Quando todos os dados mostram 6 identicos em um ataque, o dano da arma e dobrado (Critico). Escolha se isso se aplica a 2d6, 3d6 ou ambos.",
+        "choices": {
+          "off": "Desativado",
+          "two": "apenas 2d6",
+          "three": "apenas 3d6",
+          "both": "2d6 e 3d6"
+        }
+      },
+      "showNpcReloadMessages": {
+        "name": "Mostrar mensagens de recarga NPC",
+        "hint": "Postar mensagens de recarga/sem municao de NPC no chat (desativado por padrao para reduzir ruido)."
+      },
+      "deathRounds": {
+        "name": "Salvacao: rounds para morrer",
+        "hint": "Turnos até a morte após 0 PV. Digite um número (3) ou uma fórmula rolada ao chegar a 0, por exemplo 1d6+2 ou 2d5, para uma duração aleatória a cada vez."
+      },
+      "deathSaveThreshold": {
+        "name": "Salvacao: limite de sucesso",
+        "hint": "Uma salvacao (1d6) tem sucesso se o resultado for pelo menos este valor (padrao 4)."
+      },
+      "showNpcDeathMessages": {
+        "name": "Mostrar mensagens de derrota NPC",
+        "hint": "Tambem postar mensagem quando um NPC normal e derrotado (desativado por padrao para reduzir ruido)."
+      },
+      "enableHealStabProxy": {
+        "name": "Proxy de Mestre: curar e estabilizar",
+        "hint": "Permite que jogadores curem ou estabilizem personagens/NPCs que não possuem. A mudança é aplicada pelo Mestre via socketlib (sem necessidade de posse)."
+      },
+      "enablePlayerDamageProxy": {
+        "name": "Proxy de Mestre: dano do jogador",
+        "hint": "Permite que jogadores apliquem dano de ataque em personagens/NPCs que não possuem. O dano é aplicado pelo Mestre via socketlib (sem necessidade de posse)."
+      },
+      "enableAttackProficiency": {
+        "name": "Proficiência de arma automática",
+        "hint": "TinyD6+: sugere automaticamente os dados de ataque conforme a proficiência da arma (arma dominada = vantagem, sem treino = desvantagem). O jogador pode escolher qualquer nível manualmente."
+      },
+      "enableArmorStacking": {
+        "name": "Empilhamento de armaduras",
+        "hint": "Quando habilitado, múltiplas armaduras equipadas acumulam seu DR. Quando desabilitado, apenas a armadura com o maior DR se aplica."
+      },
+      "animFx": {
+        "name": "Animações de combate",
+        "hint": "Mostra números de dano flutuantes, flashes de token, destaques críticos e efeitos de morte. Desativar para máquinas de baixa performance ou ruído visual mínimo."
+      },
+      "enableArmorBreakMessages": {
+        "name": "Mensagens de chat de quebra de armadura",
+        "hint": "Publica uma mensagem de chat quando um escudo ou peça de armadura quebra (HP chega a 0)."
+      },
+      "movementDefault": {
+        "name": "Movimento padrão",
+        "hint": "Movimento básico do personagem por turno (em pés). Usado quando o personagem não tem valor próprio. A corrida adiciona esse valor ao orçamento de movimento por 1 ação."
+      },
+      "movementUnit": {
+        "name": "Unidades de movimento",
+        "hint": "Unidades de movimento: pés (grade imperial) ou metros (métrica). Conversão: 1 ft = 0,3048 m. O movimento dos personagens é sempre armazenado em pés e convertido automaticamente.",
+        "choices": {
+          "ft": "Pés (grade imperial)",
+          "m": "Metros (métrica)"
+        }
+      },
+      "dashRefundsAction": {
+        "name": "Devolver ação (corrida)",
+        "hint": "A corrida sempre custa 1 ação. Ativado: clicar novamente cancela a corrida e devolve a ação. Desativado: clicar novamente só desativa a corrida, a ação não volta. Bom para jogos em que personagens têm apenas 1 ação."
+      },
+      "enableMovementBudget": {
+        "name": "Orçamento de movimento e corrida",
+        "hint": "Ativa o orçamento de movimento por turno: coloração verde/amarela/vermelha do caminho, o botão Corrida (super-movimento por 1 ação) e um chip do saldo no rastreador de combate. Desative para voltar ao movimento ilimitado padrão."
+      },
+      "enableDeathSound": {
+        "name": "Som de morte",
+        "hint": "Toca um som quando um personagem morre (o contador de morte zera)."
+      },
+      "deathSoundFile": {
+        "name": "Som de morte (arquivo)",
+        "hint": "Caminho para um arquivo de áudio de qualquer formato (mp3, ogg, wav, webm, m4a, flac). Vazio para usar o motivo integrado."
+      },
+      "enableDeathTicks": {
+        "name": "Tic-tac da morte",
+        "hint": "Um tique-taque tenso (ouvido por todos) no início do turno de um personagem moribundo, quando seu contador de morte desconta. Três níveis: 5+ rodadas - lento, 3-4 - médio, 1-2 - agudo."
+      },
+      "deathTickFile": {
+        "name": "Som do tique (arquivo)",
+        "hint": "Tique personalizado no início do turno de um personagem moribundo (qualquer formato: mp3, ogg, wav, webm, m4a, flac). Volume conforme o nível: 5+ rodadas - baixo, 3-4 - médio, 1-2 - alto. Vazio usa o tique sintetizado."
+      },
+      "enableDeathFx": {
+        "name": "Efeitos de agonia no token",
+        "hint": "Enquanto um personagem agoniza, seu token é destacado em vermelho conforme os rounds restantes: 5+ - bordas vermelhas, 3-4 - vermelho avançando ao centro e respingos de sangue, 1-2 - pulso interno lento. Segue o interruptor de animações de combate."
+      },
+      "deathSoundVolume": {
+        "name": "Volume do som de morte",
+        "hint": "Volume (0.05-1) do som de morte, aplicado a um arquivo personalizado e ao sintetizado. Padrão 0.5 - para não ensurdecer mesmo sem arquivo configurado."
+      }
+    },
+    "attack": {
+      "attack": "Ataque",
+      "hit": "Acerto",
+      "miss": "Errado",
+      "crit": "Crítico",
+      "targets": "Alvos",
+      "damage": "Dano",
+      "noTarget": "Selecione um token alvo antes de atacar.",
+      "applyDamage": "Aplicar dano",
+      "weapon": "Arma",
+      "mode": "Jogar",
+      "roll": "Ataque",
+      "cancel": "Cancelar"
+    },
+    "dice": {
+      "modifier": {
+        "focus": "Foco",
+        "marksman": "Atirador"
+      },
+      "roll": {
+        "disadvantage": "Desvantagem",
+        "standard": "Teste Padrao",
+        "advantage": "Vantagem",
+        "success": "Sucesso!",
+        "failure": "Falha",
+        "critical": "Acerto Critico!!",
+        "botch": "Erro Critico!!"
+      }
+    },
+    "sheet": {
+      "tab": {
+        "main": "Main"
+      },
+      "combat": "Combat",
+      "weaponProficiency": "Weapon Proficiency",
+      "wounds": "Wounds",
+      "armor": "Armor",
+      "corruption": "Corruption",
+      "xp": "XP",
+      "actions": {
+        "name": "Acoes",
+        "spend": "Gastar uma acao",
+        "restore": "Restaurar uma acao",
+        "plus": "Adicionar acao maxima (+1)",
+        "minus": "Remover acao maxima (-1)"
+      },
+      "newItem": "Novo Item",
+      "description": "Descricao",
+      "none": "Nenhum",
+      "noWeapons": "Nenhuma arma encontrada no diretório de itens do mundo.",
+      "unequip": "Des equipar",
+      "delete": "Excluir"
+    },
+    "actor": {
+      "name": "Nome",
+      "npc": "NPC",
+      "people": "Povo",
+      "traits": "Tracos",
+      "description": "Descricao",
+      "tiny-cthulhu": {
+        "character": "Bio",
+        "heritage": {
+          "header": "Arquetipo",
+          "traits": "Traco de Arquetipo",
+          "delete": "Remover Arquetipo"
+        }
+      },
+      "tiny-dungeon": {
+        "character": "Personagem",
+        "heritage": {
+          "header": "Heranca",
+          "traits": "Traco de Heranca",
+          "delete": "Remover Heranca"
+        }
+      },
+      "homeland": "Patria",
+      "age": "Idade",
+      "eyes": "Olhos",
+      "hair": "Cabelo",
+      "familyTrade": "Ramo da Familia",
+      "powerOrigin": "Origem do Poder",
+      "weakness": "Fraqueza",
+      "belief": "Crenca",
+      "xp": {
+        "header": "Experiencia",
+        "progression": "Progressao",
+        "total": "Total",
+        "spent": "Gasto",
+        "remaining": "Restante"
+      },
+      "wounds": {
+        "header": "PVs",
+        "current": "Atual",
+        "max": "Maximo:",
+        "increaseMax": "Aumentar Pontos de Vida Maximo",
+        "help": "Marque uma caixa quando sofrer dano. Desmarque quando for curado."
+      },
+      "radiation": {
+        "header": "Radiacao",
+        "current": "Atual",
+        "max": "Maxima:",
+        "increaseMax": "Aumentar Radiacao Maxima",
+        "help": "Marque uma caixa quando sofrer Radiacao."
+      },
+      "corruption": {
+        "test": "Teste de Corrupcao",
+        "header": "Corrupcao",
+        "current": "Atual",
+        "max": "Maxima:",
+        "increaseMax": "Aumentar Limite de Corrupcao",
+        "help": "Marque uma caixa quando sofrer corrupcao. Desmarque quando recuperar."
+      },
+      "panic": {
+        "test": "Teste de Panico",
+        "header": "Panico",
+        "current": "Atual",
+        "help": "Desmarque uma caixa quando sofrer Panico. Marque quando recuperar. Testes de Panico quando Panico chegar a 1."
+      },
+      "grit": {
+        "header": "Coragem",
+        "current": "Atual",
+        "help": "Desmarque uma caixa quando sofrer Panico."
+      },
+      "proficiencies": {
+        "header": "Proficiencia",
+        "mastered": "Especialidade"
+      },
+      "gear": "Inventario",
+      "preferredWeapons": "Armas Preferidas",
+      "noPreferredWeapons": "Clique para atribuir uma arma preferida",
+      "removePreferred": "Remover das preferidas",
+      "addAmmo": "Adicionar Municao",
+      "addAmmoTitle": "Adicionar Municao",
+      "ammoType": "Tipo de Municao",
+      "selectWeapon": "Selecionar Arma",
+      "equipped": "Equipado",
+      "equipment": "Armas",
+      "weaponry": "Armamento",
+      "wearing": "Vestimenta",
+      "important": "NPC importante",
+      "money": "Moeda",
+      "noMoney": "Sem moeda",
+      "actions": {
+        "editTrait": "Editar Traco",
+        "chatTrait": "",
+        "chatItem": "",
+        "deleteTrait": "Remover Traco"
+      }
+    },
+    "weaponCategories": {
+      "melee": "Corpo a Corpo",
+      "ranged": "A Distancia"
+    },
+    "weaponTypes": {
+      "none": "",
+      "light": "Leve",
+      "heavy": "Pesada"
+    },
+    "armorTypes": {
+      "none": "",
+      "light": "Leve",
+      "medium": "Media",
+      "heavy": "Pesada",
+      "shield": "Escudo"
+    },
+    "corruptionTests": {
+      "none": "Nenhum",
+      "disadvantage": "Desvantagem",
+      "standard": "Padrao"
+    },
+    "weapon": {
+      "name": "Nome",
+      "type": "Tipo de Arma",
+      "damage": "Dano",
+      "slots": "Vagas",
+      "description": "Descricao",
+      "light": "Leve",
+      "heavy": "Pesado",
+      "ranged": "A Distancia",
+      "lightMelee": "L. Corpo a Corpo",
+      "heavyMelee": "P. Corpo a Corpo",
+      "lightRanged": "L. A Distancia",
+      "heavyRanged": "P. A Distancia",
+      "lightShort": "L",
+      "heavyShort": "P",
+      "meleeShort": "C",
+      "rangedShort": "D",
+      "oneAttack": "Um ataque por rodada",
+      "reload": "Recarregar",
+      "uses": "Usos",
+      "ammoType": "Tipo de municao",
+      "ammoAny": "- qualquer municao"
+    },
+    "reload": {
+      "outOfAmmo": "Sem municao - recarregue!",
+      "ranOut": "Municao esgotada - recarregue para continuar.",
+      "reloadBtn": "Recarregar (reiniciar para o maximo)",
+      "reloaded": "recarregou",
+      "undoResource": "Restaurar recurso",
+      "noMag": "Nenhum carregador do tipo \"{type}\" no inventario.",
+      "emptyMag": "Carregador \"{type}\" vazio (0 restantes).",
+      "noMagAny": "Nenhum carregador (municao) no inventario.",
+      "ammoUsed": " (carregador {ammo})"
+    },
+    "death": {
+      "down": "Derrotado",
+      "dying": "Agonizando",
+      "dead": "Morto",
+      "cannotAct": "Personagens derrotados nao podem atacar.",
+      "thrown": "Salvacao",
+      "self": "sua propria salvacao",
+      "stabilized": "Estabilizado",
+      "stabilizedHint": "O personagem esta caido mas vivo e estabilizado.",
+      "dyingHint": "O personagem agoniza e morrerá em {rounds} {word} se não for curado.",
+      "defeated": "e derrotado.",
+      "died": "morreu.",
+      "turnsLeft": "{actor} morrerá em {n} {word}.",
+      "stabilizedRest": "cai, mas nada mais o ameaça.",
+      "dyingRest": "cai e sangra. Sem ajuda, a morte virá em {n} {word}.",
+      "diedNotify": "{actor} morreu."
+    },
+    "stabilize": {
+      "title": "Estabilizar",
+      "sheetHint": "Selecione um aliado caído (0 PV) e faça uma salvaguarda contra a morte.",
+      "subtitle": "faça uma salvaguarda contra a morte para estabilizar. Qualquer dado igual ou acima do limite é um sucesso.",
+      "self": "Você não pode se estabilizar.",
+      "noTarget": "Selecione primeiro um aliado caído (0 PV) como alvo.",
+      "notDowned": "Este alvo não está caído.",
+      "thrown": "Estabilização",
+      "target": "alvo",
+      "success": "Estabilizado",
+      "fail": "Falhou",
+      "roll": "Estabilizar",
+      "applyConfirm": "Aplicar",
+      "actionsCost": "Estabilizar custa 1 ação."
+    },
+    "heal": {
+      "use": "Usar",
+      "heal": "Curar",
+      "usesOn": "usa",
+      "heals": "cura {hp} PV",
+      "noTarget": "Selecione um token alvo para curar ou use em si mesmo.",
+      "empty": "Este item de cura está sem usos.",
+      "emptyHint": "Nenhum item de cura. Selecione um aliado caído para estabilizar.",
+      "full": "O alvo está com PV cheios.",
+      "badFormula": "Fórmula de cura inválida neste item.",
+      "wasted": "(perdido: {wasted} PV)",
+      "useTooltip": "Cura o alvo por este valor (1 uso).",
+      "confirmTitle": "Confirmação de cura",
+      "applyConfirm": "Aplicar",
+      "confirmed": "Confirmado"
+    },
+    "armor": {
+      "name": "Nome",
+      "type": "Tipo de Armadura",
+      "damageReduction": "RD",
+      "armorHp": "HP Armadura",
+      "slots": "Vagas",
+      "depletion": "Desgaste",
+      "description": "Descricao",
+      "none": "Sem Armadura",
+      "armor": "Armadura",
+      "shieldBreak": "O escudo {name} de {actor} quebrou!",
+      "armorBreak": "A armadura {name} de {actor} quebrou!"
+    },
+    "shield": {
+      "name": "Nome",
+      "damageReduction": "Redução",
+      "armorHp": "HP do escudo",
+      "shields": "Escudos",
+      "none": "Sem escudo",
+      "description": "Descrição"
+    },
+    "gear": {
+      "name": "Nome",
+      "slots": "Vagas",
+      "depletion": "Desgaste",
+      "quantity": "Quantidade",
+      "description": "Descricao",
+      "category": "Categoria",
+      "ammoType": "Tipo de municao",
+      "ammoTypePlaceholder": "ex.: 9x19",
+      "heal": "Cura (PV)",
+      "healPlaceholder": "4 ou 2d4+2",
+      "categories": {
+        "item": "Item",
+        "ammo": "Municao",
+        "heal": "Cura",
+        "money": "Dinheiro"
+      },
+      "moneyTotal": "Dinheiro"
+    },
+    "heritage": {
+      "trait": "Traco de Heranca",
+      "startingHealth": "PV inicial",
+      "corruptionThreshold": "Limite de Corrupcao"
+    },
+    "trait": {
+      "name": "Nome",
+      "description": "Descricao"
+    },
+    "plural": {
+      "round": {
+        "one": "rodada",
+        "few": "rodadas",
+        "many": "rodadas",
+        "other": "rodadas"
+      },
+      "turn": {
+        "one": "turno",
+        "few": "turnos",
+        "many": "turnos",
+        "other": "turnos"
+      }
+    },
+    "movement": {
+      "dash": "Corrida",
+      "dashUndo": "Cancelar a corrida e devolver a ação",
+      "noActions": "Sem ação livre: a corrida exige 1 ação.",
+      "dashActive": "Corrida ativa",
+      "dashHint": "Super-movimento: custa 1 ação e adiciona o movimento mundial ao orçamento. Clique novamente para cancelar e devolver a ação.",
+      "dashOff": "Cancelar corrida",
+      "label": "Movimento"
     }
+  }
 }

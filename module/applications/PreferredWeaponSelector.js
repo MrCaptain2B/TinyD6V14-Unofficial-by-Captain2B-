@@ -1,6 +1,6 @@
 /* Окно выбора предпочитаемого оружия NPC.
  *
- * Использует HandlebarsApplicationMixin(ApplicationV2) — тот же паттерн
+ * Использует HandlebarsApplicationMixin(ApplicationV2) - тот же паттерн
  * что и MasteredWeaponSelector. Чекбоксы, toggle selection, без лимита.
  */
 

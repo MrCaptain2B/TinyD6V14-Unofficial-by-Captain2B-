@@ -1,10 +1,4 @@
-﻿<form class="actor-sheet {{classes}} m-0" autocomplete="off">
-    {{#if config.enableTinyD6Plus}}
-    <div class="td-rail" role="tablist">
-        <button type="button" class="td-rail-tab active" data-rail="sheet" title="{{localize "tinyd6.mech.sheet"}}"><i class="fas fa-scroll"></i></button>
-        <button type="button" class="td-rail-tab" data-rail="mechanics" title="{{localize "tinyd6.mech.mechanics"}}"><i class="fas fa-gear"></i></button>
-    </div>
-    {{/if}}
+<form class="actor-sheet {{classes}} m-0" autocomplete="off">
     <div class="td-sheet-body">
     <div class="td-hero-head">
         <div class="td-avatar"><img src="{{actor.img}}" data-edit="img" title="{{actor.name}}" alt=""/></div>
@@ -25,15 +19,21 @@
         </div>
     </div>
 
-    <div class="td-tabs">
-        <button type="button" class="td-tab active" data-tab="main">{{localize "tinyd6.sheet.tab.main"}}</button>
-        <button type="button" class="td-tab" data-tab="traits">{{localize "tinyd6.actor.traits"}}</button>
-        <button type="button" class="td-tab" data-tab="inventory">{{localize "tinyd6.actor.gear"}}</button>
-    </div>
-
-    {{#if owner}}
-        {{> "systems/tinyd6v14/templates/partials/roll-bar.hbs" flexClass=""}}
-    {{/if}}
+    <div class="td-layout">
+        <nav class="td-tabbar" role="tablist">
+            <div class="td-tabbar-group">{{localize "tinyd6.mech.groupSheet"}}</div>
+            <button type="button" class="td-tab active" data-tab="main"><i class="fas fa-scroll"></i><span>{{localize "tinyd6.sheet.tab.main"}}</span></button>
+            <button type="button" class="td-tab" data-tab="traits"><i class="fas fa-star"></i><span>{{localize "tinyd6.actor.traits"}}</span></button>
+            <button type="button" class="td-tab" data-tab="inventory"><i class="fas fa-box"></i><span>{{localize "tinyd6.actor.gear"}}</span></button>
+            {{#if config.enableTinyD6Plus}}
+            <div class="td-tabbar-group">{{localize "tinyd6.mech.groupRules"}}</div>
+            <button type="button" class="td-tab" data-tab="mechanics"><i class="fas fa-gear"></i><span>{{localize "tinyd6.mech.mechanics"}}</span></button>
+            {{/if}}
+        </nav>
+        <div class="td-tabbody">
+        {{#if owner}}
+            {{> "systems/tinyd6v14/templates/partials/roll-bar.hbs" flexClass=""}}
+        {{/if}}
 
     <div class="td-pane active" data-pane="main">
         <div class="folk-bg folk-bg-hero" aria-hidden="true"></div>
@@ -65,7 +65,7 @@
                         </div>
                     </div>
                     <div class="col-3 pt-3 text-center">
-                        <img src="{{actor.img}}" data-edit="img" title="{{actor.name}}" class="character-art img-fluid"/>
+                        <img src="{{actor.img}}" title="{{actor.name}}" class="character-art img-fluid"/>
                     </div>
                 </div>
                 <div class="td6-stat-values">
@@ -106,13 +106,23 @@
                                 {{#if config.enableTinyD6Plus}}
                                 <div class="stab-action">
                                     <div class="icon">{{{td6icon "kit-medical"}}}</div>
-                                    <div class="stab-action-body">
-                                        <div class="t">{{localize "tinyd6.stabilize.title"}}</div>
-                                        <div class="d">{{localize "tinyd6.stabilize.sheetHint"}}</div>
-                                    </div>
-                                    <button type="button" class="stab-btn" data-action="stabilize">
-                                        {{{td6icon "burst"}}} {{localize "tinyd6.stabilize.title"}}
+                                    <div class="stab-action-body"><div class="t">{{localize "tinyd6.stabilize.title"}}</div></div>
+                                    <button type="button" class="stab-btn" data-action="stabilize" data-tooltip="{{localize "tinyd6.stabilize.sheetHint"}}" data-tooltip-direction="UP">
+                                        {{{td6icon "burst"}}}
                                     </button>
+                                </div>
+                                {{/if}}
+                                {{#if (and config.enableTinyD6Plus config.enableMovementBudget)}}
+                                <div class="stab-action dash-action {{#if data.system.movement.dashed}}active{{/if}}">
+                                    <div class="icon">{{{td6icon "run"}}}</div>
+                                    <div class="stab-action-body"><div class="t">{{#if data.system.movement.dashed}}{{localize "tinyd6.movement.dashActive"}}{{else}}{{localize "tinyd6.movement.dash"}}{{/if}}</div></div>
+                                    {{#if owner}}
+                                    <button type="button" class="dash-btn {{#if data.system.movement.dashed}}dashed{{/if}}" data-action="dash"
+                                            data-tooltip="{{#if data.system.movement.dashed}}{{#if config.dashRefundsAction}}{{localize "tinyd6.movement.dashUndo"}}{{else}}{{localize "tinyd6.movement.dashOff"}}{{/if}}{{else}}{{localize "tinyd6.movement.dashHint"}}{{/if}}"
+                                            data-tooltip-direction="UP">
+                                        {{{td6icon "run"}}}
+                                    </button>
+                                    {{/if}}
                                 </div>
                                 {{/if}}
                             </div>
@@ -178,29 +188,33 @@
                 <div class="combat-profs">
                     <section class="proficiencies">
                         <h2 class="td6-section-header">{{localize "tinyd6.sheet.weaponProficiency"}}</h2>
-                        <div class="d-flex justify-content-start">
+                        <div class="prof-row d-flex justify-content-start">
                             <div class="light mr-4">
-                                <label>
+                                <label class="{{#if data.system.proficiencies.lightMelee}}active{{/if}}" title="{{localize "tinyd6.weapon.lightMelee"}}">
                                     <input type="checkbox" name="system.proficiencies.lightMelee" {{checked data.system.proficiencies.lightMelee}}/>
-                                    {{localize "tinyd6.weapon.lightMelee"}}
+                                    <span class="lab-abbr">L.M</span>
+                                    <span class="lab-txt">{{localize "tinyd6.weapon.lightMelee"}}</span>
                                 </label>
                             </div>
                             <div class="heavy mr-4">
-                                <label>
+                                <label class="{{#if data.system.proficiencies.heavyMelee}}active{{/if}}" title="{{localize "tinyd6.weapon.heavyMelee"}}">
                                     <input type="checkbox" name="system.proficiencies.heavyMelee" {{checked data.system.proficiencies.heavyMelee}}/>
-                                    {{localize "tinyd6.weapon.heavyMelee"}}
+                                    <span class="lab-abbr">H.M</span>
+                                    <span class="lab-txt">{{localize "tinyd6.weapon.heavyMelee"}}</span>
                                 </label>
                             </div>
                             <div class="ranged mr-4">
-                                <label>
+                                <label class="{{#if data.system.proficiencies.lightRanged}}active{{/if}}" title="{{localize "tinyd6.weapon.lightRanged"}}">
                                     <input type="checkbox" name="system.proficiencies.lightRanged" {{checked data.system.proficiencies.lightRanged}}/>
-                                    {{localize "tinyd6.weapon.lightRanged"}}
+                                    <span class="lab-abbr">L.R</span>
+                                    <span class="lab-txt">{{localize "tinyd6.weapon.lightRanged"}}</span>
                                 </label>
                             </div>
                             <div class="ranged mr-4">
-                                <label>
+                                <label class="{{#if data.system.proficiencies.heavyRanged}}active{{/if}}" title="{{localize "tinyd6.weapon.heavyRanged"}}">
                                     <input type="checkbox" name="system.proficiencies.heavyRanged" {{checked data.system.proficiencies.heavyRanged}}/>
-                                    {{localize "tinyd6.weapon.heavyRanged"}}
+                                    <span class="lab-abbr">H.R</span>
+                                    <span class="lab-txt">{{localize "tinyd6.weapon.heavyRanged"}}</span>
                                 </label>
                             </div>
                         </div>
@@ -208,13 +222,10 @@
                         <div class="mastered-slots">
                             {{#each data.system.masteredSlots as |slot idx|}}
                                 <div class="mastered-slot" data-slot="{{idx}}">
-                                    <span class="mastered-slot-label"><i class="fas fa-crosshairs"></i> {{localize "tinyd6.actor.proficiencies.mastered"}}</span>
                                     <button type="button" class="mastered-weapon-picker" data-action="openMasteredWeaponSelector">
-                                        {{#if slot.name}}
-                                            {{slot.name}}
-                                        {{else}}
-                                            {{localize "tinyd6.sheet.none"}}
-                                        {{/if}}
+                                        <i class="fas fa-crosshairs"></i>
+                                        <span class="mastered-slot-kicker">{{localize "tinyd6.actor.proficiencies.mastered"}}</span>
+                                        <span class="mastered-slot-name">{{#if slot.name}}{{slot.name}}{{else}}{{localize "tinyd6.sheet.none"}}{{/if}}</span>
                                     </button>
                                     {{#if slot.name}}
                                         <a class="mastered-slot-clear" title="{{localize "tinyd6.sheet.delete"}}"><i class="fas fa-xmark"></i></a>
@@ -291,6 +302,7 @@
         <section class="inventory">
             <h2 class="floating-header">{{localize "tinyd6.actor.gear"}}</h2>
 
+            {{#if config.enableTinyD6Plus}}
             <section class="inventory-currency">
                 <div class="inv-section-toggle" data-section="currency">
                     <span class="arrow">&#9660;</span> {{localize 'tinyd6.actor.money'}}
@@ -311,6 +323,7 @@
                     </div>
                 </div>
             </section>
+            {{/if}}
 
             <section class="inventory-weapons inv-collapsible">
                 <div class="inv-section-toggle" data-section="weapons">
@@ -322,7 +335,7 @@
                         <div class="inv-row" data-item-id="{{weapon._id}}">
                             <img class="inv-row-img" src="{{weapon.img}}" alt=""/>
                             <span class="inv-row-name">{{weapon.name}}</span>
-                            {{#if weapon.system.reload}}
+                            {{#if (and weapon.system.reload @root.config.enableTinyD6Plus)}}
                                 <span class="inv-row-charges {{#if (eq weapon.system.charges 0)}}empty{{/if}}">
                                     <input class="inline-num" type="number" min="0" max="{{weapon.system.uses}}" value="{{weapon.system.charges}}" data-field="system.charges" data-item-id="{{weapon._id}}"/>
                                     <span class="inline-sep">/</span><span class="inline-max">{{weapon.system.uses}}</span>
@@ -362,10 +375,12 @@
                                     <img class="inv-row-img" src="{{shield.img}}" alt=""/>
                                     <span class="inv-row-name">{{shield.name}}</span>
                                     <span class="inv-row-stats">DR:{{shield.system.damageReduction}}</span>
-                                    <span class="inv-row-charges {{#if (eq shield.system.armorHp.value 0)}}empty{{/if}}">
-                                        <input class="inline-num" type="number" min="0" max="{{shield.system.armorHp.max}}" value="{{shield.system.armorHp.value}}" data-field="system.armorHp.value" data-item-id="{{shield._id}}"/>
-                                        <span class="inline-sep">/</span><span class="inline-max">{{shield.system.armorHp.max}}</span>
-                                    </span>
+{{#if @root.config.enableTinyD6Plus}}
+                                        <span class="inv-row-charges {{#if (eq shield.system.armorHp.value 0)}}empty{{/if}}">
+                                            <input class="inline-num" type="number" min="0" max="{{shield.system.armorHp.max}}" value="{{shield.system.armorHp.value}}" data-field="system.armorHp.value" data-item-id="{{shield._id}}"/>
+                                            <span class="inline-sep">/</span><span class="inline-max">{{shield.system.armorHp.max}}</span>
+                                        </span>
+                                        {{/if}}
                                     <a class="inv-row-btn item-equip" title="{{localize 'tinyd6.sheet.unequip'}}" data-item-id="{{shield._id}}"><i class="fas fa-arrow-right-from-bracket"></i></a>
                                 </div>
                             {{/each}}
@@ -377,12 +392,14 @@
                         </div>
                         <div class="inv-armor-block">
                             <div class="total-armor">{{data.system.armorTotal}}</div>
+                            {{#if config.enableTinyD6Plus}}
                             <div class="armor-hprow">
                                 <input class="armor-hp-input" type="number" min="0" value="{{data.system.armorHpTotal}}" title="{{localize 'tinyd6.armor.armorHp'}}"/>
                                 <button type="button" class="armor-restore" data-tooltip="TINYD6.ArmorRestore" data-tooltip-direction="UP">
                                     <i class="fas fa-arrows-rotate"></i>
                                 </button>
                             </div>
+                            {{/if}}
                         </div>
                     </div>
                 </div>
@@ -404,7 +421,7 @@
                                     <a class="inv-row-btn delete" title="{{localize 'tinyd6.sheet.delete'}}" data-item-id="{{gearItem._id}}"><i class="fas fa-xmark"></i></a>
                                 </div>
                             {{else}}
-                                {{#if (eq gearItem.system.category "heal")}}
+                                {{#if (and (eq gearItem.system.category "heal") @root.config.enableTinyD6Plus)}}
                                     <div class="inv-row heal-row {{#if (eq gearItem.system.quantity.value 0)}}zero-qty{{/if}}" data-item-id="{{gearItem._id}}">
                                         <img class="inv-row-img" src="{{gearItem.img}}" alt=""/>
                                         <span class="inv-row-name {{#if (eq gearItem.system.quantity.value 0)}}strikethrough{{/if}}">{{gearItem.name}}</span>
@@ -436,9 +453,10 @@
     {{#if config.enableTinyD6Plus}}
     <div class="td-pane td-pane-mechanics" data-pane="mechanics">
         <h2 class="floating-header">{{localize "tinyd6.mech.mechanics"}}</h2>
+        <p class="mech-intro">{{localize "tinyd6.mech.intro"}}</p>
 
         <section class="mech-section">
-            <h3 class="td6-section-header">{{localize "tinyd6.mech.actions"}}</h3>
+            <h3 class="td6-section-header">{{localize "tinyd6.mech.stats"}}</h3>
             <div class="mech-row">
                 <label>{{localize "tinyd6.mech.actionsMax"}}</label>
                 {{#if owner}}
@@ -446,6 +464,7 @@
                 {{else}}
                     <span>{{data.system.actions.max}}</span>
                 {{/if}}
+                <p class="mech-hint">{{localize "tinyd6.mech.actionsMaxHint"}}</p>
             </div>
             <div class="mech-row">
                 <label>{{localize "tinyd6.mech.woundsMax"}}</label>
@@ -454,6 +473,7 @@
                 {{else}}
                     <span>{{data.system.wounds.max}}</span>
                 {{/if}}
+                <p class="mech-hint">{{localize "tinyd6.mech.woundsMaxHint"}}</p>
             </div>
             {{#if config.enableCorruption}}
             <div class="mech-row">
@@ -463,6 +483,7 @@
                 {{else}}
                     <span>{{data.system.corruptionThreshold.max}}</span>
                 {{/if}}
+                <p class="mech-hint">{{localize "tinyd6.mech.corruptionMaxHint"}}</p>
             </div>
             {{/if}}
             {{#if (eq config.advancementMethod 'xp')}}
@@ -473,6 +494,7 @@
                 {{else}}
                     <span>{{data.system.xp.max}}</span>
                 {{/if}}
+                <p class="mech-hint">{{localize "tinyd6.mech.xpTotalHint"}}</p>
             </div>
             {{/if}}
             {{#if (eq config.advancementMethod 'minimalist')}}
@@ -483,6 +505,7 @@
                 {{else}}
                     <span>{{data.system.advancement.max}}</span>
                 {{/if}}
+                <p class="mech-hint">{{localize "tinyd6.mech.progressionHint"}}</p>
             </div>
             {{/if}}
         </section>
@@ -496,8 +519,8 @@
                 {{else}}
                     <span>{{data.system.homebrew.masteredCount}}</span>
                 {{/if}}
+                <p class="mech-hint">{{localize "tinyd6.mech.masteredHint"}}</p>
             </div>
-            <p class="mech-hint">{{localize "tinyd6.mech.masteredHint"}}</p>
         </section>
 
         <section class="mech-section">
@@ -505,38 +528,61 @@
             <div class="mech-row">
                 <label>{{localize "tinyd6.mech.deathDie"}}</label>
                 {{#if owner}}
-                    <select data-path="system.homebrew.deathDie">
-                        <option value="" {{#unless data.system.homebrew.deathDie}}selected{{/unless}}>d6 ({{localize "tinyd6.mech.worldDefault"}})</option>
-                        <option value="d4" {{#if (eq data.system.homebrew.deathDie "d4")}}selected{{/if}}>d4</option>
-                        <option value="d6" {{#if (eq data.system.homebrew.deathDie "d6")}}selected{{/if}}>d6</option>
-                        <option value="d8" {{#if (eq data.system.homebrew.deathDie "d8")}}selected{{/if}}>d8</option>
-                        <option value="d10" {{#if (eq data.system.homebrew.deathDie "d10")}}selected{{/if}}>d10</option>
-                    </select>
+                    <span class="mech-ctrl">
+                        <select data-path="system.homebrew.deathDie">
+                            <option value="" {{#unless data.system.homebrew.deathDie}}selected{{/unless}}>{{data.system.homebrew.world.deathDie}} · {{localize "tinyd6.mech.fromWorld"}}</option>
+                            <option value="d4" {{#if (eq data.system.homebrew.deathDie "d4")}}selected{{/if}}>d4</option>
+                            <option value="d6" {{#if (eq data.system.homebrew.deathDie "d6")}}selected{{/if}}>d6</option>
+                            <option value="d8" {{#if (eq data.system.homebrew.deathDie "d8")}}selected{{/if}}>d8</option>
+                            <option value="d10" {{#if (eq data.system.homebrew.deathDie "d10")}}selected{{/if}}>d10</option>
+                        </select>
+                    </span>
                 {{else}}
                     <span>{{data.system.homebrew.deathDie}}</span>
                 {{/if}}
+                <p class="mech-hint">{{localize "tinyd6.mech.deathDieHint"}}</p>
             </div>
             <div class="mech-row">
                 <label>{{localize "tinyd6.mech.deathRounds"}}</label>
                 {{#if owner}}
-                    <input class="inline-num" type="text" inputmode="text" data-path="system.homebrew.deathRounds" value="{{data.system.homebrew.deathRounds}}" placeholder="{{localize "tinyd6.mech.worldDefault"}}"/>
+                    <span class="mech-ctrl">
+                        <input class="inline-num" type="text" inputmode="text" data-path="system.homebrew.deathRounds" value="{{data.system.homebrew.deathRounds}}" placeholder="{{localize "tinyd6.mech.fromWorldShort"}} {{data.system.homebrew.world.deathRounds}}"/>
+                        {{#unless data.system.homebrew.deathRounds}}
+                            <span class="mech-badge">{{localize "tinyd6.mech.fromWorld"}}: {{data.system.homebrew.world.deathRounds}}</span>
+                        {{/unless}}
+                    </span>
                 {{else}}
                     <span>{{data.system.homebrew.deathRounds}}</span>
                 {{/if}}
+                <p class="mech-hint">{{localize "tinyd6.mech.deathRoundsHint"}}</p>
             </div>
             <div class="mech-row">
                 <label>{{localize "tinyd6.mech.deathThreshold"}}</label>
                 {{#if owner}}
-                    <input class="inline-num" type="number" min="1" max="10" data-path="system.homebrew.deathSaveThreshold" value="{{data.system.homebrew.deathSaveThreshold}}" placeholder="{{localize "tinyd6.mech.worldDefault"}}"/>
+                    <span class="mech-ctrl">
+                        <input class="inline-num" type="number" min="1" max="10" data-path="system.homebrew.deathSaveThreshold" value="{{data.system.homebrew.deathSaveThreshold}}" placeholder="{{localize "tinyd6.mech.fromWorldShort"}} {{data.system.homebrew.world.deathSaveThreshold}}"/>
+                        {{#unless data.system.homebrew.deathSaveThreshold}}
+                            <span class="mech-badge">{{localize "tinyd6.mech.fromWorld"}}: {{data.system.homebrew.world.deathSaveThreshold}}</span>
+                        {{/unless}}
+                    </span>
                 {{else}}
                     <span>{{data.system.homebrew.deathSaveThreshold}}</span>
                 {{/if}}
+                <p class="mech-hint">{{localize "tinyd6.mech.deathThresholdHint"}}</p>
             </div>
-            <p class="mech-hint">{{localize "tinyd6.mech.emptyWorld"}}</p>
         </section>
 
         <section class="mech-section">
-            <h3 class="td6-section-header">{{localize "tinyd6.mech.damageBonus"}}</h3>
+            <h3 class="td6-section-header">{{localize "tinyd6.mech.combat"}}</h3>
+            <div class="mech-row">
+                <label>{{localize "tinyd6.mech.movement"}}</label>
+                {{#if owner}}
+                    <input class="inline-num" type="number" min="0" max="999" data-path="system.homebrew.movement" value="{{data.system.homebrew.movement}}" placeholder="{{data.system.movement.world}}"/>
+                {{else}}
+                    <span>{{data.system.movement.effective}} {{data.system.movement.unit}}</span>
+                {{/if}}
+                <p class="mech-hint">{{localize "tinyd6.mech.movementHint"}} ({{localize "tinyd6.mech.fromWorld"}} {{data.system.movement.world}} {{data.system.movement.unit}})</p>
+            </div>
             <div class="mech-row">
                 <label>{{localize "tinyd6.mech.damageBonus"}}</label>
                 {{#if owner}}
@@ -544,10 +590,21 @@
                 {{else}}
                     <span>{{data.system.homebrew.damageBonus}}</span>
                 {{/if}}
+                <p class="mech-hint">{{localize "tinyd6.mech.damageBonusHint"}}</p>
             </div>
-            <p class="mech-hint">{{localize "tinyd6.mech.damageBonusHint"}}</p>
+            <div class="mech-row">
+                <label>{{localize "tinyd6.mech.damageResist"}}</label>
+                {{#if owner}}
+                    <input class="inline-num" type="text" data-path="system.homebrew.damageResist" value="{{data.system.homebrew.damageResist}}" placeholder="{{localize "tinyd6.mech.damageResistPlaceholder"}}"/>
+                {{else}}
+                    <span>{{data.system.homebrew.damageResist}}</span>
+                {{/if}}
+                <p class="mech-hint">{{localize "tinyd6.mech.damageResistHint"}}</p>
+            </div>
         </section>
     </div>
     {{/if}}
+        </div>
+        </div>
     </div>
 </form>

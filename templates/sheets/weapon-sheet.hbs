@@ -1,65 +1,94 @@
 ﻿<form class="{{cssClass}}" autocomplete="off">
     {{> "systems/tinyd6v14/templates/partials/item-header.hbs" placeholder='tinyd6.weapon.name'}}
-    <table>
-        <tr>
-            <th class="text-nowrap">{{localize 'tinyd6.weapon.type'}}</th>
-            <th class="text-nowrap">{{localize 'tinyd6.weapon.damage'}}</th>
-            <th class="text-nowrap">{{localize 'tinyd6.weapon.slots'}}</th>
-        </tr>
-        <tr>
-            <td class="text-nowrap">
+    <div class="td-layout td-layout-weapon">
+        {{! Левая колонка: база системы — характеристики оружия (как в прототипе B) }}
+        <div class="split-core">
+            <h2 class="floating-header">{{localize 'tinyd6.weapon.stats'}}</h2>
+
+            <div class="core-row">
+                <div class="lbl">{{localize 'tinyd6.weapon.type'}}</div>
                 {{#if config.enableTinyD6Plus}}
                 <select name="system.weaponType">
                     {{selectOptions config.weaponCombos selected=data.system.weaponType localize="true"}}
                 </select>
                 {{else}}
-                <select name="system.damageType">
+                <select name="system.damageType" class="mb-1">
                     {{selectOptions config.weaponTypes selected=data.system.damageType localize="true"}}
                 </select>
                 <select name="system.group">
                     {{selectOptions config.weaponCategories selected=data.system.group localize="true"}}
                 </select>
                 {{/if}}
-            </td>
-            <td>
-                <input type="text" class="text-center" name="system.damage" value="{{data.system.damage}}" data-dtype="Number"/>
-            </td>
-            <td>
-                <input type="text" class="text-center" name="system.slots" value="{{data.system.slots}}" data-dtype="Number"/>
-            </td>
-        </tr>
-    </table>
+            </div>
 
-    {{#if config.enableTinyD6Plus}}
-    <div class="weapon-reload-opts">
-        {{#if (or (eq data.system.weaponType "heavyMelee") (eq data.system.weaponType "heavyRanged"))}}
-        <label class="toggle-line">
-            <input type="checkbox" name="system.oneAttack" {{checked data.system.oneAttack}}/>
-            {{localize "tinyd6.weapon.oneAttack"}}
-        </label>
-        {{/if}}
+            <div class="core-row">
+                <div class="lbl">{{localize 'tinyd6.weapon.damage'}}</div>
+                <input type="text" name="system.damage" value="{{data.system.damage}}" data-dtype="Number"/>
+            </div>
 
-        {{#if (or (eq data.system.weaponType "lightRanged") (eq data.system.weaponType "heavyRanged"))}}
-        <label class="toggle-line">
-            <input type="checkbox" name="system.reload" {{checked data.system.reload}}/>
-            {{localize "tinyd6.weapon.reload"}}
-        </label>
-        <div class="field-row">
-            <label>{{localize "tinyd6.weapon.uses"}}</label>
-            <input type="number" class="text-center" name="system.uses" value="{{data.system.uses}}" min="0"/>
+            <div class="core-row">
+                <div class="lbl">{{localize 'tinyd6.weapon.slots'}}</div>
+                <input type="text" name="system.slots" value="{{data.system.slots}}" data-dtype="Number"/>
+            </div>
+
+            {{#if config.enableTinyD6Plus}}
+                {{#if (or (eq data.system.weaponType "heavyMelee") (eq data.system.weaponType "heavyRanged"))}}
+                <div class="core-row">
+                    <label class="toggle-line">
+                        <input type="checkbox" name="system.oneAttack" {{checked data.system.oneAttack}}/>
+                        {{localize "tinyd6.weapon.oneAttack"}}
+                    </label>
+                </div>
+                {{/if}}
+
+                {{#if (or (eq data.system.weaponType "lightRanged") (eq data.system.weaponType "heavyRanged"))}}
+                <div class="core-row">
+                    <label class="toggle-line">
+                        <input type="checkbox" name="system.reload" {{checked data.system.reload}}/>
+                        {{localize "tinyd6.weapon.reload"}}
+                    </label>
+                </div>
+                <div class="core-row">
+                    <div class="lbl">{{localize "tinyd6.weapon.uses"}}</div>
+                    <input type="number" name="system.uses" value="{{data.system.uses}}" min="0"/>
+                </div>
+                <div class="core-row">
+                    <div class="lbl">{{localize "tinyd6.weapon.ammoType"}}</div>
+                    <select name="system.ammoType">
+                        <option value="">{{localize "tinyd6.weapon.ammoAny"}}</option>
+                        {{#each config.ammoTypes}}
+                            <option value="{{this}}" {{#if (eq ../data.system.ammoType this)}}selected{{/if}}>{{this}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+                {{/if}}
+            {{/if}}
         </div>
-        <div class="field-row">
-            <label>{{localize "tinyd6.weapon.ammoType"}}</label>
-            <select name="system.ammoType">
-                <option value="">{{localize "tinyd6.weapon.ammoAny"}}</option>
-                {{#each config.ammoTypes}}
-                    <option value="{{this}}" {{#if (eq ../data.system.ammoType this)}}selected{{/if}}>{{this}}</option>
-                {{/each}}
-            </select>
+
+        {{! Средняя колонка: док вкладок }}
+        <nav class="td-tabbar">
+            <div class="td-tabbar-group">{{localize 'tinyd6.sheet.panels'}}</div>
+            <button type="button" class="td-tab active" data-tab="description">
+                <i class="fas fa-book"></i><span>{{localize 'tinyd6.sheet.description'}}</span>
+            </button>
+            {{#if moduleTabs.length}}
+            <div class="td-tabbar-group">{{localize 'tinyd6.sheet.modules'}}</div>
+            {{#each moduleTabs}}
+            <button type="button" class="td-tab" data-tab="{{this.key}}">
+                <i class="{{this.icon}}"></i><span>{{this.label}}</span>
+            </button>
+            {{/each}}
+            {{/if}}
+        </nav>
+
+        {{! Правая колонка: содержимое активной вкладки }}
+        <div class="td-tabbody">
+            <div class="td-pane active" data-pane="description">
+                {{editor descriptionHTML target="system.description" button=true owner=owner editable=editable}}
+            </div>
+            {{#each moduleTabs}}
+                <div class="td-pane" data-pane="{{this.key}}"></div>
+            {{/each}}
         </div>
-        {{/if}}
     </div>
-    {{/if}}
-
-    {{editor descriptionHTML target="system.description" button=true owner=owner editable=editable}}
 </form>

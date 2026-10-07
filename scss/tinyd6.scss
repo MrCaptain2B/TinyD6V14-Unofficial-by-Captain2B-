@@ -1,4 +1,4 @@
-/** Bootstrap grid — mixins and variables must stay global (they generate
+/** Bootstrap grid - mixins and variables must stay global (they generate
  *  code and define color tokens), but the actual grid/utility classes are
  *  scoped under .tinyd6 to avoid leaking into Foundry core and other modules. */
 @import "../node_modules/bootstrap/scss/functions";
@@ -21,10 +21,14 @@
   @import "sheet/common";
   @import "sheet/npc";
   @import "sheet/hero";
+  @import "sheet/item";
   @import "application/die-roller";
 }
 
 @import "theme/tiny-cthulhu";
+
+@import "sheet/weapon-v2";
+
 @import "theme/td-base";
 @import "theme/td-redesign";
 @import "theme/td-themes";

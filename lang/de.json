@@ -1,496 +1,565 @@
 {
-    "tinyd6": {
-        "mech": {
-            "sheet": "Blatt",
-            "mechanics": "Einstellungen",
-            "actions": "Aktionen",
-            "actionsMax": "Max. Aktionen",
-            "woundsMax": "Max. Wunden",
-            "corruptionMax": "Max. Verderbnis",
-            "masteredCount": "Gemeisterte Waffen",
-            "masteredHint": "Anzahl der Waffen, die der Held gleichzeitig meistern kann (erfordert das Regelwerk „Gemeisterte Waffen“).",
-            "death": "Tod & Sterben",
-            "deathDie": "Todeswürfel",
-            "worldDefault": "d6 (Weltstandard)",
-            "deathRounds": "Todesrunden",
-            "deathThreshold": "Schwelle des Todesrettungswurfs",
-            "emptyWorld": "Leer lassen, um den Weltstandard zu verwenden.",
-            "damageBonus": "Schadensbonus",
-            "damageBonusHint": "Bonus, der zu allen Waffenschadenswürfen addiert wird."
-        },
-        "TinyD6HeroSheet": "Held",
-        "TinyD6NpcSheet": "NSC",
-        "TokenWeapons": "Waffen",
-        "TokenHeal": "Heilen & Stabilisieren",
-        "TokenActions": "Aktionen",
-        "TokenArmor": "Panzerung",
-        "ArmorRestore": "Panzerung wiederherstellen",
-        "Attack": "Angriff",
-        "Reload": "Nachladen",
-        "system": {
-            "name": "Tiny D6 2E",
-            "dieRoller": "Wurfelbecher",
-            "actions": "Aktionen",
-            "actionAdd": "Aktion hinzufugen",
-            "actionRemove": "Aktion entfernen",
-            "collapse": "Einklappen",
-            "expand": "Aufklappen"
-        },
-        "settings": {
-            "title": "System Einstellungen",
-            "label": "System Einstellungen",
-            "description": "Wahle die optionalen Regeln und Mechanismen, die DU aktivieren mochtest, aus den folgenden Optionen aus.",
-            "theme": {
-                "name": "Thema",
-                "hint": "Bitte wahle hier das Thema fur deine Tiny D6 Welt",
-                "choices": {
-                    "cthulhu": "Tiny Cthulhu",
-                    "dungeon": "Tiny Dungeon 2.Edition"
-                }
-            },
-            "sheetStyle": {
-                "name": "Blattstil",
-                "hint": "Wahle das Aussehen der Charakterbogen",
-                "choices": {
-                    "default": "Dunkel (Standard)",
-                    "perkament": "Pergament пїЅ Folklor",
-                    "noir": "Noir пїЅ Kupfer",
-                    "minimal": "Minimal пїЅ Hell",
-                    "cyberpunk": "Cyberpunk пїЅ Neon"
-                }
-            },
-            "rollerInCharsheet": {
-                "name": "Wurfeln aus dem Charakterbogen",
-                "hint": "Aktiviert den Wurfelwurf auf dem Charakterbogen."
-            },
-            "enableCorruption": {
-                "name": "Aktiviere Verderbtheit",
-                "hint": "Fuge eine Anzeige fur den Grad der Verderbtheit auf dem Charakterbogen hinzu."
-            },
-            "enableAdvancement": {
-                "name": "Charakterentwicklung",
-                "hint": "Der Fortschritt der Charaktere basiert entweder auf der Anzahl der Sitzungen oder auf der Vergabe von Erfahrungspunkten",
-                "choices": {
-                    "none": "Keine Weiterentwicklung",
-                    "minimalist": "Minimalistische Entwicklung",
-                    "xp": "Erfahrungspunkte"
-                }
-            },
-            "enableItemTracking": {
-                "name": "Slotnutzung Objekten aktivieren",
-                "hint": "Zeigt die Slotnutzung fur Objekte an und berechnet die verbleibenden Inventar-Slots."
-            },
-            "enableDepletionPoints": {
-                "name": "Aktiviere Abnutzung/Erschopfung von Gegenstanden",
-                "hint": "Wenn ein Gegenstand Abnutzungspunkte benutzt, werden diese fur die Charaktergegenstande angezeigt."
-            },
-            "enableCriticalHits": {
-                "name": "Kritische Treffer zulassen",
-                "hint": "Markiert die Probe als 'Kritischen Erfolg', wenn alle Wurfel 6 anzeigen."
-            },
-            "enableCriticalFailure": {
-                "name": "Kritische Patzer zulassen",
-                "hint": "Markiert die Probe als 'Kritischen Patzer', wenn alle Wurfel 1 anzeigen"
-            },
-            "enableVariableWeaponDamage": {
-                "name": "Variabler Waffenschaden",
-                "hint": "Berechnet variablen Waffenschaden fur Angriffsproben."
-            },
-            "enablePowerOrigin": {
-                "name": "Macht Ursprung aktivieren",
-                "hint": "Fugt ein Textfeld fur die Herkunft der Superkraft hinzu."
-            },
-            "enableWeakness": {
-                "name": "Schwache aktivieren",
-                "hint": "Fugt ein Textfeld fur deine Schwachstelle deiner Superkraft hinzu."
-            },
-            "enablePanic": {
-                "name": "Panik aktivieren",
-                "hint": "Fugt einen Zahler hinzu, um den Grad der Panik anzuzeigen."
-            },
-            "enableRadiation": {
-                "name": "Verstrahlung aktivieren",
-                "hint": "Fugt einen Zahler hinzu, um den Grad der Verstrahlung anzuzeigen."
-            },
-            "enableGrit": {
-                "name": "Mut aktivieren",
-                "hint": "Fugt einen Zahler hinzu, um den Mut anzuzeigen."
-            },
-            "independentNpcTokens": {
-                "name": "Unabhangige NSC-Token",
-                "hint": "Token, die von einem NSC-Actor auf der Szene platziert werden, werden zu unabhangigen Kopien mit eigenen HP und Rüstung."
-            },
-            "defaultActions": {
-                "name": "Standard-Aktionen",
-                "hint": "Standard-Anzahl maximaler Aktionen fur neu erstellte Actors (Tiny D6 Standard ist 1)."
-            },
-            "enableTinyD6Plus": {
-                "name": "Hausregel: TinyD6+",
-                "hint": "Aktiviert die TinyD6+-Kampfhausregeln: Nachladen (Munition pro Angriff), Tod & kampfunfahig (Todeswurf, sterbend mit Runden-Zeitgeber) und die Waffen-Palette im Token-HUD."
-            },
-            "critAdvantage": {
-                "name": "Hausregel: Kritischer Vorteil",
-                "hint": "Zeigen alle Wurfel beim Angriff gleiche 6er, wird der Waffenschaden verdoppelt (Kritisch). Wahle, ob dies fur 2W6, 3W6 oder beide gilt.",
-                "choices": {
-                    "off": "Aus",
-                    "two": "nur 2W6",
-                    "three": "nur 3W6",
-                    "both": "2W6 und 3W6"
-                }
-            },
-            "showNpcReloadMessages": {
-                "name": "NPC-Nachlade-Meldungen anzeigen",
-                "hint": "Nachlade-/Munitionsleer-Meldungen auch fur NPCs im Chat posten (Standard: aus, weniger Chat-Rauschen)."
-            },
-            "deathRounds": {
-                "name": "Todeswurf: Runden bis zum Tod",
-                "hint": "Runden bis zum Tod nach 0 TP. Zahl (3) oder Formel eintragen, die bei 0 TP gewürfelt wird, z. B. 1d6+2 oder 2d5 – jede Sterbephase dauert anders."
-            },
-            "deathSaveThreshold": {
-                "name": "Todeswurf: Erfolgs-Schwelle",
-                "hint": "Ein Todeswurf (1W6) gelingt, wenn das Ergebnis mindestens diesen Wert erreicht (Standard 4)."
-            },
-            "showNpcDeathMessages": {
-                "name": "NPC-Besiegt-Meldungen anzeigen",
-                "hint": "Auch beim Besiegen normaler NPCs eine Chat-Meldung posten (Standard: aus, weniger Chat-Rauschen)."
-            },
-            "enableHealStabProxy": {
-                "name": "GM-Proxy: Heilen & Stabilisieren",
-                "hint": "Erlaubt Spielern, Charaktere/NPCs zu heilen oder zu stabilisieren, die ihnen nicht gehören. Die Änderung wird über socketlib durch den GM angewendet (kein Besitz nötig)."
-            },
-            "enablePlayerDamageProxy": {
-                "name": "GM-Proxy: Spieler-Schaden",
-                "hint": "Erlaubt Spielern, Angriffsschaden an Charakteren/NPCs anzuwenden, die ihnen nicht gehören. Der Schaden wird über socketlib durch den GM angewendet (kein Besitz nötig)."
-            },
-            "enableAttackProficiency": {
-                "name": "Auto-Waffenfertigkeit",
-                "hint": "TinyD6+: schlägt automatisch die Würfelzahl für den Angriff basierend auf der Waffenfertigkeit vor (Meisterwaffe = Vorteil, untrainiert = Nachteil). Der Spieler kann jede Stufe manuell wählen."
-            },
-            "enableArmorStacking": {
-                "name": "Rüstungsstapelung aktivieren",
-                "hint": "Wenn aktiviert, stapeln mehrere angelegte Rüstungen ihren Schutz. Wenn deaktiviert, gilt nur die Rüstung mit dem höchsten Schutz."
-            },
-            "animFx": {
-                "name": "Kampfanimationen",
-                "hint": "Zeigt schwebende Schadenszahlen, Token-Blitze, kritische Hervorhebungen und Todeffekte. Deaktivieren Sie dies für leistungs schwache Geräte oder minimalen visuellen Lärm."
-            },
-            "enableArmorBreakMessages": {
-                "name": "Rüstungsbruch-Nachrichten",
-                "hint": "Postet eine Chat-Nachricht, wenn ein Schild oder ein Rüstungsteil zerbricht (HP erreicht 0)."
-            }
-        },
-        "attack": {
-            "attack": "Angriff",
-            "hit": "Treffer",
-            "miss": "Verfehlung",
-            "crit": "Kritisch",
-            "targets": "Ziele",
-            "damage": "Schaden",
-            "noTarget": "Zieltoken auswählen (oder Tokens auswählen), bevor du angreifst.",
-            "applyDamage": "Schaden anwenden",
-            "weapon": "Waffe",
-            "mode": "Wurf",
-            "roll": "Angriff",
-            "cancel": "Abbrechen"
-        },
-        "dice": {
-            "modifier": {
-                "focus": "Fokus",
-                "marksman": "Scharfschutze"
-            },
-            "roll": {
-                "disadvantage": "Nachteil Probe",
-                "standard": "Standard Probe",
-                "advantage": "Vorteil Probe",
-                "success": "Erfolg!",
-                "failure": "Misserfolg",
-                "critical": "Kritischer Erfolg!!",
-                "botch": "Kritisches Patzer!!"
-            }
-        },
-        "sheet": {
-            "tab": {
-                "main": "Main"
-            },
-            "combat": "Combat",
-            "weaponProficiency": "Weapon Proficiency",
-            "wounds": "Wounds",
-            "armor": "Armor",
-            "corruption": "Corruption",
-            "xp": "XP",
-            "actions": {
-                "name": "Actions",
-                "spend": "Spend an action",
-                "restore": "Restore an action",
-                "plus": "Add max action (+1)",
-                "minus": "Remove max action (-1)"
-            },
-            "newItem": "Neuer Gegenstand",
-            "description": "Beschreibung",
-            "none": "nichts",
-            "noWeapons": "Keine Waffen im Item-Verzeichnis der Welt gefunden.",
-            "unequip": "Ausrüsten",
-            "delete": "Löschen"
-        },
-        "actor": {
-            "name": "Name",
-            "npc": "NSC",
-            "people": "Person",
-            "traits": "Eigenschaften",
-            "description": "Beschreibung",
-            "tiny-cthulhu": {
-                "character": "Bio",
-                "heritage": {
-                    "header": "Archetyp",
-                    "traits": "Archetyp Eigenschaften",
-                    "delete": "Entferne Archetyp"
-                }
-            },
-            "tiny-dungeon": {
-                "character": "Character",
-                "heritage": {
-                    "header": "Vermachtnis",
-                    "traits": "Vermachtnis Merkmale",
-                    "delete": "Entferne Vermachtnis"
-                }
-            },
-            "homeland": "Heimat",
-            "age": "Alter",
-            "eyes": "Augen",
-            "hair": "Haar",
-            "familyTrade": "Familientradition",
-            "powerOrigin": "Quelle der Macht",
-            "weakness": "Schwachstelle",
-            "belief": "Glaube",
-            "xp": {
-                "header": "Erfahrung",
-                "progression": "Fortschritt",
-                "total": "Total",
-                "spent": "Ausgegeben",
-                "remaining": "Verbleibend"
-            },
-            "wounds": {
-                "header": "Trefferpunkte",
-                "current": "Aktuell",
-                "max": "Max:",
-                "increaseMax": "Erweiterung Max TP",
-                "help": "Markiere ein Kastchen, wenn du Schaden erleidest. Entferne das Hakchen, wenn du geheilt wurdest."
-            },
-            "radiation": {
-                "header": "Verstrahlung",
-                "current": "Aktuell",
-                "max": "Max:",
-                "increaseMax": "Erweiterung Max Verstrahlung",
-                "help": "Kreuze ein Kastchen an, wenn du unter Verstrahlung leidest."
-            },
-            "corruption": {
-                "test": "Verderbtheits Probe",
-                "header": "Verderbtheit",
-                "current": "Aktuell",
-                "max": "Max:",
-                "increaseMax": "Steigerung der Verderbheits-Schwelle",
-                "help": "Markiere ein Kastchen, wenn du von der Verderbtheit heimgesucht wirst. Entferne das Hakchen, wenn Du geheilt wurdest."
-            },
-            "panic": {
-                "test": "Panik Probe",
-                "header": "Panik",
-                "current": "Aktuell",
-                "help": "Entferne ein Hakchen, wenn du Panik bekommst. Ein Hakchen setzen, wenn du dich wieder fasst. Panikporbe, wenn Panik auf 1 fallt."
-            },
-            "grit": {
-                "header": "Grit",
-                "current": "Aktuell",
-                "help": "Entferne ein Hakchen, wenn du Grit investierst."
-            },
-            "proficiencies": {
-                "header": "Vertraut mit",
-                "mastered": "Gemeistert"
-            },
-            "gear": "Inventar",
-            "preferredWeapons": "Bevorzugte Waffen",
-            "noPreferredWeapons": "Klicken, um eine bevorzugte Waffe zuzuweisen",
-            "removePreferred": "Aus Bevorzugten entfernen",
-            "addAmmo": "Munition hinzufugen",
-            "addAmmoTitle": "Munition hinzufugen",
-            "ammoType": "Munitionstyp",
-            "selectWeapon": "Waffe auswahlen",
-            "equipped": "Ausgerustet",
-            "equipment": "Waffen",
-            "weaponry": "Bewaffnung",
-            "wearing": "Kleidung",
-            "important": "Wichtiger NPC",
-            "money": "Wahrung",
-            "noMoney": "Keine Wahrung",
-            "actions": {
-                "editTrait": "Eigenschaft editieren",
-                "chatTrait": "",
-                "chatItem": "",
-                "deleteTrait": "Entferne Eigenschaft"
-            }
-        },
-        "weaponCategories": {
-            "melee": "Nahkampf",
-            "ranged": "Fernkampf"
-        },
-        "weaponTypes": {
-            "none": "",
-            "light": "Leicht",
-            "heavy": "Schwer"
-        },
-        "armorTypes": {
-            "none": "",
-            "light": "Leicht",
-            "medium": "Medium",
-            "heavy": "Schwer",
-            "shield": "Schild"
-        },
-        "corruptionTests": {
-            "none": "nichts",
-            "disadvantage": "Nachteil",
-            "standard": "Standard"
-        },
-        "weapon": {
-            "name": "Name",
-            "type": "Waffentyp",
-            "damage": "Schaden",
-            "slots": "Gegenstande Slots",
-            "description": "Beschreibung",
-            "light": "Leicht",
-            "heavy": "Schwer",
-            "ranged": "Fernkampf",
-            "lightMelee": "L. Nahkampf",
-            "heavyMelee": "S. Nahkampf",
-            "lightRanged": "L. Fernkampf",
-            "heavyRanged": "S. Fernkampf",
-            "lightShort": "L",
-            "heavyShort": "S",
-            "meleeShort": "N",
-            "rangedShort": "F",
-            "oneAttack": "Ein Angriff pro Runde",
-            "reload": "Nachladen",
-            "uses": "Nutzungen",
-            "ammoType": "Munitions-Typ",
-            "ammoAny": "- jede Munition"
-        },
-        "reload": {
-            "outOfAmmo": "Keine Munition — nachladen!",
-            "ranOut": "Munition erschopft — zum Fortfahren nachladen.",
-            "reloadBtn": "Nachladen (auf Maximum zurucksetzen)",
-            "reloaded": "hat nachgeladen",
-            "undoResource": "Ressource wiederherstellen",
-            "noMag": "Keine Magazine des Typs \"{type}\" im Inventar.",
-            "emptyMag": "Magazin \"{type}\" ist leer (0 ubrig).",
-            "noMagAny": "Keine Magazine (Munition) im Inventar.",
-            "ammoUsed": " (Magazin {ammo})"
-        },
-        "death": {
-            "down": "Besiegt",
-            "dying": "Sterbend",
-            "dead": "Tot",
-            "cannotAct": "Besiegte Charaktere konnen nicht angreifen.",
-            "thrown": "Todeswurf",
-            "self": "eigener Todeswurf",
-            "stabilized": "Stabilisiert",
-            "stabilizedHint": "Der Charakter liegt danieder, ist aber am Leben und stabilisiert.",
-            "dyingHint": "Der Charakter liegt im Sterben und stirbt in {rounds} {word}, wenn er nicht geheilt wird.",
-            "defeated": "ist besiegt.",
-            "died": "ist gestorben.",
-            "turnsLeft": "{actor} stirbt in {n} {word}.",
-            "stabilizedRest": "fällt, aber ihm droht keine Gefahr mehr.",
-            "dyingRest": "fällt und verblutet. Ohne Hilfe tritt der Tod in {n} {word} ein."
-        },
-        "stabilize": {
-            "title": "Stabilisieren",
-            "sheetHint": "Waehle einen besiegten Verbuendeten (0 HP) als Ziel und wirf einen Todeswurf.",
-            "subtitle": "wirf einen Todeswurf zum Stabilisieren. Jeder Wuerfel gleich oder ueber dem Schwellenwert ist ein Erfolg.",
-            "self": "Du kannst dich nicht selbst stabilisieren.",
-            "noTarget": "Waehle zuerst einen besiegten Verbuendeten (0 HP) als Ziel.",
-            "notDowned": "Dieses Ziel ist nicht besiegt.",
-            "thrown": "Stabilisierung",
-            "target": "Ziel",
-            "success": "Stabilisiert",
-            "fail": "Fehlgeschlagen",
-            "roll": "Stabilisieren",
-            "applyConfirm": "Anwenden"
-        },
-        "heal": {
-            "use": "Anwenden",
-            "heal": "Heilen",
-            "usesOn": "verwendet",
-            "heals": "heilt {hp} HP",
-            "noTarget": "Waehle ein Ziel-Token zum Heilen oder verwende es an dir selbst.",
-            "empty": "Dieses Heilmittel ist aufgebraucht.",
-            "emptyHint": "Keine Heilmittel. Waehle einen besiegten Verbuendeten als Ziel, um zu stabilisieren.",
-            "full": "Das Ziel hat volle HP.",
-            "badFormula": "Ungueltige Heilformel auf diesem Gegenstand.",
-            "wasted": "(verpufft: {wasted} HP)",
-            "useTooltip": "Heile das Ziel um diesen Betrag (1 Verbrauch).",
-            "confirmTitle": "Heilbestätigung",
-            "applyConfirm": "Anwenden",
-            "confirmed": "Bestätigt"
-        },
-        "armor": {
-            "name": "Name",
-            "type": "Rustungstyp",
-            "damageReduction": "SR",
-            "armorHp": "Rustungs HP",
-            "slots": "Gengenstand Slots",
-            "depletion": "Verschlei?",
-            "description": "Beschreibung",
-            "none": "Keine Rustung",
-            "armor": "Rüstung",
-            "shieldBreak": "Schild von {actor} {name} ist zerbrochen!",
-            "armorBreak": "Rüstung von {actor} {name} ist zerbrochen!"
-        },
-        "shield": {
-            "name": "Name",
-            "damageReduction": "Verringerung",
-            "armorHp": "Schild-HP",
-            "shields": "Schilde",
-            "none": "Kein Schild",
-            "description": "Beschreibung"
-        },
-        "gear": {
-            "name": "Name",
-            "slots": "Gengenstand Slots",
-            "depletion": "Verschlei?",
-            "quantity": "Anzahl",
-            "description": "Beschreibung",
-            "category": "Kategorie",
-            "ammoType": "Munitions-Typ",
-            "ammoTypePlaceholder": "z.B. 9x19",
-            "heal": "Heilung (HP)",
-            "healPlaceholder": "4 oder 2d4+2",
-            "categories": {
-                "item": "Gegenstand",
-                "ammo": "Munition",
-                "heal": "Heilung",
-                "money": "Wahrung"
-            },
-            "moneyTotal": "Währung"
-        },
-        "heritage": {
-            "trait": "Vermachtnis Merkmal",
-            "startingHealth": "Einstieg TP",
-            "corruptionThreshold": "Verderbtheits Schwelle"
-        },
-        "trait": {
-            "name": "Name",
-            "description": "Beschreibung"
-        },
-        "plural": {
-            "round": {
-                "one": "Runde",
-                "few": "Runden",
-                "many": "Runden",
-                "other": "Runden"
-            },
-            "turn": {
-                "one": "Zug",
-                "few": "Zügen",
-                "many": "Zügen",
-                "other": "Zügen"
-            }
+  "tinyd6": {
+    "mech": {
+      "sheet": "Blatt",
+      "mechanics": "Einstellungen",
+      "actions": "Aktionen",
+      "actionsMax": "Max. Aktionen",
+      "woundsMax": "Max. Wunden",
+      "corruptionMax": "Max. Verderbnis",
+      "masteredCount": "Gemeisterte Waffen",
+      "masteredHint": "Anzahl der Waffen, die der Held gleichzeitig meistern kann (erfordert das Regelwerk „Gemeisterte Waffen“).",
+      "death": "Tod & Sterben",
+      "deathDie": "Todeswürfel",
+      "worldDefault": "d6 (Weltstandard)",
+      "deathRounds": "Todesrunden",
+      "deathThreshold": "Schwelle des Todesrettungswurfs",
+      "emptyWorld": "Leer lassen, um den Weltstandard zu verwenden.",
+      "damageBonus": "Schadensbonus",
+      "damageBonusHint": "Bonus, der zu allen Waffenschadenswürfen addiert wird.",
+      "groupSheet": "Blatt",
+      "groupRules": "Regeln",
+      "stats": "Eigenschaften",
+      "intro": "Persönliche Regeln des Helden. Leer oder 0 - verwende den Weltstandard.",
+      "fromWorld": "aus der Welt",
+      "fromWorldShort": "Welt:",
+      "actionsMaxHint": "Aktionslimit pro Runde. Wird zu Beginn einer Runde wiederhergestellt.",
+      "woundsMaxHint": "Obergrenze der Lebensleiste des Helden.",
+      "corruptionMaxHint": "Schwellengröße, bei der die Korruptionsregel greift.",
+      "xpTotalHint": "Gesamtes Lebenszeit-EP des Helden.",
+      "progressionHint": "Felder für den Fortschritt der Entwicklung.",
+      "deathDieHint": "Persönlicher Würfel für den Todesrettungswurf. Leer - Weltstandard.",
+      "deathRoundsHint": "Runden bis zum Tod ohne Hilfe. Leer oder 0 - Weltstandard. Formeln möglich (2d5).",
+      "deathThresholdHint": "Würfelergebnis für einen erfolgreichen Todesrettungswurf. Leer oder 0 - Weltstandard."
+    },
+    "TinyD6HeroSheet": "Held",
+    "TinyD6NpcSheet": "NSC",
+    "TokenWeapons": "Waffen",
+    "TokenHeal": "Heilen & Stabilisieren",
+    "TokenActions": "Aktionen",
+    "TokenArmor": "Panzerung",
+    "ArmorRestore": "Panzerung wiederherstellen",
+    "Attack": "Angriff",
+    "Reload": "Nachladen",
+    "system": {
+      "name": "Tiny D6 2E",
+      "dieRoller": "Wurfelbecher",
+      "actions": "Aktionen",
+      "actionAdd": "Aktion hinzufugen",
+      "actionRemove": "Aktion entfernen",
+      "collapse": "Einklappen",
+      "expand": "Aufklappen"
+    },
+    "settings": {
+      "title": "System Einstellungen",
+      "label": "System Einstellungen",
+      "description": "Wahle die optionalen Regeln und Mechanismen, die DU aktivieren mochtest, aus den folgenden Optionen aus.",
+      "theme": {
+        "name": "Thema",
+        "hint": "Bitte wahle hier das Thema fur deine Tiny D6 Welt",
+        "choices": {
+          "cthulhu": "Tiny Cthulhu",
+          "dungeon": "Tiny Dungeon 2.Edition"
         }
+      },
+      "sheetStyle": {
+        "name": "Blattstil",
+        "hint": "Wahle das Aussehen der Charakterbogen",
+        "choices": {
+          "default": "Dunkel (Standard)",
+          "perkament": "Pergament пїЅ Folklor",
+          "noir": "Noir пїЅ Kupfer",
+          "minimal": "Minimal пїЅ Hell",
+          "cyberpunk": "Cyberpunk пїЅ Neon"
+        }
+      },
+      "rollerInCharsheet": {
+        "name": "Wurfeln aus dem Charakterbogen",
+        "hint": "Aktiviert den Wurfelwurf auf dem Charakterbogen."
+      },
+      "enableCorruption": {
+        "name": "Aktiviere Verderbtheit",
+        "hint": "Fuge eine Anzeige fur den Grad der Verderbtheit auf dem Charakterbogen hinzu."
+      },
+      "enableAdvancement": {
+        "name": "Charakterentwicklung",
+        "hint": "Der Fortschritt der Charaktere basiert entweder auf der Anzahl der Sitzungen oder auf der Vergabe von Erfahrungspunkten",
+        "choices": {
+          "none": "Keine Weiterentwicklung",
+          "minimalist": "Minimalistische Entwicklung",
+          "xp": "Erfahrungspunkte"
+        }
+      },
+      "enableItemTracking": {
+        "name": "Slotnutzung Objekten aktivieren",
+        "hint": "Zeigt die Slotnutzung fur Objekte an und berechnet die verbleibenden Inventar-Slots."
+      },
+      "enableDepletionPoints": {
+        "name": "Aktiviere Abnutzung/Erschopfung von Gegenstanden",
+        "hint": "Wenn ein Gegenstand Abnutzungspunkte benutzt, werden diese fur die Charaktergegenstande angezeigt."
+      },
+      "enableCriticalHits": {
+        "name": "Kritische Treffer zulassen",
+        "hint": "Markiert die Probe als 'Kritischen Erfolg', wenn alle Wurfel 6 anzeigen."
+      },
+      "enableCriticalFailure": {
+        "name": "Kritische Patzer zulassen",
+        "hint": "Markiert die Probe als 'Kritischen Patzer', wenn alle Wurfel 1 anzeigen"
+      },
+      "enableVariableWeaponDamage": {
+        "name": "Variabler Waffenschaden",
+        "hint": "Berechnet variablen Waffenschaden fur Angriffsproben."
+      },
+      "enablePowerOrigin": {
+        "name": "Macht Ursprung aktivieren",
+        "hint": "Fugt ein Textfeld fur die Herkunft der Superkraft hinzu."
+      },
+      "enableWeakness": {
+        "name": "Schwache aktivieren",
+        "hint": "Fugt ein Textfeld fur deine Schwachstelle deiner Superkraft hinzu."
+      },
+      "enablePanic": {
+        "name": "Panik aktivieren",
+        "hint": "Fugt einen Zahler hinzu, um den Grad der Panik anzuzeigen."
+      },
+      "enableRadiation": {
+        "name": "Verstrahlung aktivieren",
+        "hint": "Fugt einen Zahler hinzu, um den Grad der Verstrahlung anzuzeigen."
+      },
+      "enableGrit": {
+        "name": "Mut aktivieren",
+        "hint": "Fugt einen Zahler hinzu, um den Mut anzuzeigen."
+      },
+      "independentNpcTokens": {
+        "name": "Unabhangige NSC-Token",
+        "hint": "Token, die von einem NSC-Actor auf der Szene platziert werden, werden zu unabhangigen Kopien mit eigenen HP und Rüstung."
+      },
+      "defaultActions": {
+        "name": "Standard-Aktionen",
+        "hint": "Standard-Anzahl maximaler Aktionen fur neu erstellte Actors (Tiny D6 Standard ist 1)."
+      },
+      "enableTinyD6Plus": {
+        "name": "Hausregel: TinyD6+",
+        "hint": "Aktiviert die TinyD6+-Kampfhausregeln: Nachladen (Munition pro Angriff), Tod & kampfunfahig (Todeswurf, sterbend mit Runden-Zeitgeber) und die Waffen-Palette im Token-HUD."
+      },
+      "critAdvantage": {
+        "name": "Hausregel: Kritischer Vorteil",
+        "hint": "Zeigen alle Wurfel beim Angriff gleiche 6er, wird der Waffenschaden verdoppelt (Kritisch). Wahle, ob dies fur 2W6, 3W6 oder beide gilt.",
+        "choices": {
+          "off": "Aus",
+          "two": "nur 2W6",
+          "three": "nur 3W6",
+          "both": "2W6 und 3W6"
+        }
+      },
+      "showNpcReloadMessages": {
+        "name": "NPC-Nachlade-Meldungen anzeigen",
+        "hint": "Nachlade-/Munitionsleer-Meldungen auch fur NPCs im Chat posten (Standard: aus, weniger Chat-Rauschen)."
+      },
+      "deathRounds": {
+        "name": "Todeswurf: Runden bis zum Tod",
+        "hint": "Runden bis zum Tod nach 0 TP. Zahl (3) oder Formel eintragen, die bei 0 TP gewürfelt wird, z. B. 1d6+2 oder 2d5 - jede Sterbephase dauert anders."
+      },
+      "deathSaveThreshold": {
+        "name": "Todeswurf: Erfolgs-Schwelle",
+        "hint": "Ein Todeswurf (1W6) gelingt, wenn das Ergebnis mindestens diesen Wert erreicht (Standard 4)."
+      },
+      "showNpcDeathMessages": {
+        "name": "NPC-Besiegt-Meldungen anzeigen",
+        "hint": "Auch beim Besiegen normaler NPCs eine Chat-Meldung posten (Standard: aus, weniger Chat-Rauschen)."
+      },
+      "enableHealStabProxy": {
+        "name": "GM-Proxy: Heilen & Stabilisieren",
+        "hint": "Erlaubt Spielern, Charaktere/NPCs zu heilen oder zu stabilisieren, die ihnen nicht gehören. Die Änderung wird über socketlib durch den GM angewendet (kein Besitz nötig)."
+      },
+      "enablePlayerDamageProxy": {
+        "name": "GM-Proxy: Spieler-Schaden",
+        "hint": "Erlaubt Spielern, Angriffsschaden an Charakteren/NPCs anzuwenden, die ihnen nicht gehören. Der Schaden wird über socketlib durch den GM angewendet (kein Besitz nötig)."
+      },
+      "enableAttackProficiency": {
+        "name": "Auto-Waffenfertigkeit",
+        "hint": "TinyD6+: schlägt automatisch die Würfelzahl für den Angriff basierend auf der Waffenfertigkeit vor (Meisterwaffe = Vorteil, untrainiert = Nachteil). Der Spieler kann jede Stufe manuell wählen."
+      },
+      "enableArmorStacking": {
+        "name": "Rüstungsstapelung aktivieren",
+        "hint": "Wenn aktiviert, stapeln mehrere angelegte Rüstungen ihren Schutz. Wenn deaktiviert, gilt nur die Rüstung mit dem höchsten Schutz."
+      },
+      "animFx": {
+        "name": "Kampfanimationen",
+        "hint": "Zeigt schwebende Schadenszahlen, Token-Blitze, kritische Hervorhebungen und Todeffekte. Deaktivieren Sie dies für leistungs schwache Geräte oder minimalen visuellen Lärm."
+      },
+      "enableArmorBreakMessages": {
+        "name": "Rüstungsbruch-Nachrichten",
+        "hint": "Postet eine Chat-Nachricht, wenn ein Schild oder ein Rüstungsteil zerbricht (HP erreicht 0)."
+      },
+      "movementDefault": {
+        "name": "Standard-Bewegung",
+        "hint": "Basisbewegung eines Charakters pro Zug (in Fuß). Wird verwendet, wenn der Charakter keinen eigenen Wert hat. Die Sprint-Taste addiert denselben Wert für 1 Aktion zum Bewegungsbudget."
+      },
+      "movementUnit": {
+        "name": "Bewegungseinheiten",
+        "hint": "In welchen Einheiten Bewegung zählt: Fuß (imperiales Raster) oder Meter (metrisch). Umrechnung: 1 ft = 0,3048 m. Die Bewegung der Charaktere wird immer in Fuß gespeichert und automatisch umgerechnet.",
+        "choices": {
+          "ft": "Fuß (imperiales Raster)",
+          "m": "Meter (metrisch)"
+        }
+      },
+      "dashRefundsAction": {
+        "name": "Aktion zurückerstatten (Sprint)",
+        "hint": "Ein Sprint kostet immer 1 Aktion. Aktiviert: ein erneuter Klick bricht den Sprint ab und erstattet die Aktion. Deaktiviert: ein erneuter Klick beendet den Sprint nur, die Aktion bleibt verbraucht. Nützlich, wenn ein Charakter nur 1 Aktion hat."
+      },
+      "enableMovementBudget": {
+        "name": "Bewegungsbudget & Sprint",
+        "hint": "Aktiviert das Bewegungsbudget pro Zug: grüne/gelbe/rote Pfadfärbung, die Sprint-Taste (Super-Bewegung für 1 Aktion) und einen Rest-Chip im Kampftracker. Deaktivieren stellt die normale unbegrenzte Bewegung von Foundry wieder her."
+      },
+      "enableDeathSound": {
+        "name": "Sterbegeräusch",
+        "hint": "Spielt einen Hinweis ab, wenn ein Charakter stirbt (Todestimer abgelaufen)."
+      },
+      "deathSoundFile": {
+        "name": "Sterbe-Sound (Datei)",
+        "hint": "Pfad zu einer Audiodatei in jedem Format (mp3, ogg, wav, webm, m4a, flac). Leer lassen für das eingebaute Motiv."
+      },
+      "enableDeathTicks": {
+        "name": "Todes-Ticken",
+        "hint": "Ein kurzes angespanntes Ticken (von allen gehört) zu Beginn des Zuges eines sterbenden Charakters, wenn der Todestimer tickt. Drei Stufen: 5+ Runden - langsam, 3-4 - mittel, 1-2 - scharf."
+      },
+      "deathTickFile": {
+        "name": "Tick-Sound (Datei)",
+        "hint": "Benutzerdefinierter Tick zu Beginn des Zuges eines sterbenden Charakters (beliebiges Format: mp3, ogg, wav, webm, m4a, flac). Lautstärke nach Stufe: 5+ Runden - leise, 3-4 - mittel, 1-2 - laut. Leer = synthetisierter Tick."
+      },
+      "enableDeathFx": {
+        "name": "Sterbens-Effekte am Token",
+        "hint": "Solange ein Charakter im Sterben liegt, wird sein Token rot hervorgehoben (je nach verbleibenden Runden): 5+ - rote Ränder, 3-4 - Rot rückt zur Mitte vor plus Blutspritzer, 1-2 - langsames inneres Pulsieren. Folgt dem Kampf-Animationen-Schalter."
+      },
+      "deathSoundVolume": {
+        "name": "Lautstärke des Todessounds",
+        "hint": "Lautstärke (0.05-1) für den Todessound - gilt für eigene Datei und eingebaute Synthese. Standard 0.5, damit der Sound auch ohne Datei nicht ohrenbetäubend ist."
+      }
+    },
+    "attack": {
+      "attack": "Angriff",
+      "hit": "Treffer",
+      "miss": "Verfehlung",
+      "crit": "Kritisch",
+      "targets": "Ziele",
+      "damage": "Schaden",
+      "noTarget": "Zieltoken auswählen (oder Tokens auswählen), bevor du angreifst.",
+      "applyDamage": "Schaden anwenden",
+      "weapon": "Waffe",
+      "mode": "Wurf",
+      "roll": "Angriff",
+      "cancel": "Abbrechen"
+    },
+    "dice": {
+      "modifier": {
+        "focus": "Fokus",
+        "marksman": "Scharfschutze"
+      },
+      "roll": {
+        "disadvantage": "Nachteil Probe",
+        "standard": "Standard Probe",
+        "advantage": "Vorteil Probe",
+        "success": "Erfolg!",
+        "failure": "Misserfolg",
+        "critical": "Kritischer Erfolg!!",
+        "botch": "Kritisches Patzer!!"
+      }
+    },
+    "sheet": {
+      "tab": {
+        "main": "Main"
+      },
+      "combat": "Combat",
+      "weaponProficiency": "Weapon Proficiency",
+      "wounds": "Wounds",
+      "armor": "Armor",
+      "corruption": "Corruption",
+      "xp": "XP",
+      "actions": {
+        "name": "Actions",
+        "spend": "Spend an action",
+        "restore": "Restore an action",
+        "plus": "Add max action (+1)",
+        "minus": "Remove max action (-1)"
+      },
+      "newItem": "Neuer Gegenstand",
+      "description": "Beschreibung",
+      "none": "nichts",
+      "noWeapons": "Keine Waffen im Item-Verzeichnis der Welt gefunden.",
+      "unequip": "Ausrüsten",
+      "delete": "Löschen"
+    },
+    "actor": {
+      "name": "Name",
+      "npc": "NSC",
+      "people": "Person",
+      "traits": "Eigenschaften",
+      "description": "Beschreibung",
+      "tiny-cthulhu": {
+        "character": "Bio",
+        "heritage": {
+          "header": "Archetyp",
+          "traits": "Archetyp Eigenschaften",
+          "delete": "Entferne Archetyp"
+        }
+      },
+      "tiny-dungeon": {
+        "character": "Character",
+        "heritage": {
+          "header": "Vermachtnis",
+          "traits": "Vermachtnis Merkmale",
+          "delete": "Entferne Vermachtnis"
+        }
+      },
+      "homeland": "Heimat",
+      "age": "Alter",
+      "eyes": "Augen",
+      "hair": "Haar",
+      "familyTrade": "Familientradition",
+      "powerOrigin": "Quelle der Macht",
+      "weakness": "Schwachstelle",
+      "belief": "Glaube",
+      "xp": {
+        "header": "Erfahrung",
+        "progression": "Fortschritt",
+        "total": "Total",
+        "spent": "Ausgegeben",
+        "remaining": "Verbleibend"
+      },
+      "wounds": {
+        "header": "Trefferpunkte",
+        "current": "Aktuell",
+        "max": "Max:",
+        "increaseMax": "Erweiterung Max TP",
+        "help": "Markiere ein Kastchen, wenn du Schaden erleidest. Entferne das Hakchen, wenn du geheilt wurdest."
+      },
+      "radiation": {
+        "header": "Verstrahlung",
+        "current": "Aktuell",
+        "max": "Max:",
+        "increaseMax": "Erweiterung Max Verstrahlung",
+        "help": "Kreuze ein Kastchen an, wenn du unter Verstrahlung leidest."
+      },
+      "corruption": {
+        "test": "Verderbtheits Probe",
+        "header": "Verderbtheit",
+        "current": "Aktuell",
+        "max": "Max:",
+        "increaseMax": "Steigerung der Verderbheits-Schwelle",
+        "help": "Markiere ein Kastchen, wenn du von der Verderbtheit heimgesucht wirst. Entferne das Hakchen, wenn Du geheilt wurdest."
+      },
+      "panic": {
+        "test": "Panik Probe",
+        "header": "Panik",
+        "current": "Aktuell",
+        "help": "Entferne ein Hakchen, wenn du Panik bekommst. Ein Hakchen setzen, wenn du dich wieder fasst. Panikporbe, wenn Panik auf 1 fallt."
+      },
+      "grit": {
+        "header": "Grit",
+        "current": "Aktuell",
+        "help": "Entferne ein Hakchen, wenn du Grit investierst."
+      },
+      "proficiencies": {
+        "header": "Vertraut mit",
+        "mastered": "Gemeistert"
+      },
+      "gear": "Inventar",
+      "preferredWeapons": "Bevorzugte Waffen",
+      "noPreferredWeapons": "Klicken, um eine bevorzugte Waffe zuzuweisen",
+      "removePreferred": "Aus Bevorzugten entfernen",
+      "addAmmo": "Munition hinzufugen",
+      "addAmmoTitle": "Munition hinzufugen",
+      "ammoType": "Munitionstyp",
+      "selectWeapon": "Waffe auswahlen",
+      "equipped": "Ausgerustet",
+      "equipment": "Waffen",
+      "weaponry": "Bewaffnung",
+      "wearing": "Kleidung",
+      "important": "Wichtiger NPC",
+      "money": "Wahrung",
+      "noMoney": "Keine Wahrung",
+      "actions": {
+        "editTrait": "Eigenschaft editieren",
+        "chatTrait": "",
+        "chatItem": "",
+        "deleteTrait": "Entferne Eigenschaft"
+      }
+    },
+    "weaponCategories": {
+      "melee": "Nahkampf",
+      "ranged": "Fernkampf"
+    },
+    "weaponTypes": {
+      "none": "",
+      "light": "Leicht",
+      "heavy": "Schwer"
+    },
+    "armorTypes": {
+      "none": "",
+      "light": "Leicht",
+      "medium": "Medium",
+      "heavy": "Schwer",
+      "shield": "Schild"
+    },
+    "corruptionTests": {
+      "none": "nichts",
+      "disadvantage": "Nachteil",
+      "standard": "Standard"
+    },
+    "weapon": {
+      "name": "Name",
+      "type": "Waffentyp",
+      "damage": "Schaden",
+      "slots": "Gegenstande Slots",
+      "description": "Beschreibung",
+      "light": "Leicht",
+      "heavy": "Schwer",
+      "ranged": "Fernkampf",
+      "lightMelee": "L. Nahkampf",
+      "heavyMelee": "S. Nahkampf",
+      "lightRanged": "L. Fernkampf",
+      "heavyRanged": "S. Fernkampf",
+      "lightShort": "L",
+      "heavyShort": "S",
+      "meleeShort": "N",
+      "rangedShort": "F",
+      "oneAttack": "Ein Angriff pro Runde",
+      "reload": "Nachladen",
+      "uses": "Nutzungen",
+      "ammoType": "Munitions-Typ",
+      "ammoAny": "- jede Munition"
+    },
+    "reload": {
+      "outOfAmmo": "Keine Munition - nachladen!",
+      "ranOut": "Munition erschopft - zum Fortfahren nachladen.",
+      "reloadBtn": "Nachladen (auf Maximum zurucksetzen)",
+      "reloaded": "hat nachgeladen",
+      "undoResource": "Ressource wiederherstellen",
+      "noMag": "Keine Magazine des Typs \"{type}\" im Inventar.",
+      "emptyMag": "Magazin \"{type}\" ist leer (0 ubrig).",
+      "noMagAny": "Keine Magazine (Munition) im Inventar.",
+      "ammoUsed": " (Magazin {ammo})"
+    },
+    "death": {
+      "down": "Besiegt",
+      "dying": "Sterbend",
+      "dead": "Tot",
+      "cannotAct": "Besiegte Charaktere konnen nicht angreifen.",
+      "thrown": "Todeswurf",
+      "self": "eigener Todeswurf",
+      "stabilized": "Stabilisiert",
+      "stabilizedHint": "Der Charakter liegt danieder, ist aber am Leben und stabilisiert.",
+      "dyingHint": "Der Charakter liegt im Sterben und stirbt in {rounds} {word}, wenn er nicht geheilt wird.",
+      "defeated": "ist besiegt.",
+      "died": "ist gestorben.",
+      "turnsLeft": "{actor} stirbt in {n} {word}.",
+      "stabilizedRest": "fällt, aber ihm droht keine Gefahr mehr.",
+      "dyingRest": "fällt und verblutet. Ohne Hilfe tritt der Tod in {n} {word} ein.",
+      "diedNotify": "{actor} ist gestorben."
+    },
+    "stabilize": {
+      "title": "Stabilisieren",
+      "sheetHint": "Waehle einen besiegten Verbuendeten (0 HP) als Ziel und wirf einen Todeswurf.",
+      "subtitle": "wirf einen Todeswurf zum Stabilisieren. Jeder Wuerfel gleich oder ueber dem Schwellenwert ist ein Erfolg.",
+      "self": "Du kannst dich nicht selbst stabilisieren.",
+      "noTarget": "Waehle zuerst einen besiegten Verbuendeten (0 HP) als Ziel.",
+      "notDowned": "Dieses Ziel ist nicht besiegt.",
+      "thrown": "Stabilisierung",
+      "target": "Ziel",
+      "success": "Stabilisiert",
+      "fail": "Fehlgeschlagen",
+      "roll": "Stabilisieren",
+      "applyConfirm": "Anwenden",
+      "actionsCost": "Stabilisieren kostet 1 Aktion."
+    },
+    "heal": {
+      "use": "Anwenden",
+      "heal": "Heilen",
+      "usesOn": "verwendet",
+      "heals": "heilt {hp} HP",
+      "noTarget": "Waehle ein Ziel-Token zum Heilen oder verwende es an dir selbst.",
+      "empty": "Dieses Heilmittel ist aufgebraucht.",
+      "emptyHint": "Keine Heilmittel. Waehle einen besiegten Verbuendeten als Ziel, um zu stabilisieren.",
+      "full": "Das Ziel hat volle HP.",
+      "badFormula": "Ungueltige Heilformel auf diesem Gegenstand.",
+      "wasted": "(verpufft: {wasted} HP)",
+      "useTooltip": "Heile das Ziel um diesen Betrag (1 Verbrauch).",
+      "confirmTitle": "Heilbestätigung",
+      "applyConfirm": "Anwenden",
+      "confirmed": "Bestätigt"
+    },
+    "armor": {
+      "name": "Name",
+      "type": "Rustungstyp",
+      "damageReduction": "SR",
+      "armorHp": "Rustungs HP",
+      "slots": "Gengenstand Slots",
+      "depletion": "Verschlei?",
+      "description": "Beschreibung",
+      "none": "Keine Rustung",
+      "armor": "Rüstung",
+      "shieldBreak": "Schild von {actor} {name} ist zerbrochen!",
+      "armorBreak": "Rüstung von {actor} {name} ist zerbrochen!"
+    },
+    "shield": {
+      "name": "Name",
+      "damageReduction": "Verringerung",
+      "armorHp": "Schild-HP",
+      "shields": "Schilde",
+      "none": "Kein Schild",
+      "description": "Beschreibung"
+    },
+    "gear": {
+      "name": "Name",
+      "slots": "Gengenstand Slots",
+      "depletion": "Verschlei?",
+      "quantity": "Anzahl",
+      "description": "Beschreibung",
+      "category": "Kategorie",
+      "ammoType": "Munitions-Typ",
+      "ammoTypePlaceholder": "z.B. 9x19",
+      "heal": "Heilung (HP)",
+      "healPlaceholder": "4 oder 2d4+2",
+      "categories": {
+        "item": "Gegenstand",
+        "ammo": "Munition",
+        "heal": "Heilung",
+        "money": "Wahrung"
+      },
+      "moneyTotal": "Währung"
+    },
+    "heritage": {
+      "trait": "Vermachtnis Merkmal",
+      "startingHealth": "Einstieg TP",
+      "corruptionThreshold": "Verderbtheits Schwelle"
+    },
+    "trait": {
+      "name": "Name",
+      "description": "Beschreibung"
+    },
+    "plural": {
+      "round": {
+        "one": "Runde",
+        "few": "Runden",
+        "many": "Runden",
+        "other": "Runden"
+      },
+      "turn": {
+        "one": "Zug",
+        "few": "Zügen",
+        "many": "Zügen",
+        "other": "Zügen"
+      }
+    },
+    "movement": {
+      "dash": "Sprint",
+      "dashUndo": "Sprint abbrechen und Aktion zurückerstatten",
+      "noActions": "Keine freie Aktion: für einen Sprint wird 1 Aktion benötigt.",
+      "dashActive": "Sprint aktiv",
+      "dashHint": "Super-Bewegung: kostet 1 Aktion und addiert die Weltstandard-Bewegung zum Budget. Erneutes Klicken bricht den Sprint ab und erstattet die Aktion.",
+      "dashOff": "Sprint abbrechen",
+      "label": "Bewegung"
     }
+  }
 }

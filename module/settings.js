@@ -152,6 +152,52 @@ export const registerGameSettings = function () {
         type: String
     });
 
+    game.settings.register(systemName, "npcRequireEquipped", {
+        name: game.i18n.localize("tinyd6.settings.npcRequireEquipped.name"),
+        hint:  game.i18n.localize("tinyd6.settings.npcRequireEquipped.hint"),
+        scope: "world",
+        config: true,
+        default: false,
+        type: Boolean
+    });
+
+    game.settings.register(systemName, "movementDefault", {
+        name: game.i18n.localize("tinyd6.settings.movementDefault.name"),
+        hint:  game.i18n.localize("tinyd6.settings.movementDefault.hint"),
+        scope: "world",
+        config: true,
+        default: 25,
+        type: Number
+    });
+
+    game.settings.register(systemName, "movementUnit", {
+        name: game.i18n.localize("tinyd6.settings.movementUnit.name"),
+        hint:  game.i18n.localize("tinyd6.settings.movementUnit.hint"),
+        scope: "world",
+        config: true,
+        choices: localizeAll(CONFIG.tinyd6.movementUnits),
+        default: "ft",
+        type: String
+    });
+
+    game.settings.register(systemName, "dashRefundsAction", {
+        name: game.i18n.localize("tinyd6.settings.dashRefundsAction.name"),
+        hint:  game.i18n.localize("tinyd6.settings.dashRefundsAction.hint"),
+        scope: "world",
+        config: true,
+        default: true,
+        type: Boolean
+    });
+
+    game.settings.register(systemName, "enableMovementBudget", {
+        name: game.i18n.localize("tinyd6.settings.enableMovementBudget.name"),
+        hint:  game.i18n.localize("tinyd6.settings.enableMovementBudget.hint"),
+        scope: "world",
+        config: true,
+        default: true,
+        type: Boolean
+    });
+
     game.settings.register(systemName, "showNpcReloadMessages", {
         name: game.i18n.localize("tinyd6.settings.showNpcReloadMessages.name"),
         hint:  game.i18n.localize("tinyd6.settings.showNpcReloadMessages.hint"),
@@ -177,6 +223,65 @@ export const registerGameSettings = function () {
         config: true,
         default: 4,
         type: Number
+    });
+
+    game.settings.register(systemName, "enableDeathSound", {
+        name: game.i18n.localize("tinyd6.settings.enableDeathSound.name"),
+        hint:  game.i18n.localize("tinyd6.settings.enableDeathSound.hint"),
+        scope: "world",
+        config: true,
+        default: true,
+        type: Boolean
+    });
+
+    game.settings.register(systemName, "enableDeathTicks", {
+        name: game.i18n.localize("tinyd6.settings.enableDeathTicks.name"),
+        hint:  game.i18n.localize("tinyd6.settings.enableDeathTicks.hint"),
+        scope: "world",
+        config: true,
+        default: true,
+        type: Boolean
+    });
+
+    game.settings.register(systemName, "enableDeathFx", {
+        name: game.i18n.localize("tinyd6.settings.enableDeathFx.name"),
+        hint:  game.i18n.localize("tinyd6.settings.enableDeathFx.hint"),
+        scope: "world",
+        config: true,
+        default: true,
+        type: Boolean
+    });
+
+    game.settings.register(systemName, "deathSoundVolume", {
+        name: game.i18n.localize("tinyd6.settings.deathSoundVolume.name"),
+        hint:  game.i18n.localize("tinyd6.settings.deathSoundVolume.hint"),
+        scope: "world",
+        config: true,
+        range: { min: 0.05, max: 1, step: 0.05 },
+        default: 0.5,
+        type: Number
+    });
+
+    // filePicker: "audio" - родная кнопка обзора Foundry v14 (FilePathField в
+    // SettingsConfig, тэг HTMLFilePickerElement). Фильтр: все аудио-форматы.
+    game.settings.register(systemName, "deathTickFile", {
+        name: game.i18n.localize("tinyd6.settings.deathTickFile.name"),
+        hint:  game.i18n.localize("tinyd6.settings.deathTickFile.hint"),
+        scope: "world",
+        config: true,
+        filePicker: "audio",
+        default: "",
+        type: String
+    });
+
+    game.settings.register(systemName, "deathSoundFile", {
+        name: game.i18n.localize("tinyd6.settings.deathSoundFile.name"),
+        hint:  game.i18n.localize("tinyd6.settings.deathSoundFile.hint"),
+        scope: "world",
+        config: true,
+        filePicker: "audio",
+        default: "",
+        type: String
     });
 
     game.settings.register(systemName, "showNpcDeathMessages", {
@@ -238,6 +343,13 @@ function _reloadWorldAfterChange() {
     _reloadTimer = setTimeout(() => window.location.reload(), 500);
 }
 
+/* ============================================================
+   Пикер файла для настроек звука: filePicker: "audio" в реестре
+   настроек заставляет SettingsConfig v14 рендерить FilePathField
+   с нативным обзором файлов (mp3/ogg/wav/webm/m4a/flac и т.п.).
+   Ручной хук / кнопка не нужны.
+   ============================================================ */
+
 export function registerWorldSettingsReload() {
     const reloadFor = (setting) => {
         const key = typeof setting?.key === "string" ? setting.key : "";
@@ -246,7 +358,7 @@ export function registerWorldSettingsReload() {
     };
 
     // Дополняем onChange каждого мирового ключа системы (вызывается ядром
-    // при game.settings.set) — надёжно, поверх любых существующих колбэков.
+    // при game.settings.set) - надёжно, поверх любых существующих колбэков.
     for (const [key, cfg] of game.settings.settings)
     {
         if (!key.startsWith("tinyd6v14.") || cfg.scope !== "world") continue;
@@ -257,7 +369,7 @@ export function registerWorldSettingsReload() {
         };
     }
 
-    // На всякий случай — хук документа Setting (мировые настройки хранятся
+    // На всякий случай - хук документа Setting (мировые настройки хранятся
     // как документы Setting в коллекции мира).
     Hooks.on("updateSetting", reloadFor);
 }

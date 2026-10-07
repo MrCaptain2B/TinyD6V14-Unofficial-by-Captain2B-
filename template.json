@@ -73,6 +73,19 @@
         "lightRanged": false,
         "heavyRanged": false,
         "masteredWeapons": ""
+      },
+      "bio": {
+        "origin": "",
+        "role": "",
+        "appearance": "",
+        "goals": "",
+        "history": ""
+      },
+      "faction": {
+        "name": "",
+        "rank": "",
+        "leader": "",
+        "note": ""
       }
     }
   },

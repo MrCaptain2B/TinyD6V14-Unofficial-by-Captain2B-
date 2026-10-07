@@ -1,0 +1,198 @@
+/* ============================================================
+   Tiny D6 - Лист предмета: ОРУЖИЕ, макет B (прототип 19).
+   Foundry оборачивает все item sheets через:
+     div.app.window-app.sheet.item → section.window-content → form
+   где .window-content = display:flex; flex-direction:col,
+   а <form> = flex:1.  Чтобы три колонки внутри формы
+   растянулись на доступную высоту, нужно:
+     1) Сделать form колонкой (flex-direction:column),
+     2) Дать .td-layout-weapon flex:1 1 0 + min-height:0.
+   ============================================================ */
+.tinyd6.sheet.item form.editable,
+.tinyd6.sheet.item form.locked
+{
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.tinyd6.sheet.item .sheet-header
+{
+    flex: 0 0 auto;
+}
+
+.tinyd6.sheet.item .td-layout-weapon
+{
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+    align-items: stretch;
+}
+
+/* ───────── Левая колонка: характеристики (база системы) ───────── */
+.tinyd6.sheet.item .split-core
+{
+    flex: 0 0 200px;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 12px 16px;
+    background: color-mix(in srgb, var(--td-card, #24242a) 28%, var(--td-bg, #1b1b1f));
+    border-right: 1px solid var(--td-border, #3b3b44);
+    overflow: hidden auto;
+}
+
+.tinyd6.sheet.item .split-core .floating-header
+{
+    margin: 0 0 2px;
+    padding-bottom: 6px;
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    color: var(--td-muted, #8a8b92);
+    border-bottom: 1px solid var(--td-border, #3b3b44);
+    line-height: 1.2;
+}
+
+.tinyd6.sheet.item .split-core .core-row
+{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.tinyd6.sheet.item .split-core .lbl
+{
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--td-muted, #8a8b92);
+    line-height: 1.2;
+}
+
+.tinyd6.sheet.item .split-core select,
+.tinyd6.sheet.item .split-core input[type="text"],
+.tinyd6.sheet.item .split-core input[type="number"]
+{
+    width: 100%;
+    padding: 4px 7px;
+    font-size: 13px;
+    color: var(--td-text, #d7d8dc);
+    background: var(--td-field, #2f2f36);
+    border: 1px solid var(--td-border, #3b3b44);
+    border-radius: 3px;
+    box-sizing: border-box;
+}
+
+.tinyd6.sheet.item .split-core select:focus,
+.tinyd6.sheet.item .split-core input:focus
+{
+    outline: none;
+    border-color: var(--td-accent-soft, #6ea8fe);
+}
+
+.tinyd6.sheet.item .split-core .mb-1 { margin-bottom: 6px; }
+
+.tinyd6.sheet.item .split-core .toggle-line
+{
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: var(--td-text, #d7d8dc);
+    line-height: 1.3;
+    cursor: pointer;
+}
+.tinyd6.sheet.item .split-core .toggle-line input
+{
+    margin: 0;
+    accent-color: var(--td-accent, #4a52ca);
+    flex: none;
+}
+
+/* ───────── Средняя колонка: вертикальный док вкладок ───────── */
+.tinyd6.sheet.item .td-tabbar
+{
+    flex: 0 0 132px;
+    width: 132px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 12px 8px 18px 6px;
+    background: color-mix(in srgb, var(--td-card, #24242a) 35%, var(--td-bg, #1b1b1f));
+    border-right: 1px solid var(--td-border, #3b3b44);
+}
+
+.tinyd6.sheet.item .td-tabbar .td-tabbar-group
+{
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    color: var(--td-muted, #8a8b92);
+    margin: 12px 6px 4px;
+    line-height: 1.2;
+}
+.tinyd6.sheet.item .td-tabbar .td-tabbar-group:first-child { margin-top: 2px; }
+
+.tinyd6.sheet.item .td-tabbar .td-tab
+{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    background: transparent;
+    color: var(--td-muted, #8a8b92);
+    font-size: 13px;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    font-family: inherit;
+    text-align: left;
+    line-height: 1.2;
+    cursor: pointer;
+    box-shadow: none;
+}
+
+.tinyd6.sheet.item .td-tabbar .td-tab i
+{
+    width: 16px;
+    flex: 0 0 auto;
+    text-align: center;
+    font-size: 13px;
+}
+
+.tinyd6.sheet.item .td-tabbar .td-tab:hover
+{
+    background: var(--td-hover, #3b3b44);
+    color: var(--td-text, #d7d8dc);
+    box-shadow: none;
+}
+
+.tinyd6.sheet.item .td-tabbar .td-tab.active
+{
+    background: color-mix(in srgb, var(--td-accent, #4a52ca) 22%, var(--td-field, #2f2f36));
+    border-color: var(--td-border, #3b3b44);
+    color: var(--td-accent-soft, #6ea8fe);
+    font-weight: 600;
+    box-shadow: none;
+}
+.tinyd6.sheet.item .td-tabbar .td-tab.active > span { color: var(--td-strong, #e8e9ea); }
+
+/* ───────── Правая колонка: панель активной вкладки ───────── */
+.tinyd6.sheet.item .td-tabbody
+{
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 14px 16px 18px;
+    background: var(--td-bg, #1b1b1f);
+}
+
+.tinyd6.sheet.item .td-pane { display: none; }
+.tinyd6.sheet.item .td-pane.active { display: block; }
+.tinyd6.sheet.item .td-pane .editor { min-height: 140px; }

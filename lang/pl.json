@@ -1,496 +1,565 @@
 {
-    "tinyd6": {
-        "mech": {
-            "sheet": "Karta",
-            "mechanics": "Ustawienia",
-            "actions": "Akcje",
-            "actionsMax": "Maks. akcje",
-            "woundsMax": "Maks. obrażenia",
-            "corruptionMax": "Maks. korupcja",
-            "masteredCount": "Opanowane bronie",
-            "masteredHint": "Liczba broni, które bohater może jednocześnie opanować (wymaga zasady „Opanowane bronie”).",
-            "death": "Śmierć i umieranie",
-            "deathDie": "Kość śmierci",
-            "worldDefault": "d6 (domyślnie w świecie)",
-            "deathRounds": "Rundy umierania",
-            "deathThreshold": "Próg rzutu na śmierć",
-            "emptyWorld": "Pozostaw puste, aby użyć wartości domyślnej świata.",
-            "damageBonus": "Bonus do obrażeń",
-            "damageBonusHint": "Bonus dodawany do wszystkich rzutów na obrażenia."
-        },
-        "TinyD6HeroSheet": "Bohater",
-        "TinyD6NpcSheet": "BN",
-        "TokenWeapons": "Bron",
-        "TokenActions": "Akcje",
-        "system": {
-            "name": "Tiny D6 2e",
-            "dieRoller": "Rzut Koscia",
-            "actions": "Akcje",
-            "actionAdd": "Dodaj akcje",
-            "actionRemove": "Usun akcje",
-            "collapse": "Zwin",
-            "expand": "Rozwin"
-        },
-        "settings": {
-            "title": "Ustawienia systemu",
-            "label": "Ustawienia systemu",
-            "description": "Wybierz opcjonalne zasady i mechaniki, ktore chcesz wlaczyc sposrod ponizszych opcji.",
-            "theme": {
-                "name": "Motyw",
-                "hint": "Wybierz motyw odpowiedni dla twojej gry Tiny D6",
-                "choices": {
-                    "cthulhu": "Tiny Cthulhu",
-                    "dungeon": "Tiny Dungeon 2e"
-                }
-            },
-            "sheetStyle": {
-                "name": "Styl karty",
-                "hint": "Wybierz styl wizualny kart postaci",
-                "choices": {
-                    "default": "Ciemny (domyslny)",
-                    "perkament": "Pergamin пїЅ Folklor",
-                    "noir": "Noir пїЅ Miedz",
-                    "minimal": "Minimalny пїЅ Jasny",
-                    "cyberpunk": "Cyberpunk пїЅ Neon"
-                }
-            },
-            "rollerInCharsheet": {
-                "name": "Rzut koscia w Karcie Postaci",
-                "hint": "Wlacz, aby miec dostep do rzutu koscia bezposrednio w Karcie Postaci."
-            },
-            "enableCorruption": {
-                "name": "Wlacz tor Skazenia",
-                "hint": "Dodaje do Karty Postaci tor Skazenia."
-            },
-            "enableAdvancement": {
-                "name": "Rozwoj postaci",
-                "hint": "Postacie rozwijaja sie na podstawie sesji lub zdobywajac punkty doswiadczenia.",
-                "choices": {
-                    "none": "Brak",
-                    "minimalist": "Minimalistyczny rozwoj",
-                    "xp": "Punkty doswiadczenia"
-                }
-            },
-            "enableItemTracking": {
-                "name": "Sledzenie przedmiotow",
-                "hint": "Pokazuje wykorzystane sloty przedmiotow i oblicza pozostale."
-            },
-            "enableDepletionPoints": {
-                "name": "Zuzycie/Wyczerpanie przedmiotow",
-                "hint": "Sledzi punkty zuzycia przedmiotow na karcie postaci."
-            },
-            "enableCriticalHits": {
-                "name": "Trafienia krytyczne",
-                "hint": "Oznacza test jako 'Krytyczny Sukces', gdy wszystkie kosci pokaza 6."
-            },
-            "enableCriticalFailure": {
-                "name": "Krytyczne porazki",
-                "hint": "Oznacza test jako 'Krytyczna Porazka', gdy wszystkie kosci pokaza 1."
-            },
-            "enableVariableWeaponDamage": {
-                "name": "Zmienna obrazenia broni",
-                "hint": "Oblicza zmienne obrazenia broni przy ataku."
-            },
-            "enablePowerOrigin": {
-                "name": "Pochodzenie mocy",
-                "hint": "Dodaje pole tekstowe do wpisania pochodzenia Super Mocy."
-            },
-            "enableWeakness": {
-                "name": "Slabosc",
-                "hint": "Dodaje pole tekstowe do wpisania Super Slabosci."
-            },
-            "enablePanic": {
-                "name": "Panika",
-                "hint": "Dodaje licznik do sledzenia Paniki."
-            },
-            "enableRadiation": {
-                "name": "Promieniowanie",
-                "hint": "Dodaje licznik do sledzenia Promieniowania."
-            },
-            "enableGrit": {
-                "name": "Hart ducha",
-                "hint": "Dodaje licznik do sledzenia Hartu ducha."
-            },
-            "independentNpcTokens": {
-                "name": "Niezalezne tokeny BN",
-                "hint": "Tokeny umieszczane na scenie z aktora BN staja sie niezaleznymi kopiami z wlasnymi HP i pancerzem."
-            },
-            "defaultActions": {
-                "name": "Domyslne akcje",
-                "hint": "Domyslna maksymalna liczba akcji dla nowych aktorow (standard Tiny D6 to 1)."
-            },
-            "enableTinyD6Plus": {
-                "name": "Homerule: TinyD6+",
-                "hint": "Wlacza homerules walki TinyD6+: przeladowanie (amunicja na atak), smierc i obalenie (rzut na smierc, umierajacy z licznikiem) oraz palete broni w HUD tokena."
-            },
-            "critAdvantage": {
-                "name": "Homerule: Krytyczna przewaga",
-                "hint": "Gdy wszystkie kosci w ataku pokazuja identyczne szesci (6), obrazenia broni sa podwojone (Krytyczne). Wybierz, czy dziala dla 2k6, 3k6, czy obu.",
-                "choices": {
-                    "off": "Wylaczone",
-                    "two": "tylko 2k6",
-                    "three": "tylko 3k6",
-                    "both": "2k6 i 3k6"
-                }
-            },
-            "showNpcReloadMessages": {
-                "name": "Pokazuj wiadomosci przeladowania NPC",
-                "hint": "Publikuj wiadomosci o przeladowaniu/braku amunicji NPC w czacie (domyslnie wylaczone, mniej szumu)."
-            },
-            "deathRounds": {
-                "name": "Rzut na smierc: rundy do smierci",
-                "hint": "Rundy do śmierci po osiągnięciu 0 PZ. Wpisz liczbę (3) lub formułę rzucaną przy 0 PZ, np. 1d6+2 albo 2d5, aby każdy upadek trwał inaczej."
-            },
-            "deathSaveThreshold": {
-                "name": "Rzut na smierc: prog sukcesu",
-                "hint": "Rzut na smierc (1k6) udaje sie, gdy wynik wynosi co najmniej tyle (standard 4)."
-            },
-            "showNpcDeathMessages": {
-                "name": "Pokazuj wiadomosci obalenia NPC",
-                "hint": "Publikuj tez wiadomosc, gdy zwykly NPC zostaje obalony (domyslnie wylaczone, mniej szumu)."
-            },
-            "enableHealStabProxy": {
-                "name": "Proxy GM: leczenie i stabilizacja",
-                "hint": "Pozwala graczom leczyc lub stabilizowac postacie/BN, ktorych nie posiadaja. Zmiana jest stosowana przez GM przez socketlib (bez prawa wlasnosci)."
-            },
-            "enablePlayerDamageProxy": {
-                "name": "Proxy GM: obrazenia gracza",
-                "hint": "Pozwala graczom zadawac obrazenia postaciami/BN, ktorych nie posiadaja. Obrazenia sa stosowane przez GM przez socketlib (bez prawa wlasnosci)."
-            },
-            "enableAttackProficiency": {
-                "name": "Auto biegłosc w broni",
-                "hint": "TinyD6+: automatycznie proponuje liczbe kosci ataku na podstawie biegłosci w broni (opanowana bron = przewaga, niewytresowana = utrudnienie). Gracz moze recznie wybrac dowolny poziom."
-            },
-            "enableArmorStacking": {
-                "name": "Umozliwianie nakładania zbroi",
-                "hint": "Gdy włączone, wiele zakwalifikowanych zbroi sumuje swój DR. Gdy wyłączone, stosuje się tylko zbroję z najwyższym DR."
-            },
-            "enableArmorBreakMessages": {
-                "name": "Wiadomosci o lamaniu pancerza w czacie",
-                "hint": "Publikuj wiadomosc w czacie, gdy tarcza lub pancerz sie zlamie (HP spadnie do 0)."
-            },
-            "animFx": {
-                "name": "Animacje walki",
-                "hint": "Pokazuj plywajace liczby obrazen, blyski tokenow, efekty krytyczne i efekty smierci. Wylacz na slabych komputerach."
-            }
-        },
-        "dice": {
-            "modifier": {
-                "focus": "Skupienie",
-                "marksman": "Strzelec wyborowy"
-            },
-            "roll": {
-                "disadvantage": "Utrudnienie",
-                "standard": "Zwykly Test",
-                "advantage": "Ulatwienie",
-                "success": "Sukces!",
-                "failure": "Porazka",
-                "critical": "Krytyczny Sukces!!",
-                "botch": "Krytyczna Porazka!!"
-            }
-        },
-        "weaponCategories": {
-            "melee": "Wrecz",
-            "ranged": "Dystansowe"
-        },
-        "weaponTypes": {
-            "none": "",
-            "light": "Lekka",
-            "heavy": "Ciezka"
-        },
-        "armorTypes": {
-            "none": "",
-            "light": "Lekka",
-            "medium": "Srednia",
-            "heavy": "Ciezka",
-            "shield": "Tarcza"
-        },
-        "sheet": {
-            "tab": {
-                "main": "Main"
-            },
-            "combat": "Combat",
-            "weaponProficiency": "Weapon Proficiency",
-            "wounds": "Wounds",
-            "armor": "Armor",
-            "corruption": "Corruption",
-            "xp": "XP",
-            "actions": {
-                "name": "Akcje",
-                "spend": "Wydaj akcje",
-                "restore": "Przywroc akcje",
-                "plus": "Dodaj max akcje (+1)",
-                "minus": "Usun max akcje (-1)"
-            },
-            "newItem": "Nowy przedmiot",
-            "description": "Opis",
-            "none": "Brak",
-            "noWeapons": "Nie znaleziono broni w katalogu przedmiotów świata.",
-            "unequip": "Zdejmij",
-            "delete": "Usun"
-        },
-        "actor": {
-            "name": "Imie",
-            "npc": "BN",
-            "people": "Ludzie",
-            "traits": "Cechy",
-            "description": "Opis",
-            "actions": {
-                "editTrait": "Edytuj ceche",
-                "chatTrait": "Udostepnij ceche",
-                "chatItem": "Udostepnij przedmiot",
-                "deleteTrait": "Usun ceche"
-            },
-            "tiny-cthulhu": {
-                "character": "Bio",
-                "heritage": {
-                    "header": "Archetyp",
-                    "traits": "Cecha Archetypu",
-                    "delete": "Usun Archetyp"
-                }
-            },
-            "tiny-dungeon": {
-                "character": "Postac",
-                "heritage": {
-                    "header": "Pochodzenie",
-                    "traits": "Cecha Pochodzenia",
-                    "delete": "Usun Pochodzenie"
-                }
-            },
-            "homeland": "Ojczyzna",
-            "age": "Wiek",
-            "eyes": "Oczy",
-            "hair": "Wlosy",
-            "familyTrade": "Zawod rodzinny",
-            "powerOrigin": "Pochodzenie mocy",
-            "weakness": "Slabosc",
-            "belief": "Wiara",
-            "xp": {
-                "header": "Doswiadczenie",
-                "progression": "Progresja",
-                "total": "Razem",
-                "spent": "Wydane",
-                "remaining": "Pozostalo"
-            },
-            "wounds": {
-                "header": "Zdrowie",
-                "current": "Obecne",
-                "max": "Maks:",
-                "increaseMax": "Zwieksz maks. HP",
-                "help": "Zaznacz, gdy otrzymasz obrazenia. Odznacz, gdy wyzdrowiejesz."
-            },
-            "gear": "Ekwipunek",
-            "preferredWeapons": "Preferowane Bronie",
-            "noPreferredWeapons": "Kliknij, aby przypisac preferowana bron",
-            "removePreferred": "Usun z preferowanych",
-            "addAmmo": "Dodaj Amunicje",
-            "addAmmoTitle": "Dodaj Amunicje",
-            "ammoType": "Typ Amunicji",
-            "selectWeapon": "Wybierz Bron",
-            "equipped": "Zakwipowany",
-            "equipment": "Bron",
-            "weaponry": "Bronie",
-            "wearing": "Ubranie",
-            "important": "Wazny BN",
-            "money": "Waluta",
-            "noMoney": "Brak waluty",
-            "corruption": {
-                "header": "Skazenie",
-                "current": "Obecne",
-                "max": "Maks:",
-                "increaseMax": "Zwieksz prog skazenia",
-                "help": "Zaznacz, gdy otrzymasz skazenie. Odznacz, gdy wyzdrowiejesz.",
-                "test": "Test Skazenia"
-            },
-            "radiation": {
-                "header": "Promieniowanie",
-                "current": "Obecne",
-                "max": "Maks:",
-                "increaseMax": "Zwieksz maks. promieniowanie",
-                "help": "Zaznacz, gdy otrzymasz promieniowanie."
-            },
-            "panic": {
-                "header": "Panika",
-                "current": "Obecne",
-                "help": "Odznacz, gdy dostaniesz Panike. Zaznacz, gdy sie wycofa. Rzut na Panike, gdy Panika wynosi 1.",
-                "test": "Test Paniki"
-            },
-            "grit": {
-                "header": "Hart ducha",
-                "current": "Obecne",
-                "help": "Odznacz, gdy wydasz Hart ducha."
-            },
-            "proficiencies": {
-                "header": "Bieglosc",
-                "mastered": "Opanowanie"
-            }
-        },
-        "gear": {
-            "name": "Nazwa",
-            "category": "Kategoria",
-            "quantity": "Ilość",
-            "moneyTotal": "Pieniądze",
-            "heal": "Leczenie (HP)",
-            "healPlaceholder": "np. 4 lub 2d4+2",
-            "slots": "Sloty",
-            "depletion": "Zuzycie",
-            "description": "Opis",
-            "ammoType": "Typ amunicji",
-            "ammoTypePlaceholder": "np. strzala, kula",
-            "categories": {
-                "item": "Przedmiot",
-                "ammo": "Amunicja",
-                "heal": "Leczenie",
-                "money": "Pieniadze"
-            }
-        },
-        "TokenHeal": "Leczenie",
-        "TokenArmor": "Pancerz",
-        "death": {
-            "down": "Obalony",
-            "dying": "Umierajacy",
-            "dead": "Martwy",
-            "cannotAct": "Nie moze dzialac",
-            "thrown": "Rzut na smierc",
-            "self": "Nie mozesz stabilizowac siebie.",
-            "stabilized": "Ustabilizowany",
-            "stabilizedHint": "Cel jest ustabilizowany i nie umiera.",
-            "dyingHint": "Umierający: umrze za {rounds} {word} bez leczenia.",
-            "defeated": "Pokonany",
-            "died": "Zmarl",
-            "turnsLeft": "{actor} umrze za {n} {word}.",
-            "stabilizedRest": "pada, ale nic już mu nie zagraża.",
-            "dyingRest": "pada i krwawi. Bez pomocy śmierć nadejdzie za {n} {word}."
-        },
-        "stabilize": {
-            "title": "Stabilizacja",
-            "sheetHint": "Wskaz obalonego sojusznika (0 HP) i rzuc rzut na smierc.",
-            "subtitle": "rzuc rzut na smierc, aby ustabilizowac. Kazda koscia o wyniku co najmniej progu to sukces.",
-            "self": "Nie mozesz ustabilizowac siebie.",
-            "noTarget": "Najpierw wskaz obalonego sojusznika (0 HP).",
-            "notDowned": "Ten cel nie jest obalony.",
-            "thrown": "Stabilizacja",
-            "target": "cel",
-            "success": "Ustabilizowano",
-            "fail": "Porazka",
-            "roll": "Stabilizuj",
-            "applyConfirm": "Zastosuj"
-        },
-        "heal": {
-            "use": "Uzyj",
-            "heal": "Leczenie",
-            "usesOn": "uzywa na",
-            "heals": "leczy {hp} HP",
-            "noTarget": "Wskaz cel, ktory chcesz wyleczyc, lub uzyj na sobie.",
-            "empty": "Ten przedmiot leczenia nie ma uzytkow.",
-            "full": "Cel ma pelne HP.",
-            "badFormula": "Nieprawidlowa formula leczenia na tym przedmiocie.",
-            "emptyHint": "Brak przedmiotow leczenia. Wskaz obalonego sojusznika, aby ustabilizowac.",
-            "wasted": "(zmarnowano: {wasted} HP)",
-            "useTooltip": "Leczy cel o ta wartosc (1 uzycie).",
-            "confirmTitle": "Potwierdzenie leczenia",
-            "applyConfirm": "Zastosuj",
-            "confirmed": "Potwierdzono"
-        },
-        "Attack": "Atak",
-        "Reload": "Przeladuj",
-        "corruptionTests": {
-            "none": "Brak",
-            "disadvantage": "Utrudnienie",
-            "standard": "Zwykly"
-        },
-        "weapon": {
-            "name": "Nazwa",
-            "type": "Typ broni",
-            "damage": "Obrazenia",
-            "slots": "Sloty przedmiotu",
-            "description": "Opis",
-            "light": "Lekka",
-            "heavy": "Ciezka",
-            "ranged": "Dystansowa",
-            "lightMelee": "L. wrecz",
-            "heavyMelee": "H. wrecz",
-            "lightRanged": "L. dystansowa",
-            "heavyRanged": "H. dystansowa",
-            "lightShort": "L",
-            "heavyShort": "C",
-            "meleeShort": "W",
-            "rangedShort": "D",
-            "oneAttack": "Atakuje raz na runde",
-            "reload": "Przeladowanie",
-            "uses": "Uzytki",
-            "ammoType": "Typ amunicji",
-            "ammoAny": "— dowolna amunicja"
-        },
-        "reload": {
-            "outOfAmmo": "Brak amunicji — przeladuj!",
-            "ranOut": "Amunicja wyczerpana — przeladuj, aby kontynuowac.",
-            "reloadBtn": "Przeladuj (resetuj do max)",
-            "reloaded": "przeladowano",
-            "undoResource": "Przywroc zasob",
-            "noMag": "Brak magazynkow typu \"{type}\" w ekwipunku.",
-            "emptyMag": "Magazynek \"{type}\" jest pusty (0 zostalo).",
-            "noMagAny": "Brak magazynkow (amunicji) w ekwipunku.",
-            "ammoUsed": " (mag {ammo})"
-        },
-        "armor": {
-            "name": "Nazwa",
-            "type": "Typ pancerza",
-            "damageReduction": "OBP",
-            "armorHp": "HP pancerza",
-            "slots": "Sloty przedmiotu",
-            "depletion": "Zuzycie",
-            "description": "Opis",
-            "none": "Bez pancerza",
-            "armor": "Pancerz",
-            "shieldBreak": "Tarcza {name} aktora {actor} zlamala sie!",
-            "armorBreak": "Pancerz {name} aktora {actor} zlamal sie!"
-        },
-        "shield": {
-            "name": "Nazwa",
-            "damageReduction": "OBP",
-            "armorHp": "HP tarczy",
-            "shields": "Tarcze",
-            "none": "Bez tarczy",
-            "description": "Opis"
-        },
-        "heritage": {
-            "trait": "Cecha pochodzenia",
-            "startingHealth": "Poczatkowe HP",
-            "corruptionThreshold": "Prog skazenia"
-        },
-        "trait": {
-            "name": "Nazwa",
-            "description": "Opis"
-        },
-        "attack": {
-            "attack": "Atak",
-            "hit": "Trafienie",
-            "miss": "Pudlo",
-            "crit": "Krytyczne",
-            "targets": "Cele",
-            "damage": "Obrazenia",
-            "noTarget": "Wybierz cel (badz zaznacz tokeny) przed atakiem.",
-            "applyDamage": "Zastosuj obrazenia",
-            "weapon": "Bron",
-            "mode": "Rzut",
-            "roll": "Atak",
-            "cancel": "Anuluj"
-        },
-        "ArmorRestore": "Przywroc pancerz",
-        "plural": {
-            "round": {
-                "one": "runda",
-                "few": "rundy",
-                "many": "rund",
-                "other": "rund"
-            },
-            "turn": {
-                "one": "tura",
-                "few": "tury",
-                "many": "tur",
-                "other": "tur"
-            }
+  "tinyd6": {
+    "mech": {
+      "sheet": "Karta",
+      "mechanics": "Ustawienia",
+      "actions": "Akcje",
+      "actionsMax": "Maks. akcje",
+      "woundsMax": "Maks. obrażenia",
+      "corruptionMax": "Maks. korupcja",
+      "masteredCount": "Opanowane bronie",
+      "masteredHint": "Liczba broni, które bohater może jednocześnie opanować (wymaga zasady „Opanowane bronie”).",
+      "death": "Śmierć i umieranie",
+      "deathDie": "Kość śmierci",
+      "worldDefault": "d6 (domyślnie w świecie)",
+      "deathRounds": "Rundy umierania",
+      "deathThreshold": "Próg rzutu na śmierć",
+      "emptyWorld": "Pozostaw puste, aby użyć wartości domyślnej świata.",
+      "damageBonus": "Bonus do obrażeń",
+      "damageBonusHint": "Bonus dodawany do wszystkich rzutów na obrażenia.",
+      "groupSheet": "Karta",
+      "groupRules": "Zasady",
+      "stats": "Cechy",
+      "intro": "Osobiste zasady bohatera. Puste lub 0 - użyj wartości świata.",
+      "fromWorld": "ze świata",
+      "fromWorldShort": "świat:",
+      "actionsMaxHint": "Limit akcji na rundę. Przywracany na początku rundy.",
+      "woundsMaxHint": "Górna granica paska zdrowia bohatera.",
+      "corruptionMaxHint": "Rozmiar paska, po przekroczeniu którego działa reguła korupcji.",
+      "xpTotalHint": "Całkowite XP zdobyte przez bohatera.",
+      "progressionHint": "Pola ogólnego postępu rozwoju.",
+      "deathDieHint": "Osobista kość ratunku przed śmiercią. Pusto - wartość świata.",
+      "deathRoundsHint": "Rundy do śmierci bez pomocy. Pusto lub 0 - wartość świata. Możliwe formuły (2d5).",
+      "deathThresholdHint": "Wynik rzutu wymagany do udanego ratunku. Pusto lub 0 - wartość świata."
+    },
+    "TinyD6HeroSheet": "Bohater",
+    "TinyD6NpcSheet": "BN",
+    "TokenWeapons": "Bron",
+    "TokenActions": "Akcje",
+    "system": {
+      "name": "Tiny D6 2e",
+      "dieRoller": "Rzut Koscia",
+      "actions": "Akcje",
+      "actionAdd": "Dodaj akcje",
+      "actionRemove": "Usun akcje",
+      "collapse": "Zwin",
+      "expand": "Rozwin"
+    },
+    "settings": {
+      "title": "Ustawienia systemu",
+      "label": "Ustawienia systemu",
+      "description": "Wybierz opcjonalne zasady i mechaniki, ktore chcesz wlaczyc sposrod ponizszych opcji.",
+      "theme": {
+        "name": "Motyw",
+        "hint": "Wybierz motyw odpowiedni dla twojej gry Tiny D6",
+        "choices": {
+          "cthulhu": "Tiny Cthulhu",
+          "dungeon": "Tiny Dungeon 2e"
         }
+      },
+      "sheetStyle": {
+        "name": "Styl karty",
+        "hint": "Wybierz styl wizualny kart postaci",
+        "choices": {
+          "default": "Ciemny (domyslny)",
+          "perkament": "Pergamin пїЅ Folklor",
+          "noir": "Noir пїЅ Miedz",
+          "minimal": "Minimalny пїЅ Jasny",
+          "cyberpunk": "Cyberpunk пїЅ Neon"
+        }
+      },
+      "rollerInCharsheet": {
+        "name": "Rzut koscia w Karcie Postaci",
+        "hint": "Wlacz, aby miec dostep do rzutu koscia bezposrednio w Karcie Postaci."
+      },
+      "enableCorruption": {
+        "name": "Wlacz tor Skazenia",
+        "hint": "Dodaje do Karty Postaci tor Skazenia."
+      },
+      "enableAdvancement": {
+        "name": "Rozwoj postaci",
+        "hint": "Postacie rozwijaja sie na podstawie sesji lub zdobywajac punkty doswiadczenia.",
+        "choices": {
+          "none": "Brak",
+          "minimalist": "Minimalistyczny rozwoj",
+          "xp": "Punkty doswiadczenia"
+        }
+      },
+      "enableItemTracking": {
+        "name": "Sledzenie przedmiotow",
+        "hint": "Pokazuje wykorzystane sloty przedmiotow i oblicza pozostale."
+      },
+      "enableDepletionPoints": {
+        "name": "Zuzycie/Wyczerpanie przedmiotow",
+        "hint": "Sledzi punkty zuzycia przedmiotow na karcie postaci."
+      },
+      "enableCriticalHits": {
+        "name": "Trafienia krytyczne",
+        "hint": "Oznacza test jako 'Krytyczny Sukces', gdy wszystkie kosci pokaza 6."
+      },
+      "enableCriticalFailure": {
+        "name": "Krytyczne porazki",
+        "hint": "Oznacza test jako 'Krytyczna Porazka', gdy wszystkie kosci pokaza 1."
+      },
+      "enableVariableWeaponDamage": {
+        "name": "Zmienna obrazenia broni",
+        "hint": "Oblicza zmienne obrazenia broni przy ataku."
+      },
+      "enablePowerOrigin": {
+        "name": "Pochodzenie mocy",
+        "hint": "Dodaje pole tekstowe do wpisania pochodzenia Super Mocy."
+      },
+      "enableWeakness": {
+        "name": "Slabosc",
+        "hint": "Dodaje pole tekstowe do wpisania Super Slabosci."
+      },
+      "enablePanic": {
+        "name": "Panika",
+        "hint": "Dodaje licznik do sledzenia Paniki."
+      },
+      "enableRadiation": {
+        "name": "Promieniowanie",
+        "hint": "Dodaje licznik do sledzenia Promieniowania."
+      },
+      "enableGrit": {
+        "name": "Hart ducha",
+        "hint": "Dodaje licznik do sledzenia Hartu ducha."
+      },
+      "independentNpcTokens": {
+        "name": "Niezalezne tokeny BN",
+        "hint": "Tokeny umieszczane na scenie z aktora BN staja sie niezaleznymi kopiami z wlasnymi HP i pancerzem."
+      },
+      "defaultActions": {
+        "name": "Domyslne akcje",
+        "hint": "Domyslna maksymalna liczba akcji dla nowych aktorow (standard Tiny D6 to 1)."
+      },
+      "enableTinyD6Plus": {
+        "name": "Homerule: TinyD6+",
+        "hint": "Wlacza homerules walki TinyD6+: przeladowanie (amunicja na atak), smierc i obalenie (rzut na smierc, umierajacy z licznikiem) oraz palete broni w HUD tokena."
+      },
+      "critAdvantage": {
+        "name": "Homerule: Krytyczna przewaga",
+        "hint": "Gdy wszystkie kosci w ataku pokazuja identyczne szesci (6), obrazenia broni sa podwojone (Krytyczne). Wybierz, czy dziala dla 2k6, 3k6, czy obu.",
+        "choices": {
+          "off": "Wylaczone",
+          "two": "tylko 2k6",
+          "three": "tylko 3k6",
+          "both": "2k6 i 3k6"
+        }
+      },
+      "showNpcReloadMessages": {
+        "name": "Pokazuj wiadomosci przeladowania NPC",
+        "hint": "Publikuj wiadomosci o przeladowaniu/braku amunicji NPC w czacie (domyslnie wylaczone, mniej szumu)."
+      },
+      "deathRounds": {
+        "name": "Rzut na smierc: rundy do smierci",
+        "hint": "Rundy do śmierci po osiągnięciu 0 PZ. Wpisz liczbę (3) lub formułę rzucaną przy 0 PZ, np. 1d6+2 albo 2d5, aby każdy upadek trwał inaczej."
+      },
+      "deathSaveThreshold": {
+        "name": "Rzut na smierc: prog sukcesu",
+        "hint": "Rzut na smierc (1k6) udaje sie, gdy wynik wynosi co najmniej tyle (standard 4)."
+      },
+      "showNpcDeathMessages": {
+        "name": "Pokazuj wiadomosci obalenia NPC",
+        "hint": "Publikuj tez wiadomosc, gdy zwykly NPC zostaje obalony (domyslnie wylaczone, mniej szumu)."
+      },
+      "enableHealStabProxy": {
+        "name": "Proxy GM: leczenie i stabilizacja",
+        "hint": "Pozwala graczom leczyc lub stabilizowac postacie/BN, ktorych nie posiadaja. Zmiana jest stosowana przez GM przez socketlib (bez prawa wlasnosci)."
+      },
+      "enablePlayerDamageProxy": {
+        "name": "Proxy GM: obrazenia gracza",
+        "hint": "Pozwala graczom zadawac obrazenia postaciami/BN, ktorych nie posiadaja. Obrazenia sa stosowane przez GM przez socketlib (bez prawa wlasnosci)."
+      },
+      "enableAttackProficiency": {
+        "name": "Auto biegłosc w broni",
+        "hint": "TinyD6+: automatycznie proponuje liczbe kosci ataku na podstawie biegłosci w broni (opanowana bron = przewaga, niewytresowana = utrudnienie). Gracz moze recznie wybrac dowolny poziom."
+      },
+      "enableArmorStacking": {
+        "name": "Umozliwianie nakładania zbroi",
+        "hint": "Gdy włączone, wiele zakwalifikowanych zbroi sumuje swój DR. Gdy wyłączone, stosuje się tylko zbroję z najwyższym DR."
+      },
+      "enableArmorBreakMessages": {
+        "name": "Wiadomosci o lamaniu pancerza w czacie",
+        "hint": "Publikuj wiadomosc w czacie, gdy tarcza lub pancerz sie zlamie (HP spadnie do 0)."
+      },
+      "animFx": {
+        "name": "Animacje walki",
+        "hint": "Pokazuj plywajace liczby obrazen, blyski tokenow, efekty krytyczne i efekty smierci. Wylacz na slabych komputerach."
+      },
+      "movementDefault": {
+        "name": "Standardowy ruch",
+        "hint": "Podstawowy ruch postaci na turę (w stopach). Używany, gdy postać nie ma własnej wartości. Bieg dodaje tę wartość do budżetu ruchu za 1 akcję."
+      },
+      "movementUnit": {
+        "name": "Jednostki ruchu",
+        "hint": "W jakich jednostkach liczyć ruch: stopy (siatka imperialna) lub metry (metryczna). Konwersja: 1 ft = 0,3048 m. Ruch postaci jest zawsze przechowywany w stopach i przeliczany automatycznie.",
+        "choices": {
+          "ft": "Stopy (siatka imperialna)",
+          "m": "Metry (metryczna)"
+        }
+      },
+      "dashRefundsAction": {
+        "name": "Zwrot akcji (bieg)",
+        "hint": "Bieg zawsze kosztuje 1 akcję. Włączone: ponowne kliknięcie anuluje bieg i zwraca akcję. Wyłączone: ponowne kliknięcie tylko wyłącza bieg, akcja nie wraca. Dobre dla gier, w których postać ma 1 akcję."
+      },
+      "enableMovementBudget": {
+        "name": "Budżet ruchu i bieg",
+        "hint": "Włącza budżet ruchu na turę: kolorowanie ścieżki (zielony/żółty/czerwony), przycisk Bieg (nadruch za 1 akcję) i znacznik pozostałego ruchu na trackerze walki. Wyłącz, aby przywrócić standardowy nieograniczony ruch."
+      },
+      "enableDeathSound": {
+        "name": "Dźwięk śmierci",
+        "hint": "Odtwarza dźwięk, gdy postać umiera (koniec licznika śmierci)."
+      },
+      "deathSoundFile": {
+        "name": "Dźwięk śmierci (plik)",
+        "hint": "Ścieżka do pliku audio w dowolnym formacie (mp3, ogg, wav, webm, m4a, flac). Puste dla wbudowanego motywu."
+      },
+      "enableDeathTicks": {
+        "name": "Tyknięcie śmierci",
+        "hint": "Krótkie napięte tyknięcie (słyszą wszyscy) na początku tury umierającej postaci, gdy tyka jej licznik śmierci. Trzy poziomy: 5+ rund - wolno, 3-4 - średnio, 1-2 - ostro."
+      },
+      "deathTickFile": {
+        "name": "Dźwięk tyknięcia (plik)",
+        "hint": "Własny dźwięk tyknięcia na początku tury umierającej postaci (dowolny format: mp3, ogg, wav, webm, m4a, flac). Głośność zależy od poziomu: 5+ rund - cicho, 3-4 - średnio, 1-2 - głośno. Puste = syntetyczne tyknięcie."
+      },
+      "enableDeathFx": {
+        "name": "Efekty umierania na tokenie",
+        "hint": "Dopóki postać umiera, jej token jest podświetlany na czerwono wg pozostałych rund: 5+ - czerwone krawędzie, 3-4 - czerwień bliżej środka plus plamy krwi, 1-2 - powolna wewnętrzna pulsacja. Podporządkowany przełącznikowi animacji walki."
+      },
+      "deathSoundVolume": {
+        "name": "Głośność dźwięku śmierci",
+        "hint": "Głośność (0.05-1) dźwięku śmierci dla pliku custom jak i syntezy. Domyślnie 0.5 - aby nawet bez skonfigurowanego pliku nie ogłuszać."
+      }
+    },
+    "dice": {
+      "modifier": {
+        "focus": "Skupienie",
+        "marksman": "Strzelec wyborowy"
+      },
+      "roll": {
+        "disadvantage": "Utrudnienie",
+        "standard": "Zwykly Test",
+        "advantage": "Ulatwienie",
+        "success": "Sukces!",
+        "failure": "Porazka",
+        "critical": "Krytyczny Sukces!!",
+        "botch": "Krytyczna Porazka!!"
+      }
+    },
+    "weaponCategories": {
+      "melee": "Wrecz",
+      "ranged": "Dystansowe"
+    },
+    "weaponTypes": {
+      "none": "",
+      "light": "Lekka",
+      "heavy": "Ciezka"
+    },
+    "armorTypes": {
+      "none": "",
+      "light": "Lekka",
+      "medium": "Srednia",
+      "heavy": "Ciezka",
+      "shield": "Tarcza"
+    },
+    "sheet": {
+      "tab": {
+        "main": "Main"
+      },
+      "combat": "Combat",
+      "weaponProficiency": "Weapon Proficiency",
+      "wounds": "Wounds",
+      "armor": "Armor",
+      "corruption": "Corruption",
+      "xp": "XP",
+      "actions": {
+        "name": "Akcje",
+        "spend": "Wydaj akcje",
+        "restore": "Przywroc akcje",
+        "plus": "Dodaj max akcje (+1)",
+        "minus": "Usun max akcje (-1)"
+      },
+      "newItem": "Nowy przedmiot",
+      "description": "Opis",
+      "none": "Brak",
+      "noWeapons": "Nie znaleziono broni w katalogu przedmiotów świata.",
+      "unequip": "Zdejmij",
+      "delete": "Usun"
+    },
+    "actor": {
+      "name": "Imie",
+      "npc": "BN",
+      "people": "Ludzie",
+      "traits": "Cechy",
+      "description": "Opis",
+      "actions": {
+        "editTrait": "Edytuj ceche",
+        "chatTrait": "Udostepnij ceche",
+        "chatItem": "Udostepnij przedmiot",
+        "deleteTrait": "Usun ceche"
+      },
+      "tiny-cthulhu": {
+        "character": "Bio",
+        "heritage": {
+          "header": "Archetyp",
+          "traits": "Cecha Archetypu",
+          "delete": "Usun Archetyp"
+        }
+      },
+      "tiny-dungeon": {
+        "character": "Postac",
+        "heritage": {
+          "header": "Pochodzenie",
+          "traits": "Cecha Pochodzenia",
+          "delete": "Usun Pochodzenie"
+        }
+      },
+      "homeland": "Ojczyzna",
+      "age": "Wiek",
+      "eyes": "Oczy",
+      "hair": "Wlosy",
+      "familyTrade": "Zawod rodzinny",
+      "powerOrigin": "Pochodzenie mocy",
+      "weakness": "Slabosc",
+      "belief": "Wiara",
+      "xp": {
+        "header": "Doswiadczenie",
+        "progression": "Progresja",
+        "total": "Razem",
+        "spent": "Wydane",
+        "remaining": "Pozostalo"
+      },
+      "wounds": {
+        "header": "Zdrowie",
+        "current": "Obecne",
+        "max": "Maks:",
+        "increaseMax": "Zwieksz maks. HP",
+        "help": "Zaznacz, gdy otrzymasz obrazenia. Odznacz, gdy wyzdrowiejesz."
+      },
+      "gear": "Ekwipunek",
+      "preferredWeapons": "Preferowane Bronie",
+      "noPreferredWeapons": "Kliknij, aby przypisac preferowana bron",
+      "removePreferred": "Usun z preferowanych",
+      "addAmmo": "Dodaj Amunicje",
+      "addAmmoTitle": "Dodaj Amunicje",
+      "ammoType": "Typ Amunicji",
+      "selectWeapon": "Wybierz Bron",
+      "equipped": "Zakwipowany",
+      "equipment": "Bron",
+      "weaponry": "Bronie",
+      "wearing": "Ubranie",
+      "important": "Wazny BN",
+      "money": "Waluta",
+      "noMoney": "Brak waluty",
+      "corruption": {
+        "header": "Skazenie",
+        "current": "Obecne",
+        "max": "Maks:",
+        "increaseMax": "Zwieksz prog skazenia",
+        "help": "Zaznacz, gdy otrzymasz skazenie. Odznacz, gdy wyzdrowiejesz.",
+        "test": "Test Skazenia"
+      },
+      "radiation": {
+        "header": "Promieniowanie",
+        "current": "Obecne",
+        "max": "Maks:",
+        "increaseMax": "Zwieksz maks. promieniowanie",
+        "help": "Zaznacz, gdy otrzymasz promieniowanie."
+      },
+      "panic": {
+        "header": "Panika",
+        "current": "Obecne",
+        "help": "Odznacz, gdy dostaniesz Panike. Zaznacz, gdy sie wycofa. Rzut na Panike, gdy Panika wynosi 1.",
+        "test": "Test Paniki"
+      },
+      "grit": {
+        "header": "Hart ducha",
+        "current": "Obecne",
+        "help": "Odznacz, gdy wydasz Hart ducha."
+      },
+      "proficiencies": {
+        "header": "Bieglosc",
+        "mastered": "Opanowanie"
+      }
+    },
+    "gear": {
+      "name": "Nazwa",
+      "category": "Kategoria",
+      "quantity": "Ilość",
+      "moneyTotal": "Pieniądze",
+      "heal": "Leczenie (HP)",
+      "healPlaceholder": "np. 4 lub 2d4+2",
+      "slots": "Sloty",
+      "depletion": "Zuzycie",
+      "description": "Opis",
+      "ammoType": "Typ amunicji",
+      "ammoTypePlaceholder": "np. strzala, kula",
+      "categories": {
+        "item": "Przedmiot",
+        "ammo": "Amunicja",
+        "heal": "Leczenie",
+        "money": "Pieniadze"
+      }
+    },
+    "TokenHeal": "Leczenie",
+    "TokenArmor": "Pancerz",
+    "death": {
+      "down": "Obalony",
+      "dying": "Umierajacy",
+      "dead": "Martwy",
+      "cannotAct": "Nie moze dzialac",
+      "thrown": "Rzut na smierc",
+      "self": "Nie mozesz stabilizowac siebie.",
+      "stabilized": "Ustabilizowany",
+      "stabilizedHint": "Cel jest ustabilizowany i nie umiera.",
+      "dyingHint": "Umierający: umrze za {rounds} {word} bez leczenia.",
+      "defeated": "Pokonany",
+      "died": "Zmarl",
+      "turnsLeft": "{actor} umrze za {n} {word}.",
+      "stabilizedRest": "pada, ale nic już mu nie zagraża.",
+      "dyingRest": "pada i krwawi. Bez pomocy śmierć nadejdzie za {n} {word}.",
+      "diedNotify": "{actor} zmarł."
+    },
+    "stabilize": {
+      "title": "Stabilizacja",
+      "sheetHint": "Wskaz obalonego sojusznika (0 HP) i rzuc rzut na smierc.",
+      "subtitle": "rzuc rzut na smierc, aby ustabilizowac. Kazda koscia o wyniku co najmniej progu to sukces.",
+      "self": "Nie mozesz ustabilizowac siebie.",
+      "noTarget": "Najpierw wskaz obalonego sojusznika (0 HP).",
+      "notDowned": "Ten cel nie jest obalony.",
+      "thrown": "Stabilizacja",
+      "target": "cel",
+      "success": "Ustabilizowano",
+      "fail": "Porazka",
+      "roll": "Stabilizuj",
+      "applyConfirm": "Zastosuj",
+      "actionsCost": "Stabilizacja kosztuje 1 akcję."
+    },
+    "heal": {
+      "use": "Uzyj",
+      "heal": "Leczenie",
+      "usesOn": "uzywa na",
+      "heals": "leczy {hp} HP",
+      "noTarget": "Wskaz cel, ktory chcesz wyleczyc, lub uzyj na sobie.",
+      "empty": "Ten przedmiot leczenia nie ma uzytkow.",
+      "full": "Cel ma pelne HP.",
+      "badFormula": "Nieprawidlowa formula leczenia na tym przedmiocie.",
+      "emptyHint": "Brak przedmiotow leczenia. Wskaz obalonego sojusznika, aby ustabilizowac.",
+      "wasted": "(zmarnowano: {wasted} HP)",
+      "useTooltip": "Leczy cel o ta wartosc (1 uzycie).",
+      "confirmTitle": "Potwierdzenie leczenia",
+      "applyConfirm": "Zastosuj",
+      "confirmed": "Potwierdzono"
+    },
+    "Attack": "Atak",
+    "Reload": "Przeladuj",
+    "corruptionTests": {
+      "none": "Brak",
+      "disadvantage": "Utrudnienie",
+      "standard": "Zwykly"
+    },
+    "weapon": {
+      "name": "Nazwa",
+      "type": "Typ broni",
+      "damage": "Obrazenia",
+      "slots": "Sloty przedmiotu",
+      "description": "Opis",
+      "light": "Lekka",
+      "heavy": "Ciezka",
+      "ranged": "Dystansowa",
+      "lightMelee": "L. wrecz",
+      "heavyMelee": "H. wrecz",
+      "lightRanged": "L. dystansowa",
+      "heavyRanged": "H. dystansowa",
+      "lightShort": "L",
+      "heavyShort": "C",
+      "meleeShort": "W",
+      "rangedShort": "D",
+      "oneAttack": "Atakuje raz na runde",
+      "reload": "Przeladowanie",
+      "uses": "Uzytki",
+      "ammoType": "Typ amunicji",
+      "ammoAny": "- dowolna amunicja"
+    },
+    "reload": {
+      "outOfAmmo": "Brak amunicji - przeladuj!",
+      "ranOut": "Amunicja wyczerpana - przeladuj, aby kontynuowac.",
+      "reloadBtn": "Przeladuj (resetuj do max)",
+      "reloaded": "przeladowano",
+      "undoResource": "Przywroc zasob",
+      "noMag": "Brak magazynkow typu \"{type}\" w ekwipunku.",
+      "emptyMag": "Magazynek \"{type}\" jest pusty (0 zostalo).",
+      "noMagAny": "Brak magazynkow (amunicji) w ekwipunku.",
+      "ammoUsed": " (mag {ammo})"
+    },
+    "armor": {
+      "name": "Nazwa",
+      "type": "Typ pancerza",
+      "damageReduction": "OBP",
+      "armorHp": "HP pancerza",
+      "slots": "Sloty przedmiotu",
+      "depletion": "Zuzycie",
+      "description": "Opis",
+      "none": "Bez pancerza",
+      "armor": "Pancerz",
+      "shieldBreak": "Tarcza {name} aktora {actor} zlamala sie!",
+      "armorBreak": "Pancerz {name} aktora {actor} zlamal sie!"
+    },
+    "shield": {
+      "name": "Nazwa",
+      "damageReduction": "OBP",
+      "armorHp": "HP tarczy",
+      "shields": "Tarcze",
+      "none": "Bez tarczy",
+      "description": "Opis"
+    },
+    "heritage": {
+      "trait": "Cecha pochodzenia",
+      "startingHealth": "Poczatkowe HP",
+      "corruptionThreshold": "Prog skazenia"
+    },
+    "trait": {
+      "name": "Nazwa",
+      "description": "Opis"
+    },
+    "attack": {
+      "attack": "Atak",
+      "hit": "Trafienie",
+      "miss": "Pudlo",
+      "crit": "Krytyczne",
+      "targets": "Cele",
+      "damage": "Obrazenia",
+      "noTarget": "Wybierz cel (badz zaznacz tokeny) przed atakiem.",
+      "applyDamage": "Zastosuj obrazenia",
+      "weapon": "Bron",
+      "mode": "Rzut",
+      "roll": "Atak",
+      "cancel": "Anuluj"
+    },
+    "ArmorRestore": "Przywroc pancerz",
+    "plural": {
+      "round": {
+        "one": "runda",
+        "few": "rundy",
+        "many": "rund",
+        "other": "rund"
+      },
+      "turn": {
+        "one": "tura",
+        "few": "tury",
+        "many": "tur",
+        "other": "tur"
+      }
+    },
+    "movement": {
+      "dash": "Bieg",
+      "dashUndo": "Anuluj bieg i zwróć akcję",
+      "noActions": "Brak wolnej akcji: bieg wymaga 1 akcji.",
+      "dashActive": "Bieg aktywny",
+      "dashHint": "Nadruch: kosztuje 1 akcję i dodaje światowy ruch do budżetu. Ponowne kliknięcie anuluje bieg i zwraca akcję.",
+      "dashOff": "Anuluj bieg",
+      "label": "Ruch"
     }
+  }
 }

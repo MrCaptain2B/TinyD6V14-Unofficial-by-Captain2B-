@@ -1,5 +1,13 @@
 # Release Notes
 
+## 14.0.6
+
+- Movement budget (TinyD6+ homerule): settings `enableMovementBudget`, `movementDefault`, `movementUnit`, `dashRefundsAction`, and a token movement ruler showing spent/remaining feet while dragging.
+- Death FX (TinyD6+): configurable death sound, death ticks and a visual token effect (`enableDeathFx`, `enableDeathSound`, `enableDeathTicks`, volume and sound-file settings). Works with and without Token Magic FX.
+- New weapon sheet v2: reworked layout (`weapon-sheet-v2.hbs`) with a dedicated theme.
+- Reworked NPC and hero sheets, theme redesign, attack-card and token-HUD polish.
+- Translations updated in all supported languages.
+
 ## 14.0.5
 
 - Death-rounds fields (world + hero sheet) accept formulas like `1d6+2` instead of a fixed number.

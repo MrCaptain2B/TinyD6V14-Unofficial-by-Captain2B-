@@ -8,8 +8,8 @@
     <div class="inner">
         <div class="action-meter">
             {{#times data.system.actions.max}}
-            <button type="button" class="act {{#if (lt . ../data.system.actions.value)}}spent{{else}}avail{{/if}}"
-                    data-action-idx="{{.}}" title="{{#if (lt . ../data.system.actions.value)}}{{localize "tinyd6.sheet.actions.restore"}}{{else}}{{localize "tinyd6.sheet.actions.spend"}}{{/if}}"></button>
+            <button type="button" class="act {{#if (lt . ../data.system.actions.value)}}avail{{else}}spent{{/if}} {{#if (eq . (add ../data.system.actions.value -1))}}last-avail{{/if}}"
+                    data-action-idx="{{.}}" title="{{#if (lt . ../data.system.actions.value)}}{{localize "tinyd6.sheet.actions.spend"}}{{else}}{{localize "tinyd6.sheet.actions.restore"}}{{/if}}"></button>
             {{/times}}
         </div>
         <div class="lbl">{{localize "tinyd6.sheet.actions.name"}}</div>

@@ -1,5 +1,6 @@
 import { applyHealRefs, applyAttackDamage, spawnFloatingNumber, spawnTokenFlash, spawnTokenDeath } from "./dice.js";
-import { applyStabilizeRefs } from "./death.js";
+import { applyStabilizeRefs, playDeathSoundLocal, playDeathTickLocal } from "./death.js";
+import { applyDeathFx } from "./deathFx.js";
 
 /* ============================================================
    GM-прокси через socketlib: позволяет компании наносить,
@@ -10,7 +11,7 @@ import { applyStabilizeRefs } from "./death.js";
    Помимо применения данных, GM рассылает всем клиентам события
    визуальных эффектов (playFx): всплывающие числа урона/лечения,
    вспышки крита и затемнение при смерти. Каждый клиент рисует
-   эффект на собственный canvas — иначе анимации видит только GM.
+   эффект на собственный canvas - иначе анимации видит только GM.
    ============================================================ */
 
 let _socket = null;
@@ -72,7 +73,10 @@ const HANDLERS = {
     applyStabilize: applyStabilizeRefs,
     applyDamage: applyAttackDamage,
     playFx: _applyFxLocal,
-    syncCard: _syncCard
+    syncCard: _syncCard,
+    playDeathSound: playDeathSoundLocal,
+    playDeathTick: (tier) => playDeathTickLocal(Number(tier) || 1),
+    setDeathFx: (fx) => applyDeathFx(fx || {})
 };
 
 /* Регистрирует системный socket (socketlib). Вызывается из ready

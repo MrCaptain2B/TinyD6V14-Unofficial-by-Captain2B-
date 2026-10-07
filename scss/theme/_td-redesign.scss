@@ -1,11 +1,12 @@
-﻿/* ============================================================
-   Tiny D6 — Redesign v1 («Вариант 1 · Табы», макет)
+/* ============================================================
+   Tiny D6 - Redesign v1 («Вариант 1 · Табы», макет)
    Единая поверхность: без плашек-карточек, структура на
    заголовках, тонких линиях и акцентных гранях.
    Скоуп: только акторные листы hero/npc (item-листы не меняем).
    ============================================================ */
 .tinyd6.sheet.hero,
-.tinyd6.sheet.npc {
+.tinyd6.sheet.npc,
+.tinyd6.sheet.item {
     --td-bg: #1b1b1f;
     --td-card: #24242a;
     --td-field: #2f2f36;
@@ -142,7 +143,7 @@
     display: flex; align-items: center; gap: 2px;
 }
 
-/* NPC: компактные бейджи владения оружием — 2x2 */
+/* NPC: компактные бейджи владения оружием - 2x2 */
 .npc-proficiencies {
     display: grid; grid-template-columns: 1fr 1fr; gap: 2px;
 }
@@ -335,7 +336,7 @@
 /* ===== Портрет ===== */
 .tinyd6.sheet.hero form.actor-sheet .character-art,
 .tinyd6.sheet.npc form.actor-sheet .character-art {
-    width: 100%; max-width: 160px; aspect-ratio: 1; object-fit: cover;
+    width: 100%; max-width: 170px; height: auto; object-fit: contain;
     border-radius: var(--td-radius); border: 1px solid var(--td-border);
     background: var(--td-field);
 }
@@ -417,40 +418,41 @@
 .tinyd6.sheet.hero form.actor-sheet .help,
 .tinyd6.sheet.npc form.actor-sheet .help { font-size: 11px; color: var(--td-muted); margin: 8px 0 0; }
 
-/* ===== Homerule: TinyD6+ — кнопка «Стабилизировать» в блоке Combat ===== */
+/* ===== Homerule: TinyD6+ - кнопка «Стабилизировать» в блоке Combat ===== */
 .tinyd6.sheet.hero form.actor-sheet .stab-action,
 .tinyd6.sheet.npc form.actor-sheet .stab-action {
-    display: flex; align-items: center; flex-wrap: wrap; gap: 8px 10px;
+    display: flex; align-items: center; gap: 8px;
     border-left: 2px solid var(--td-accent);
-    padding: 8px 12px; margin-top: 12px;
+    padding: 6px 10px; margin-top: 10px;
     background: var(--td-card); border-radius: 8px;
 }
 .tinyd6.sheet.hero form.actor-sheet .stab-action .icon,
 .tinyd6.sheet.npc form.actor-sheet .stab-action .icon {
-    width: 34px; height: 34px; border-radius: 7px; flex: none;
+    width: 28px; height: 28px; border-radius: 6px; flex: none;
     background: var(--td-field); border: 1px solid var(--td-border);
     display: flex; align-items: center; justify-content: center;
-    font-size: 16px; color: var(--td-accent-soft);
+    font-size: 14px; color: var(--td-accent-soft);
 }
 .tinyd6.sheet.hero form.actor-sheet .stab-action .stab-action-body,
 .tinyd6.sheet.npc form.actor-sheet .stab-action .stab-action-body { flex: 1; min-width: 0; }
 .tinyd6.sheet.hero form.actor-sheet .stab-action .t,
 .tinyd6.sheet.npc form.actor-sheet .stab-action .t {
-    font-size: 13px; font-weight: 600; color: var(--td-strong);
-}
-.tinyd6.sheet.hero form.actor-sheet .stab-action .d,
-.tinyd6.sheet.npc form.actor-sheet .stab-action .d {
-    font-size: 11px; color: var(--td-muted);
+    font-size: 12px; font-weight: 600; color: var(--td-strong);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .tinyd6.sheet.hero form.actor-sheet .stab-action .stab-btn,
-.tinyd6.sheet.npc form.actor-sheet .stab-action .stab-btn {
-    flex: none; white-space: nowrap; background: var(--td-accent); color: #fff; border: 0;
-    border-radius: 6px; padding: 7px 14px; font-family: inherit;
-    font-size: 12px; font-weight: 600; cursor: pointer;
-    display: inline-flex; align-items: center; gap: 6px;
+.tinyd6.sheet.npc form.actor-sheet .stab-action .stab-btn,
+.tinyd6.sheet.hero form.actor-sheet .stab-action .dash-btn,
+.tinyd6.sheet.npc form.actor-sheet .stab-action .dash-btn {
+    flex: none; width: 30px; height: 30px; padding: 0;
+    background: var(--td-accent); color: #fff; border: 0;
+    border-radius: 6px; font-family: inherit; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
 }
 .tinyd6.sheet.hero form.actor-sheet .stab-action .stab-btn:hover,
-.tinyd6.sheet.npc form.actor-sheet .stab-action .stab-btn:hover { background: var(--td-accent-soft); }
+.tinyd6.sheet.npc form.actor-sheet .stab-action .stab-btn:hover,
+.tinyd6.sheet.hero form.actor-sheet .stab-action .dash-btn:hover,
+.tinyd6.sheet.npc form.actor-sheet .stab-action .dash-btn:hover { background: var(--td-accent-soft); }
 
 /* Кнопка «Исп.» у heal-гира в инвентаре */
 .tinyd6.sheet.hero form.actor-sheet .actor-item .item-use,
@@ -476,7 +478,7 @@
 .tinyd6.sheet.npc form.actor-sheet .proficiencies .td6-border-bottom input:focus {
     background: var(--td-field); border-radius: 4px; box-shadow: none;
 }
-/* Мастерство оружия — кнопка, открывающая окно выбора из директории мира. */
+/* Мастерство оружия - кнопка, открывающая окно выбора из директории мира. */
 .tinyd6.sheet.hero form.actor-sheet .proficiencies button.mastered-weapon-picker,
 .tinyd6.sheet.npc form.actor-sheet .proficiencies button.mastered-weapon-picker {
     background: var(--td-field); color: var(--td-text);
@@ -490,7 +492,7 @@
 .tinyd6.sheet.npc form.actor-sheet .proficiencies button.mastered-weapon-picker:hover {
     border-color: var(--td-accent, #d1a760);
 }
-/* Слоты мастерства (TinyD6+) — строка «название + кнопка выбора + очистка». */
+/* Слоты мастерства (TinyD6+) - строка «название + кнопка выбора + очистка». */
 .tinyd6.sheet.hero form.actor-sheet .proficiencies .mastered-slots {
     margin-top: 6px;
 }
@@ -882,7 +884,7 @@
     color: var(--td-accent);
 }
 
-/* ===== Homerule: TinyD6+ — заряды и кнопка перезарядки ===== */
+/* ===== Homerule: TinyD6+ - заряды и кнопка перезарядки ===== */
 .tinyd6.sheet.hero form.actor-sheet .equipped-weapon .weapon-charges,
 .tinyd6.sheet.npc form.actor-sheet .equipped-weapon .weapon-charges {
     font-size: 13px; font-weight: 700; color: var(--td-accent-soft);
@@ -969,64 +971,79 @@
     white-space: nowrap; max-width: 100%; text-overflow: ellipsis; overflow: hidden;
 }
 
-/* ===== Карточка атаки в чате ===== */
+/* ===== Карточка атаки в чате =====
+   Цвета берём из переменных темы (наследуются от <body>), со значениями
+   по умолчанию на случай, если переменных нет вовсе. */
 .tinyd6.td6-attack-card {
-    --td-accent: #8a6d3b;
-    --td-accent-soft: #b08d57;
-    padding: 12px; border: 1px solid rgba(0,0,0,.14); border-radius: 8px;
-    background: #faf8f4;
+    padding: 12px; border: 1px solid var(--td-border, rgba(0,0,0,.14)); border-radius: 8px;
+    background: var(--td-card, #faf8f4); color: var(--td-text, #2a2622);
 }
 .tinyd6.td6-attack-card .attack-card-head img { border-radius: 5px; }
 .tinyd6.td6-attack-card .attack-card-name {
-    font-size: 15px; font-weight: 700; color: #2a2622; margin: 0;
+    font-size: 15px; font-weight: 700; color: var(--td-strong, #2a2622); margin: 0;
 }
 .tinyd6.td6-attack-card .attack-card-sub {
-    font-size: 12px; color: #6a6156; margin-top: 3px;
+    font-size: 12px; color: var(--td-muted, #6a6156); margin-top: 3px;
 }
-.tinyd6.td6-attack-card .attack-hit { color: #2e7d32; font-weight: 700; margin-right: 8px; }
-.tinyd6.td6-attack-card .attack-miss { color: #a34a4a; font-weight: 700; margin-right: 8px; }
+.tinyd6.td6-attack-card .attack-hit { color: var(--td-ok, #2e7d32); font-weight: 700; margin-right: 8px; }
+.tinyd6.td6-attack-card .attack-miss { color: var(--td-danger, #a34a4a); font-weight: 700; margin-right: 8px; }
 .tinyd6.td6-attack-card .attack-crit {
-    color: #b8860b; font-weight: 800; text-transform: uppercase; letter-spacing: .04em;
+    color: var(--td-accent, #b8860b); font-weight: 800; text-transform: uppercase; letter-spacing: .04em;
     font-size: 11px; padding: 1px 7px; border-radius: 10px;
-    background: #fff8e1; border: 1px solid #ecd9a0; margin-right: 8px;
+    background: var(--td-field, #fff8e1); border: 1px solid var(--td-border, #ecd9a0); margin-right: 8px;
 }
 .tinyd6.td6-attack-card .attack-damage .attack-damage-base {
-    color: #a09a8e; margin-right: 4px;
+    color: var(--td-muted, #a09a8e); margin-right: 4px;
 }
 .tinyd6.td6-attack-card .attack-card-roll {
     gap: 8px; margin: 10px 0; flex-wrap: wrap;
 }
 .tinyd6.td6-attack-card .attack-die {
     width: 40px; height: 40px; border-radius: 8px;
-    background: #fff; border: 1px solid rgba(0,0,0,.18);
+    background: var(--td-field, #fff); border: 1px solid var(--td-border, rgba(0,0,0,.18));
     display: inline-flex; align-items: center; justify-content: center;
-    font-size: 22px; color: #2a2622;
+    font-size: 22px; color: var(--td-accent, #8a6d3b);
 }
 .tinyd6.td6-attack-card .attack-card-footer {
-    border-top: 1px solid rgba(0,0,0,.1); padding-top: 10px;
+    border-top: 1px solid var(--td-border, rgba(0,0,0,.1)); padding-top: 10px;
     gap: 12px; flex-wrap: wrap;
 }
-.tinyd6.td6-attack-card .attack-damage { font-size: 13px; color: #333; }
+.tinyd6.td6-attack-card .attack-damage { font-size: 13px; color: var(--td-text, #333); }
+.tinyd6.td6-attack-card .attack-damage-value {
+    font-size: 15px; font-weight: 700; color: var(--td-strong, #2a2622); margin-left: 2px;
+}
+.tinyd6.td6-attack-card .attack-damage-steps {
+    display: inline-flex; gap: 3px; margin-left: 7px; vertical-align: 1px;
+}
+.tinyd6.td6-attack-card .attack-damage-step {
+    width: 20px; height: 20px; padding: 0; line-height: 1;
+    border: 1px solid var(--td-border, #d5c9a3); border-radius: 5px;
+    background: var(--td-field, #f0ead8); color: var(--td-accent, #8a6d3b);
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: inherit;
+}
+.tinyd6.td6-attack-card .attack-damage-step:hover { background: var(--td-accent, #8a6d3b); color: #fff; }
 .tinyd6.td6-attack-card .attack-apply {
-    margin-left: auto; background: var(--td-accent); color: #fff;
+    margin-left: auto; background: var(--td-accent, #8a6d3b); color: #fff;
     border: 0; border-radius: 6px; padding: 7px 14px; cursor: pointer;
     font-family: inherit; font-size: 13px; font-weight: 600;
     display: inline-flex; align-items: center; gap: 6px;
 }
-.tinyd6.td6-attack-card .attack-apply:hover { background: var(--td-accent-soft); }
+.tinyd6.td6-attack-card .attack-apply:hover { background: var(--td-accent-soft, #b08d57); }
 .tinyd6.td6-attack-card .attack-report {
-    font-size: 12px; color: #2e7d32; font-weight: 600;
+    font-size: 12px; color: var(--td-ok, #2e7d32); font-weight: 600;
 }
 .tinyd6.attack-report-chat {
     padding: 8px 12px; border-left: 3px solid var(--td-accent, #8a6d3b);
-    background: rgba(0,0,0,.04); border-radius: 4px; font-size: 13px; color: #333;
+    background: rgba(0,0,0,.04); border-radius: 4px; font-size: 13px; color: var(--td-text, #333);
 }
 
 /* Сообщение об опустошённом оружии на карточке атаки */
 .tinyd6.td6-attack-card .attack-card-ranout {
     margin: 8px 0 4px; padding: 6px 10px; font-size: 12px; font-weight: 600;
-    color: #a34a4a; background: #fbe9e7; border: 1px solid #ecc7c2;
-    border-radius: 5px;
+    color: var(--td-danger, #a34a4a); background: var(--td-field, #fbe9e7);
+    border: 1px solid var(--td-border, #ecc7c2); border-radius: 5px;
 }
 
 /* Кнопка «Вернуть ресурс» на карточке атаки */
@@ -1034,12 +1051,58 @@
     border-top: 1px dashed rgba(0,0,0,.12); margin-top: 8px; padding-top: 8px;
 }
 .tinyd6.td6-attack-card .attack-undo {
-    background: #f0ead8; color: #8a6d3b; border: 1px solid #d5c9a3;
+    background: var(--td-field, #f0ead8); color: var(--td-accent, #8a6d3b);
+    border: 1px solid var(--td-border, #d5c9a3);
     border-radius: 6px; padding: 6px 12px; cursor: pointer;
     font-family: inherit; font-size: 12px; font-weight: 600;
     display: inline-flex; align-items: center; gap: 6px;
 }
-.tinyd6.td6-attack-card .attack-undo:hover { background: #e6dcc0; }
+.tinyd6.td6-attack-card .attack-undo:hover { background: var(--td-hover, #e4dcc4); }
+.tinyd6.td6-attack-card .attack-card-undo { gap: 10px; }
+.tinyd6.td6-attack-card .attack-undo-damage {
+    background: var(--td-field, #f0ead8); color: var(--td-accent, #8a6d3b);
+    border: 1px solid var(--td-border, #d5c9a3);
+    border-radius: 6px; padding: 6px 12px; cursor: pointer;
+    font-family: inherit; font-size: 12px; font-weight: 700;
+    display: inline-flex; align-items: center; gap: 6px;
+}
+.tinyd6.td6-attack-card .attack-undo-damage:hover { background: var(--td-hover, #e4dcc4); }
+
+/* ------- Редакция: «табель» - grid, правая панель урона в строке кубиков ------- */
+.tinyd6.td6-attack-card { display: grid; }
+.tinyd6.td6-attack-card .attack-card-center { display: flex; align-items: stretch; gap: 12px; margin: 10px 0; }
+.tinyd6.td6-attack-card .attack-card-center .attack-card-roll { flex: 1; min-width: 0; gap: 8px; margin: 0; flex-wrap: wrap; }
+.tinyd6.td6-attack-card .attack-card-head .attack-card-portrait {
+    flex: 0 0 44px; margin-right: 10px; border-radius: 6px; object-fit: cover;
+}
+.tinyd6.td6-attack-card .attack-card-dmg {
+    flex: 0 0 auto; width: 90px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px; text-align: center; padding: 8px 6px;
+    border-left: 1px solid var(--td-border, rgba(0,0,0,.12));
+    border-radius: 0 6px 6px 0;
+    background: var(--td-field, rgba(0,0,0,.03));
+}
+.tinyd6.td6-attack-card .attack-dmg-label {
+    font-size: 9px; text-transform: uppercase; letter-spacing: .16em;
+    color: var(--td-muted, #6a6156);
+}
+.tinyd6.td6-attack-card .attack-dmg-number { line-height: 1; }
+.tinyd6.td6-attack-card .attack-dmg-number .attack-damage-value {
+    font-size: 30px; font-weight: 800; color: var(--td-accent, #8a6d3b); margin: 0;
+}
+.tinyd6.td6-attack-card .attack-dmg-number .attack-damage-base {
+    font-size: 13px; font-weight: 500; color: var(--td-muted, #a09a8e);
+}
+.tinyd6.td6-attack-card .attack-card-dmg .attack-damage-steps {
+    display: inline-flex; gap: 4px; margin: 4px 0 0; vertical-align: 0;
+}
+.tinyd6.td6-attack-card .attack-card-dmg .attack-damage-step { width: 22px; height: 22px; font-size: 15px; }
+.tinyd6.td6-attack-card .attack-card-footer {
+    border-top: 1px solid var(--td-border, rgba(0,0,0,.1)); padding-top: 10px; gap: 12px; flex-wrap: wrap;
+}
+.tinyd6.td6-attack-card .attack-apply { margin-left: auto; }
+.tinyd6.td6-attack-card .attack-report { width: 100%; order: 10; font-size: 11.5px; opacity: .9; margin-top: 2px; }
 
 /* Заглушки в чате (Homerule: TinyD6+) */
 .tinyd6.reload-stub {
@@ -1103,7 +1166,7 @@
 }
 .tinyd6.death-mini .death-mini-icon.mini b { font-size: 11px; }
 
-/* Крупный заголовок «умрёт через N ходов» — на каждом ходу поверженного. */
+/* Крупный заголовок «умрёт через N ходов» - на каждом ходу поверженного. */
 .tinyd6.death-stub.death-timer {
     padding: 12px 18px; font-size: 17px; font-weight: 600; color: #5b1111;
     border-left: 4px solid #b23a3a; background: rgba(178,58,58,.10);
@@ -1156,7 +1219,7 @@
 }
 
 /* Рекомендуемый уровень броска (Auto weapon proficiency): подсвечиваем
- * кнопку, но не блокируем — игрок может выбрать любую (НРИ). */
+ * кнопку, но не блокируем - игрок может выбрать любую (НРИ). */
 .dialog-button.attack-suggest {
     background: var(--td-accent, #8a6d3b);
     color: #fff;
@@ -1203,7 +1266,7 @@
 /* ============================================================
    HUD fix: вернуть геометрию колонок Token HUD.
    Bootstrap Grid теперь скоупирован под .tinyd6, поэтому не
-   ломает Foundry core. Стили ниже — собственная геометрия
+   ломает Foundry core. Стили ниже - собственная геометрия
    HUD (колонки left/middle/right + pointer-events).
    ============================================================ */
 #token-hud .col,
@@ -1403,14 +1466,14 @@
 }
 #token-hud .attribute .death-chip i { font-size: 11px; }
 #token-hud .attribute .death-chip.down {
-    background: #7a2c2c;
-    color: #ffd7d7;
-    border-color: #b04a4a;
-}
-#token-hud .attribute .death-chip.dying {
     background: #6b4a12;
     color: #ffe6b0;
     border-color: #c98a2e;
+}
+#token-hud .attribute .death-chip.dying {
+    background: #7a2c2c;
+    color: #ffd7d7;
+    border-color: #b04a4a;
     animation: td-chip-pulse 1.1s ease-in-out infinite;
 }
 #token-hud .attribute .death-chip.dead {
@@ -1508,13 +1571,28 @@
 #token-hud .palette-weapons .wbtn.reload:hover { background: #2e4a20; }
 #token-hud .palette-weapons .wbtn.reload.spin i { animation: td-icon-spin 0.6s ease-in-out; }
 
-/* ===== Палитра Heal: стабилизация + heal-гиры (Homerule: TinyD6+) ===== */
-#token-hud .palette.palette-heal {
+/* ===== Палитра «предписанные действия»: действия + рывок + стабилизация + heal-гиры ===== */
+#token-hud .palette.palette-actions {
     width: 185px;
     gap: 3px;
     padding: 3px;
 }
-#token-hud .palette-heal .hcard {
+#token-hud .palette-actions .actions-info {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 16px;
+    width: 100%;
+    padding: 1px 2px 1px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    margin-bottom: 2px;
+}
+#token-hud .palette-actions .dash-row {
+    display: flex;
+    align-items: stretch;
+    margin-bottom: 2px;
+}
+#token-hud .palette-actions .hcard {
     display: flex;
     flex-direction: column;
     gap: 3px;
@@ -1523,28 +1601,28 @@
     border-radius: 4px;
     background: rgba(30, 30, 30, 0.55);
 }
-#token-hud .palette-heal .hcard:hover {
+#token-hud .palette-actions .hcard:hover {
     border-color: rgba(255, 255, 255, 0.2);
     background: rgba(40, 40, 40, 0.6);
 }
-#token-hud .palette-heal .hcard.stab {
+#token-hud .palette-actions .hcard.stab {
     border-color: rgba(110, 168, 254, 0.4);
     background: rgba(50, 58, 90, 0.6);
 }
-#token-hud .palette-heal .whead {
+#token-hud .palette-actions .whead {
     display: flex;
     align-items: center;
     gap: 4px;
     min-height: 15px;
     width: 100%;
 }
-#token-hud .palette-heal .whead img {
+#token-hud .palette-actions .whead img {
     width: 15px;
     height: 15px;
     border-radius: 2px;
     flex: none;
 }
-#token-hud .palette-heal .wname {
+#token-hud .palette-actions .wname {
     font-weight: 700;
     font-size: 10.5px;
     color: #fff;
@@ -1554,7 +1632,7 @@
     flex: 1;
     min-width: 0;
 }
-#token-hud .palette-heal .charges {
+#token-hud .palette-actions .charges {
     margin-left: auto;
     font-size: 9px;
     font-weight: 700;
@@ -1562,8 +1640,8 @@
     white-space: nowrap;
     flex: none;
 }
-#token-hud .palette-heal .charges.empty { color: #e05b5b; }
-#token-hud .palette-heal .wbtn {
+#token-hud .palette-actions .charges.empty { color: #e05b5b; }
+#token-hud .palette-actions .wbtn {
     flex: 1;
     height: auto;
     min-height: 0;
@@ -1581,34 +1659,46 @@
     background: rgba(20, 20, 20, 0.8);
     font-family: inherit;
 }
-#token-hud .palette-heal .wbtn.disabled,
-#token-hud .palette-heal .wbtn:disabled {
+#token-hud .palette-actions .wbtn.disabled,
+#token-hud .palette-actions .wbtn:disabled {
     opacity: 0.45;
     cursor: not-allowed;
 }
-#token-hud .palette-heal .wbtn.disabled:hover,
-#token-hud .palette-heal .wbtn:disabled:hover { background: inherit; }
-#token-hud .palette-heal .wbtn.stab {
+#token-hud .palette-actions .wbtn.disabled:hover,
+#token-hud .palette-actions .wbtn:disabled:hover { background: inherit; }
+#token-hud .palette-actions .wbtn.stab {
     border-color: #3d5a8a;
     background: #22344a;
     color: #a0b6e2;
 }
-#token-hud .palette-heal .wbtn.stab:hover { background: #2e4a6b; }
-#token-hud .palette-heal .wbtn.heal {
+#token-hud .palette-actions .wbtn.stab:hover { background: #2e4a6b; }
+#token-hud .palette-actions .wbtn.heal {
     border-color: #3d5a2a;
     background: #22341a;
     color: #b6e2a0;
 }
-#token-hud .palette-heal .wbtn.heal:hover { background: #2e4a20; }
-#token-hud .palette-heal .wbtn.empty,
-#token-hud .palette-heal .wbtn.heal:disabled {
+#token-hud .palette-actions .wbtn.heal:hover { background: #2e4a20; }
+#token-hud .palette-actions .wbtn.dash {
+    border-color: #a88b1f;
+    background: #4a4120;
+    color: #f1d836;
+}
+#token-hud .palette-actions .wbtn.dash:hover { background: #5d5323; }
+#token-hud .palette-actions .wbtn.dash.dashed {
+    border-color: #f1d836;
+    background: #f1d836;
+    color: #3a3200;
+}
+#token-hud .palette-actions .wbtn.dash.dashed:hover { background: #ffe95f; }
+#token-hud .palette-actions .wbtn.empty,
+#token-hud .palette-actions .wbtn.heal:disabled {
     opacity: 0.45;
     cursor: not-allowed;
 }
-#token-hud .palette-heal .wbtn.empty:hover,
-#token-hud .palette-heal .wbtn.heal:disabled:hover { background: #22341a; }
-#token-hud .control-icon.heal-icon {
-    color: #8fe0ad;
+#token-hud .palette-actions .wbtn.empty:hover,
+#token-hud .palette-actions .wbtn.heal:disabled:hover { background: #22341a; }
+#token-hud .control-icon.actions-icon {
+    color: #fff;
 }
 
 /* ===== Счётчик действий в шапке листа ===== */
@@ -1676,6 +1766,12 @@
 .tinyd6.sheet.npc form.actor-sheet .td-actions .act.avail {
     background: var(--td-accent);
     border-color: var(--td-accent);
+}
+/* Пульс последнего оставшегося действия - визуальное напоминание, что
+   действие можно потратить (выкл. глобальной настройкой анимаций). */
+body:not(.td-no-fx) .tinyd6.sheet.hero form.actor-sheet .td-actions .act.last-avail.avail,
+body:not(.td-no-fx) .tinyd6.sheet.npc form.actor-sheet .td-actions .act.last-avail.avail {
+    animation: td-act-pulse 1.8s ease-in-out infinite;
 }
 .tinyd6.sheet.hero form.actor-sheet .td-actions .act.avail::after,
 .tinyd6.sheet.npc form.actor-sheet .td-actions .act.avail::after {
@@ -1747,7 +1843,18 @@
     color: var(--td-danger);
 }
 
-/* ===== Homerule: TinyD6+ — опции в листе оружия (item sheet) ===== */
+/* ===== Homerule: TinyD6+ - «Рывок» (сверхпередвижение), блок действия =====
+ * Блок выглядит как обычный блок действия (боковая подсветка от акцента),
+ * состояние рывка показывает только кнопка: активный - жёлтая. */
+.tinyd6.sheet.hero form.actor-sheet .stab-action.dash-action .dash-btn.dashed,
+.tinyd6.sheet.npc form.actor-sheet .stab-action.dash-action .dash-btn.dashed {
+    background: #f1d836;
+    color: #3a3200;
+}
+.tinyd6.sheet.npc form.actor-sheet .npc-dash { margin-top: 12px; }
+.tinyd6.sheet.npc form.actor-sheet .npc-dash .stab-action { margin-top: 0; }
+
+/* ===== Homerule: TinyD6+ - опции в листе оружия (item sheet) ===== */
 .tinyd6.sheet.item .weapon-reload-opts {
     margin: 4px 0 12px; padding: 10px 12px;
     border: 1px dashed var(--td-border, rgba(0,0,0,.2));
@@ -1772,7 +1879,7 @@
     width: 70px; text-align: center; padding: 4px 6px;
 }
 
-/* ===== Homerule: Actions — счётчик действий в окне Die Roller ===== */
+/* ===== Homerule: Actions - счётчик действий в окне Die Roller ===== */
 #die-roller .dr-actions {
     align-items: center;
     justify-content: center;
@@ -2316,7 +2423,9 @@
 .tinyd6.sheet.hero form.actor-sheet .stab-action .icon svg.td6-ico,
 .tinyd6.sheet.npc form.actor-sheet .stab-action .icon svg.td6-ico { width: 18px; height: 18px; color: var(--td-accent-soft); }
 .tinyd6.sheet.hero form.actor-sheet .stab-action .stab-btn svg.td6-ico,
-.tinyd6.sheet.npc form.actor-sheet .stab-action .stab-btn svg.td6-ico { width: 12px; height: 12px; }
+.tinyd6.sheet.npc form.actor-sheet .stab-action .stab-btn svg.td6-ico,
+.tinyd6.sheet.hero form.actor-sheet .stab-action .dash-btn svg.td6-ico,
+.tinyd6.sheet.npc form.actor-sheet .stab-action .dash-btn svg.td6-ico { width: 14px; height: 14px; }
 #token-hud svg.td6-ico { width: 20px; height: 20px; }
 #token-hud .wbtn svg.td6-ico { width: 12px; height: 12px; }
 #token-hud .hp-heart svg.td6-ico { width: 18px; height: 18px; }
@@ -2357,3 +2466,348 @@ i.fa-dice-six {
   background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNTYgMjU2KSBzY2FsZSgwLjk1IC0wLjk1KSB0cmFuc2xhdGUoLTIyNC4wIC0xOTIuMCkiPjxwYXRoIGZpbGw9IiMyQTI2MjIiIGQ9Ik0wIDM1MkMwIDM4NyAyOSA0MTYgNjQgNDE2SDM4NEM0MTkgNDE2IDQ0OCAzODcgNDQ4IDM1MlYzMkM0NDggLTMgNDE5IC0zMiAzODQgLTMySDY0QzI5IC0zMiAwIC0zIDAgMzJWMzUyWk0xNjAgMjg4QzE2MCAzMDYgMTQ2IDMyMCAxMjggMzIwQzExMCAzMjAgOTYgMzA2IDk2IDI4OEM5NiAyNzAgMTEwIDI1NiAxMjggMjU2QzE0NiAyNTYgMTYwIDI3MCAxNjAgMjg4Wk0xMjggMTYwQzE0NiAxNjAgMTYwIDE3NCAxNjAgMTkyQzE2MCAyMTAgMTQ2IDIyNCAxMjggMjI0QzExMCAyMjQgOTYgMjEwIDk2IDE5MkM5NiAxNzQgMTEwIDE2MCAxMjggMTYwWk0xNjAgOTZDMTYwIDExNCAxNDYgMTI4IDEyOCAxMjhDMTEwIDEyOCA5NiAxMTQgOTYgOTZDOTYgNzggMTEwIDY0IDEyOCA2NEMxNDYgNjQgMTYwIDc4IDE2MCA5NlpNMzIwIDI1NkMzMzggMjU2IDM1MiAyNzAgMzUyIDI4OEMzNTIgMzA2IDMzOCAzMjAgMzIwIDMyMEMzMDIgMzIwIDI4OCAzMDYgMjg4IDI4OEMyODggMjcwIDMwMiAyNTYgMzIwIDI1NlpNMzUyIDE5MkMzNTIgMjEwIDMzOCAyMjQgMzIwIDIyNEMzMDIgMjI0IDI4OCAyMTAgMjg4IDE5MkMyODggMTc0IDMwMiAxNjAgMzIwIDE2MEMzMzggMTYwIDM1MiAxNzQgMzUyIDE5MlpNMzIwIDY0QzMzOCA2NCAzNTIgNzggMzUyIDk2QzM1MiAxMTQgMzM4IDEyOCAzMjAgMTI4QzMwMiAxMjggMjg4IDExNCAyODggOTZDMjg4IDc4IDMwMiA2NCAzMjAgNjRaIi8+PC9nPjwvc3ZnPg==") center / contain no-repeat;
   display: inline-block; width: 1em; height: 1em; font-style: normal;
 }
+
+/* ============================================================
+   Макет B: боковая панель вкладок героя (Настройки рядом).
+   Селекторы с повышенной специфичностью, чтобы перекрывать
+   точечные стили тем (_td-themes.scss).
+   ============================================================ */
+.tinyd6.sheet.hero form.actor-sheet .td-layout {
+    display: flex; align-items: stretch; min-height: 0;
+}
+
+.tinyd6.sheet.hero form.actor-sheet .td-tabbar {
+    flex: 0 0 148px; width: 148px;
+    background: color-mix(in srgb, var(--td-card) 35%, var(--td-bg));
+    border-right: 1px solid var(--td-border);
+    display: flex; flex-direction: column;
+    padding: 12px 8px 18px 4px; gap: 2px;
+}
+
+.tinyd6.sheet.hero form.actor-sheet .td-tabbar-group {
+    font-size: 9px; text-transform: uppercase; letter-spacing: .12em;
+    color: var(--td-muted); margin: 14px 0 6px; line-height: 1.2;
+}
+
+.tinyd6.sheet.hero form.actor-sheet .td-tabbar-group:first-child { margin-top: 2px; }
+
+.tinyd6.sheet.hero form.actor-sheet .td-sheet-body .td-tabbar .td-tab {
+    display: flex; justify-content: flex-start; gap: 10px; align-items: center;
+    width: 100%; padding: 9px 0; margin: 2px 0;
+    border: 0; border-radius: 8px;
+    background: transparent; color: var(--td-muted);
+    font-size: 12px; font-weight: 400; text-transform: none;
+    letter-spacing: 0; font-family: inherit; text-align: left;
+    line-height: 1.2; cursor: pointer; box-shadow: none;
+}
+
+.tinyd6.sheet.hero form.actor-sheet .td-sheet-body .td-tabbar .td-tab i {
+    width: 17px; flex: 0 0 auto; text-align: left; font-size: 13px;
+}
+
+.tinyd6.sheet.hero form.actor-sheet .td-sheet-body .td-tabbar .td-tab:hover {
+    background: var(--td-hover); color: var(--td-text); box-shadow: none;
+}
+
+.tinyd6.sheet.hero form.actor-sheet .td-sheet-body .td-tabbar .td-tab.active {
+    background: var(--td-field); color: var(--td-accent); font-weight: 600;
+    box-shadow: inset -3px 0 0 var(--td-accent);
+}
+
+.tinyd6.sheet.hero form.actor-sheet .td-sheet-body .td-tabbar .td-tab.active > span {
+    color: var(--td-strong);
+}
+
+.tinyd6.sheet.hero form.actor-sheet .td-sheet-body .td-tabbar .td-tab::after { display: none; content: none; }
+
+.tinyd6.sheet.hero form.actor-sheet .td-tabbody {
+    flex: 1; min-width: 0;
+    box-shadow: inset 4px 0 10px rgba(0, 0, 0, .35);
+    padding-bottom: 6px;
+}
+
+.tinyd6.sheet.hero form.actor-sheet .td-tabbody > .td-pane { padding: 16px 18px 18px; }
+
+.tinyd6.sheet.hero form.actor-sheet .td-tabbody > .td-pane-mechanics { padding-top: 14px; }
+
+/* ===== Панель «Настройки»: секции-карточки и строки с описанием ===== */
+.tinyd6.sheet.hero form.actor-sheet .mech-intro {
+    color: var(--td-muted); font-size: 12px;
+    margin: 8px 0 16px; line-height: 1.45;
+}
+
+.tinyd6.sheet.hero form.actor-sheet .mech-section {
+    border: 1px solid var(--td-border); border-radius: 10px;
+    background: var(--td-card); margin-bottom: 16px; overflow: hidden;
+}
+
+.tinyd6.sheet.hero form.actor-sheet .mech-section > .td6-section-header,
+.tinyd6.sheet.hero form.actor-sheet .mech-section > h3.td6-section-header {
+    padding: 9px 14px; margin: 0;
+    border-bottom: 1px solid var(--td-border);
+    font-size: 10px; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--td-muted); line-height: 1.3;
+}
+
+.tinyd6.sheet.hero form.actor-sheet .mech-row {
+    display: grid; grid-template-columns: 1fr auto;
+    align-items: center; gap: 6px 12px;
+    padding: 10px 14px;
+    border-top: 1px solid color-mix(in srgb, var(--td-border) 55%, transparent);
+}
+
+.tinyd6.sheet.hero form.actor-sheet .mech-row:first-of-type { border-top: 0; }
+
+.tinyd6.sheet.hero form.actor-sheet .mech-row > label {
+    margin: 0; font-weight: 600; color: var(--td-text);
+}
+
+.tinyd6.sheet.hero form.actor-sheet .mech-row .mech-ctrl {
+    display: inline-flex; align-items: center; gap: 8px; justify-content: flex-end;
+}
+
+.tinyd6.sheet.hero form.actor-sheet .mech-row > input.inline-num,
+.tinyd6.sheet.hero form.actor-sheet .mech-row .mech-ctrl input.inline-num,
+.tinyd6.sheet.hero form.actor-sheet .mech-row select {
+    width: 96px; height: auto;
+    background: var(--td-field); border: 1px solid var(--td-border);
+    border-radius: 7px; color: var(--td-strong);
+    padding: 6px 8px; font-family: inherit; font-size: 12px;
+    text-align: center; box-shadow: none;
+}
+
+.tinyd6.sheet.hero form.actor-sheet .mech-row select { width: auto; min-width: 118px; text-align: left; }
+
+.tinyd6.sheet.hero form.actor-sheet .mech-row input::placeholder { color: var(--td-muted); opacity: .8; }
+
+.tinyd6.sheet.hero form.actor-sheet .mech-row .mech-hint {
+    grid-column: 1 / -1;
+    margin: 2px 0 0; color: var(--td-muted);
+    font-size: 11px; line-height: 1.4;
+}
+
+.tinyd6.sheet.hero form.actor-sheet .mech-row .mech-hint .mech-world { color: var(--td-accent-soft); font-weight: 600; }
+
+.tinyd6.sheet.hero form.actor-sheet .mech-badge {
+    display: inline-block; font-size: 10px; padding: 2px 7px;
+    border-radius: 6px; white-space: nowrap;
+    background: color-mix(in srgb, var(--td-accent) 16%, transparent);
+    color: var(--td-accent-soft);
+    border: 1px solid color-mix(in srgb, var(--td-accent) 38%, transparent);
+}
+
+/* ===== Владения оружием: подписи, при сужении - список вниз ===== */
+.tinyd6.sheet.hero form.actor-sheet .proficiencies .prof-row { flex-wrap: wrap; }
+.tinyd6.sheet.hero form.actor-sheet .proficiencies .prof-row > div { margin-bottom: 2px; }
+.tinyd6.sheet.hero form.actor-sheet .proficiencies .lab-abbr { display: none; }
+
+/* ===== Плашка «Мастер»: компактная пилюля + выбор оружия ===== */
+.tinyd6.sheet.hero form.actor-sheet .proficiencies .mastered-slot {
+    display: flex; align-items: center; gap: 4px; padding: 2px 0;
+}
+.tinyd6.sheet.hero form.actor-sheet .proficiencies .mastered-slot .mastered-weapon-picker,
+.tinyd6.sheet.hero form.actor-sheet .proficiencies .mastered-weapon-picker {
+    display: inline-flex; align-items: center; gap: 5px;
+    min-width: 0; flex: 1 1 auto;
+    padding: 2px 8px; font-size: 12px; border-radius: 6px;
+    color: var(--td-text);
+}
+.tinyd6.sheet.hero form.actor-sheet .proficiencies .mastered-weapon-picker i { font-size: 11px; flex: 0 0 auto; }
+.tinyd6.sheet.hero form.actor-sheet .proficiencies .mastered-slot-kicker {
+    flex: 0 0 auto; font-size: 11px; color: var(--td-muted); white-space: nowrap;
+}
+.tinyd6.sheet.hero form.actor-sheet .proficiencies .mastered-slot-name {
+    flex: 1 1 auto; min-width: 0;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ============================================================
+   NPC: тот же каркас вкладок, что и у героя (Макет B).
+   ============================================================ */
+.tinyd6.sheet.npc form.actor-sheet .td-pane { display: none; padding-top: 16px; }
+.tinyd6.sheet.npc form.actor-sheet .td-pane.active {
+    display: block; animation: tinyd6FadeIn .18s ease;
+}
+
+.tinyd6.sheet.npc form.actor-sheet .td-layout {
+    display: flex; align-items: stretch; min-height: 0;
+}
+
+.tinyd6.sheet.npc form.actor-sheet .td-tabbar {
+    flex: 0 0 148px; width: 148px;
+    background: color-mix(in srgb, var(--td-card) 35%, var(--td-bg));
+    border-right: 1px solid var(--td-border);
+    display: flex; flex-direction: column;
+    padding: 12px 8px 18px 4px; gap: 2px;
+}
+
+.tinyd6.sheet.npc form.actor-sheet .td-tabbar-group {
+    font-size: 9px; text-transform: uppercase; letter-spacing: .12em;
+    color: var(--td-muted); margin: 14px 0 6px; line-height: 1.2;
+}
+
+.tinyd6.sheet.npc form.actor-sheet .td-tabbar-group:first-child { margin-top: 2px; }
+
+.tinyd6.sheet.npc form.actor-sheet .td-sheet-body .td-tabbar .td-tab {
+    display: flex; justify-content: flex-start; gap: 10px; align-items: center;
+    width: 100%; padding: 9px 0; margin: 2px 0;
+    border: 0; border-radius: 8px;
+    background: transparent; color: var(--td-muted);
+    font-size: 12px; font-weight: 400; text-transform: none;
+    letter-spacing: 0; font-family: inherit; text-align: left;
+    line-height: 1.2; cursor: pointer; box-shadow: none;
+}
+
+.tinyd6.sheet.npc form.actor-sheet .td-sheet-body .td-tabbar .td-tab i {
+    width: 17px; flex: 0 0 auto; text-align: left; font-size: 13px;
+}
+
+.tinyd6.sheet.npc form.actor-sheet .td-sheet-body .td-tabbar .td-tab:hover {
+    background: var(--td-hover); color: var(--td-text); box-shadow: none;
+}
+
+.tinyd6.sheet.npc form.actor-sheet .td-sheet-body .td-tabbar .td-tab.active {
+    background: var(--td-field); color: var(--td-accent); font-weight: 600;
+    box-shadow: inset -3px 0 0 var(--td-accent);
+}
+
+.tinyd6.sheet.npc form.actor-sheet .td-sheet-body .td-tabbar .td-tab.active > span {
+    color: var(--td-strong);
+}
+
+.tinyd6.sheet.npc form.actor-sheet .td-sheet-body .td-tabbar .td-tab::after { display: none; content: none; }
+
+.tinyd6.sheet.npc form.actor-sheet .td-tabbody {
+    flex: 1; min-width: 0;
+    box-shadow: inset 4px 0 10px rgba(0, 0, 0, .35);
+    padding-bottom: 6px;
+}
+
+.tinyd6.sheet.npc form.actor-sheet .td-tabbody > .td-pane { padding: 16px 18px 18px; }
+
+.tinyd6.sheet.npc form.actor-sheet .td-tabbody > .td-pane-mechanics { padding-top: 14px; }
+
+/* ===== NPC: панель «Настройки» ===== */
+.tinyd6.sheet.npc form.actor-sheet .mech-intro {
+    color: var(--td-muted); font-size: 12px;
+    margin: 8px 0 16px; line-height: 1.45;
+}
+
+.tinyd6.sheet.npc form.actor-sheet .mech-section {
+    border: 1px solid var(--td-border); border-radius: 10px;
+    background: var(--td-card); margin-bottom: 16px; overflow: hidden;
+}
+
+.tinyd6.sheet.npc form.actor-sheet .mech-section > .td6-section-header,
+.tinyd6.sheet.npc form.actor-sheet .mech-section > h3.td6-section-header {
+    padding: 9px 14px; margin: 0;
+    border-bottom: 1px solid var(--td-border);
+    font-size: 10px; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--td-muted); line-height: 1.3;
+}
+
+.tinyd6.sheet.npc form.actor-sheet .mech-row {
+    display: grid; grid-template-columns: 1fr auto;
+    align-items: center; gap: 6px 12px;
+    padding: 10px 14px;
+    border-top: 1px solid color-mix(in srgb, var(--td-border) 55%, transparent);
+}
+
+.tinyd6.sheet.npc form.actor-sheet .mech-row:first-of-type { border-top: 0; }
+
+.tinyd6.sheet.npc form.actor-sheet .mech-row > label {
+    margin: 0; font-weight: 600; color: var(--td-text);
+}
+
+.tinyd6.sheet.npc form.actor-sheet .mech-row .mech-ctrl {
+    display: inline-flex; align-items: center; gap: 8px; justify-content: flex-end;
+}
+
+.tinyd6.sheet.npc form.actor-sheet .mech-row > input.inline-num,
+.tinyd6.sheet.npc form.actor-sheet .mech-row .mech-ctrl input.inline-num,
+.tinyd6.sheet.npc form.actor-sheet .mech-row select {
+    width: 96px; height: auto;
+    background: var(--td-field); border: 1px solid var(--td-border);
+    border-radius: 7px; color: var(--td-strong);
+    padding: 6px 8px; font-family: inherit; font-size: 12px;
+    text-align: center; box-shadow: none;
+}
+
+.tinyd6.sheet.npc form.actor-sheet .mech-row select { width: auto; min-width: 118px; text-align: left; }
+
+.tinyd6.sheet.npc form.actor-sheet .mech-row .mech-hint {
+    grid-column: 1 / -1;
+    margin: 2px 0 0; color: var(--td-muted);
+    font-size: 11px; line-height: 1.4;
+}
+
+/* ===== NPC: вкладка «Описание» - био + фракция ===== */
+.tinyd6.sheet.npc form.actor-sheet .npc-bio-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px;
+}
+
+.tinyd6.sheet.npc form.actor-sheet .npc-bio {
+    display: flex; flex-direction: column; gap: 4px; min-width: 0;
+}
+
+.tinyd6.sheet.npc form.actor-sheet .npc-bio label {
+    font-size: 9px; text-transform: uppercase; letter-spacing: .1em;
+    color: var(--td-muted); margin: 0;
+}
+
+.tinyd6.sheet.npc form.actor-sheet .npc-bio input,
+.tinyd6.sheet.npc form.actor-sheet .npc-bio textarea {
+    width: 100%; background: var(--td-field); border: 1px solid var(--td-border);
+    border-radius: 6px; color: var(--td-text); padding: 6px 8px;
+    font-family: inherit; font-size: 12px; outline: none; box-shadow: none; height: auto;
+}
+
+.tinyd6.sheet.npc form.actor-sheet .npc-bio input:focus,
+.tinyd6.sheet.npc form.actor-sheet .npc-bio textarea:focus { border-color: var(--td-accent); }
+
+.tinyd6.sheet.npc form.actor-sheet .npc-bio.wide { grid-column: 1 / -1; }
+
+.tinyd6.sheet.npc form.actor-sheet .npc-faction {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    background: var(--td-card); border: 1px solid var(--td-border);
+    border-radius: 10px; padding: 10px 12px; margin-top: 14px;
+}
+
+.tinyd6.sheet.npc form.actor-sheet .npc-faction > img,
+.tinyd6.sheet.npc form.actor-sheet .npc-faction .npc-faction-icon {
+    width: 38px; height: 38px; border-radius: 8px; flex: none;
+    border: 1px solid var(--td-border); object-fit: cover; background: var(--td-field);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--td-muted); font-size: 15px;
+}
+
+.tinyd6.sheet.npc form.actor-sheet .npc-faction-body { flex: 1; min-width: 0; }
+
+.tinyd6.sheet.npc form.actor-sheet .npc-faction-name {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .1em;
+    color: var(--td-accent); font-weight: 600; margin-bottom: 6px;
+}
+
+.tinyd6.sheet.npc form.actor-sheet .npc-faction-fields {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 6px 12px;
+}
+
+.tinyd6.sheet.npc form.actor-sheet .npc-faction-field {
+    display: flex; align-items: center; gap: 6px; min-width: 0;
+}
+
+.tinyd6.sheet.npc form.actor-sheet .npc-faction-field > span {
+    flex: 0 0 auto; font-size: 10px; color: var(--td-muted);
+    text-transform: uppercase; letter-spacing: .06em; white-space: nowrap;
+}
+
+.tinyd6.sheet.npc form.actor-sheet .npc-faction-field input {
+    flex: 1; min-width: 0; background: var(--td-field);
+    border: 1px solid var(--td-border); border-radius: 6px;
+    color: var(--td-text); padding: 4px 8px;
+    font-family: inherit; font-size: 12px; outline: none; box-shadow: none; height: auto;
+}
+
+.tinyd6.sheet.npc form.actor-sheet .npc-faction-field.note { margin-top: 6px; }
+
+.tinyd6.sheet.npc form.actor-sheet .npc-description-editor { margin-top: 16px; }

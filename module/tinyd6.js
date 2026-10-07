@@ -4,11 +4,24 @@ import TinyD6ItemSheet from "./sheets/TinyD6ItemSheet.js";
 import TinyD6HeroSheet from "./sheets/TinyD6HeroSheet.js";
 import TinyD6NpcSheet from "./sheets/TinyD6NpcSheet.js";
 import TinyD6TokenHUD from "./applications/TinyD6TokenHUD.js";
+import TinyTokenRuler from "./canvas/TokenRuler.js";
 import DieRoller from "./applications/DieRoller.js";
 import * as Dice from "./helpers/dice.js";
 import { registerDeathStatusEffects, handleZeroHp, clearDeathState, tickDeathTimers, applyStabilizeConfirmation } from "./helpers/death.js";
 import { registerSystemSocket, broadcastFx, gmProxy } from "./helpers/socket.js";
+import { initDeathFxHooks } from "./helpers/deathFx.js";
 import { iconSvg } from "./helpers/icons.js";
+
+/* Палитры тем для инлайн-покраски чат-карточек (Carolingian UI бьёт CSS -
+ * красим из JS с !important). Держим синхронно с --td-* в
+ * scss/theme/_td-themes.scss. */
+const TINYD6_THEME_PALETTES = {
+    "td-sheet-default":   { accent: "#4a52ca", accentSoft: "#6ea8fe", card: "#24242a", text: "#d7d8dc", border: "#3b3b44", field: "#2f2f36", bg: "#1b1b1f" },
+    "td-sheet-minimal":   { accent: "#2e6eb0", accentSoft: "#4f7fb5", card: "#d5d5d1", text: "#27272c", border: "#b0b0aa", field: "#e4e4e0", bg: "#dedede" },
+    "td-sheet-perkament": { accent: "#8b2f2f", accentSoft: "#a85a3c", card: "#ddcca6", text: "#241c0f", border: "#a08a58", field: "#e4d6b2", bg: "#cdbb92" },
+    "td-sheet-noir":      { accent: "#b0773a", accentSoft: "#d3a25e", card: "#16181d", text: "#d8d8d8", border: "#2c2c34", field: "#1b1d23", bg: "#0d0e11" },
+    "td-sheet-cyberpunk": { accent: "#00e5d0", accentSoft: "#ff2e88", card: "#10141b", text: "#b8e6e0", border: "#23415a", field: "#151b24", bg: "#0a0c10" }
+};
 
 export class TinyD6System {
     static SYSTEM = "tinyd6v14";
@@ -26,7 +39,19 @@ export class TinyD6System {
         Items.unregisterSheet("core", ItemSheet);
         Items.registerSheet(TinyD6System.SYSTEM, TinyD6ItemSheet, { makeDefault: true });
 
+        // Публичный API для модулей: регистрация собственных вкладок в листах предметов.
+        // Модули вызывают game.tinyd6ItemSheets.registerTab(type, { key, label, icon, render }).
+        game.tinyd6ItemSheets = { registerTab: TinyD6ItemSheet.registerTab.bind(TinyD6ItemSheet) };
+
         CONFIG.Token.hudClass = TinyD6TokenHUD;
+
+        // Homerule: TinyD6+ - раскраска пути токена по бюджету передвижения
+        // (зелёный/жёлтый/красный). Если ядро не экспонирует TokenRuler -
+        // тихо пропускаем, останется дефолтный путь Foundry.
+        if (foundry?.canvas?.placeables?.tokens?.TokenRuler)
+        {
+            CONFIG.Token.rulerClass = TinyTokenRuler;
+        }
 
         registerGameSettings();
         // Мировые правила меняются → перезагрузка клиента (F5), чтобы
@@ -35,7 +60,7 @@ export class TinyD6System {
         this._preloadHandlebarsTemplates();
         registerDeathStatusEffects();
 
-        // Carolingian UI и тематизация чата — регистрируем уже в init():
+        // Carolingian UI и тематизация чата - регистрируем уже в init():
         // хук ready() не срабатывает, если инициализация канваса упала
         // (сломанный модуль/старый Chromium), а листы и чат тогда остаются
         // без нашей темы.
@@ -44,7 +69,12 @@ export class TinyD6System {
         Hooks.on("renderActorSheet", () => TinyD6System._injectCarolingianCompat());
         Hooks.on("renderTokenHUD", () => TinyD6System._injectCarolingianCompat());
         Hooks.on("renderChatLog", () => TinyD6System._injectCarolingianCompat());
+        Hooks.on("renderChatLog", (log, html) => TinyD6System._paintCardDiceIcons(html));
         Hooks.on("renderChatMessage", (message, html) => TinyD6System._onRenderChatMessage(message, html));
+        // Смена темы в настройках → сразу обновляем палитру на <body>.
+        Hooks.on("updateSetting", (setting) => {
+            if (setting.key === (TinyD6System.SYSTEM + ".sheetStyle")) TinyD6System._applyBodyTheme();
+        });
     
         Handlebars.registerHelper("times", function(n, content)
         {
@@ -74,7 +104,7 @@ export class TinyD6System {
 
     /* Переопределение getBarAttribute для токена: принудительно показываем
      * полосы атрибутов в HUD токена (Bar 1 = HP, Bar 2 = уровень порчи у
-     * героев). Если в Token Config вручную задан явный атрибут — уважаем его.
+     * героев). Если в Token Config вручную задан явный атрибут - уважаем его.
      * Bar 2 для NPC отсутствует (нет поля corruptionThreshold) и скрывается. */
     /* Настройка полос токена: Bar 1 = HP, Bar 2 = уровень порчи у героев.
      * Вместо монки-патча прототипа переопределяем поведение через чистую
@@ -85,7 +115,7 @@ export class TinyD6System {
     static _patchTokenBarAttributes() {
         const TokenClass = CONFIG.Token.documentClass;
 
-        // Если системные атрибуты уже заданы корректно — патч не нужен.
+        // Если системные атрибуты уже заданы корректно - патч не нужен.
         // Проверяем только, что core-метод не переопределён нами ранее.
         if (TokenClass.prototype._tdBarPatched) return;
         TokenClass.prototype._tdBarPatched = true;
@@ -128,24 +158,34 @@ export class TinyD6System {
     }
 
     static ready() {
-        console.log("tinyd6 | ready");
+        // Производительность: гасим DEBUG-спам ядра (CONFIG.debug.hooks) -
+        // какой-то из модулей в этой сборке включает его, и Foundry пишет в
+        // консоль каждую регистрацию/вызов хука (тысячи строк), что сильно
+        // нагружает клиент и рвёт WebGL-контекст при работе канваса.
+        try { CONFIG.debug.hooks = false; } catch (err) { /* ignore */ }
+        console.log("tinyd6 | ready [build 2026-09-11s]");
         registerSystemSocket();
         TinyD6System.displayFloatingDieRollerApplication();
         TinyD6System.patchCoinTexture();
         TinyD6System._migrateShieldItems();
         TinyD6System._injectCarolingianCompat();
+        // Тема на <body>: чтобы чат-карточки не зависели от класса на
+        // самом сообщении, а палитра наследовалась от body.
+        TinyD6System._applyBodyTheme();
 
         // Применяем выключатель анимаций к текущему клиенту при старте.
         const animFx = game.settings.get('tinyd6v14', 'animFx');
         document.body.classList.toggle("td-no-fx", animFx === false);
-        // CONFIG.statusEffects перезаписывается при setup — повторно
+        // CONFIG.statusEffects перезаписывается при setup - повторно
         // регистрируем статусы смерти на ready, чтобы токены их видели.
         registerDeathStatusEffects();
+        // Подсветка токенов умирающих персонажей (хуки пана/зума/сцены).
+        initDeathFxHooks();
     }
 
     /* Тематизация одной чат-карточки: вешаем текущий sheetStyle на
      * сообщение, чтобы карточки (бросок/атака/предмет) брали палитру темы.
-     * Вынесено из ready() — хук регистрируется в init(), чтобы тематизация
+     * Вынесено из ready() - хук регистрируется в init(), чтобы тематизация
      * работала даже если инициализация канваса упала. */
     static _onRenderChatMessage(message, html)
     {
@@ -155,21 +195,236 @@ export class TinyD6System {
 
         // Идентификатор сообщения на карточке: чтобы её синхронно
         // обновлять через ChatMessage.update() (кнопка применения урона,
-        // отчёт и т.п.) — тогда Foundry перерисует сразу у всех клиентов.
+        // отчёт и т.п.) - тогда Foundry перерисует сразу у всех клиентов.
         const card = html.find(".td6-attack-card, .heal-confirm, .stab-confirm").first();
         if (card.length) card.attr("data-message-id", message.id);
 
-        // Применение урона — только GM, либо игроки, если включён
+        // Применение урона - только GM, либо игроки, если включён
         // GM-прокси урона (enablePlayerDamageProxy). Подтверждение
-        // хила/стабилизации (fallback без socket) — только GM.
+        // хила/стабилизации (fallback без socket) - только GM.
         if (!game.user.isGM)
         {
             const damageProxy = game.settings.get('tinyd6v14', 'enableTinyD6Plus')
                 && game.settings.get('tinyd6v14', 'enablePlayerDamageProxy');
             if (!damageProxy) html.find(".attack-apply").remove();
+            // Кнопки ± урона (награда за креативную заявку) и «Откат урона» - только GM.
+            html.find(".attack-damage-step").remove();
+            html.find(".attack-undo-damage").remove();
             html.find(".heal-apply").remove();
             html.find(".stab-apply").remove();
         }
+
+        // Красим иконки кубиков инлайн-стилем: Carolingian UI (Custom-тема)
+        // красит напрямую каждый элемент (*, i.fas, h3…), побеждая любой
+        // CSS. Инлайн-значение с !important CSS перебить не может.
+        TinyD6System._paintCardDiceIcons(html);
+    }
+
+    /* Принудительная покраска чат-карточек и их иконок кубиков инлайн-стилем.
+     * Carolingian UI (Custom-тема) красит напрямую каждый элемент (*, i.fas, h3…),
+     * CSS ему «не противостоит». Палитру текущей темы берём из JS-карты
+     * TINYD6_THEME_PALETTES (по настройке sheetStyle) и ставим цвета инлайн
+     * с !important - CSS перебить не может. Заодно форсируем семейство FA7,
+     * чтобы Carolingian не подменял глифы своим шрифтом. */
+    static _paintCardDiceIcons(root, _followUp = false)
+    {
+        if (!root) return;
+        // renderChatLog отдаёт сырой HTMLElement, а не jQuery - приводим
+        // единообразно (упало бы на root.find).
+        if (typeof root.find !== "function") root = $(root);
+
+        let sheetStyle = "td-sheet-default";
+        try
+        {
+            sheetStyle = game.settings.get(TinyD6System.SYSTEM, "sheetStyle") || sheetStyle;
+        }
+        catch (err) { /* ignore */ }
+
+        const p = TINYD6_THEME_PALETTES[sheetStyle] || TINYD6_THEME_PALETTES["td-sheet-default"];
+
+        // Сама карточка атаки и плашка разбора кубиков - фон/текст/бордер темы.
+        root.find(".tinyd6.td6-attack-card").each((i, el) => {
+            el.style.setProperty("background", p.card, "important");
+            el.style.setProperty("color", p.text, "important");
+            el.style.setProperty("border", "1px solid " + p.border, "important");
+        });
+        root.find(".tinyd6.td6-attack-card .attack-die").each((i, el) => {
+            el.style.setProperty("background", p.field, "important");
+            el.style.setProperty("border", "1px solid " + p.border, "important");
+            el.style.setProperty("color", p.accent, "important");
+        });
+        root.find(".tinyd6.td6-dice-breakdown").each((i, el) => {
+            el.style.setProperty("background", p.card, "important");
+            el.style.setProperty("color", p.text, "important");
+            el.style.setProperty("border", "1px solid " + p.border, "important");
+        });
+
+        // Сами иконки кубиков - акцент темы + семейство FA7. Берём любые
+        // иконоподобные элементы внутри клетки кубика (i/span), а не только
+        // фабрично отрендеренные классы: Carolingian может подменить глиф.
+        const selector = [
+            ".tinyd6.td6-attack-card .attack-die i.fas",
+            ".tinyd6.td6-attack-card .attack-die i.fa-solid",
+            ".tinyd6.td6-attack-card .attack-die span.fas",
+            ".tinyd6.td6-attack-card .attack-die span.fa-solid",
+            ".tinyd6.td6-attack-card .attack-die [class*='fa-dice-']",
+            ".tinyd6.td6-attack-card .attack-die [class*='fa-gem-']",
+            ".tinyd6.td6-dice-breakdown i.fas",
+            ".tinyd6.td6-dice-breakdown i.fa-solid",
+            ".tinyd6.td6-dice-breakdown span.fas",
+            ".tinyd6.td6-dice-breakdown span.fa-solid",
+            ".tinyd6.td6-dice-breakdown [class*='fa-dice-']",
+            ".tinyd6.td6-dice-breakdown [class*='fa-shield-']"
+        ].join(", ");
+        root.find(selector).each((i, el) => {
+            el.style.setProperty("color", p.accent, "important");
+            el.style.setProperty("font-family", "var(--_fa-family, 'Font Awesome 7 Pro')", "important");
+        });
+
+        // Форс-пасс: ЛЮБОЙ потомок клетки кубика - акцент темы. Покрывает
+        // svg Font Awesome (JS-режим), псевдоглифы и пересобранные
+        // Carolingian'ом иконки, у которых съехали/сменились классы.
+        root.find(".tinyd6.td6-attack-card .attack-die *").each((i, el) => {
+            el.style.setProperty("color", p.accent, "important");
+            el.style.setProperty("fill", p.accent, "important");
+            el.style.setProperty("font-family", "var(--_fa-family, 'Font Awesome 7 Pro')", "important");
+        });
+        root.find(".tinyd6.td6-attack-card .attack-die svg path").each((i, el) => {
+            el.style.setProperty("fill", p.accent, "important");
+        });
+
+        // Грани fa-dice-one..six - это фоновые SVG-картинки (не глифы FA):
+        // color/fill их не красят. Перекрашиваем через alpha-mask: фон -> акцент,
+        // исходная картинка -> mask-image (важна только прозрачность SVG, тёмный
+        // fill внутри не мешает). Силуэт грани остаётся, цвет становится акцентным.
+        const bgDieSelector = [
+            ".tinyd6.td6-attack-card .attack-die [class*='fa-dice-']",
+            ".tinyd6.td6-dice-breakdown [class*='fa-dice-']",
+            ".tinyd6.death-mini .death-mini-rolls [class*='fa-dice-']"
+        ].join(", ");
+        root.find(bgDieSelector).each((i, el) => {
+            const st = getComputedStyle(el);
+            if (st.display === "none") return;
+            const bg = st.backgroundImage;
+            if (!bg || bg === "none" || !bg.startsWith("url(")) return;
+            el.style.setProperty("background", p.accent, "important");
+            el.style.setProperty("mask-image", bg, "important");
+            el.style.setProperty("mask-size", "contain", "important");
+            el.style.setProperty("mask-position", "center", "important");
+            el.style.setProperty("mask-repeat", "no-repeat", "important");
+            el.style.setProperty("-webkit-mask-image", bg, "important");
+            el.style.setProperty("-webkit-mask-size", "contain", "important");
+            el.style.setProperty("-webkit-mask-position", "center", "important");
+            el.style.setProperty("-webkit-mask-repeat", "no-repeat", "important");
+        });
+
+        // Кнопки карточки атаки - по палитре темы.
+        root.find(".tinyd6.td6-attack-card .attack-apply").each((i, el) => {
+            el.style.setProperty("background", p.accent, "important");
+            el.style.setProperty("color", "#fff", "important");
+        });
+        root.find(".tinyd6.td6-attack-card .attack-apply i.fas, .tinyd6.td6-attack-card .attack-apply .fa-solid, .tinyd6.td6-attack-card .attack-apply .fas").each((i, el) => {
+            el.style.setProperty("color", "#fff", "important");
+        });
+        root.find(".tinyd6.td6-attack-card .attack-undo").each((i, el) => {
+            el.style.setProperty("background", p.field, "important");
+            el.style.setProperty("color", p.accent, "important");
+            el.style.setProperty("border", "1px solid " + p.border, "important");
+        });
+        root.find(".tinyd6.td6-attack-card .attack-undo i.fas, .tinyd6.td6-attack-card .attack-undo .fa-solid, .tinyd6.td6-attack-card .attack-undo .fas").each((i, el) => {
+            el.style.setProperty("color", p.accent, "important");
+        });
+        root.find(".tinyd6.td6-attack-card .attack-undo-damage").each((i, el) => {
+            el.style.setProperty("background", p.field, "important");
+            el.style.setProperty("color", p.accent, "important");
+            el.style.setProperty("border", "1px solid " + p.border, "important");
+        });
+        root.find(".tinyd6.td6-attack-card .attack-undo-damage i.fas, .tinyd6.td6-attack-card .attack-undo-damage .fa-solid, .tinyd6.td6-attack-card .attack-undo-damage .fas").each((i, el) => {
+            el.style.setProperty("color", p.accent, "important");
+        });
+
+        // Правая панель урона («табель»): фон поля, перегородка, цифра урона
+        // и кнопки ± - по палитре темы.
+        root.find(".tinyd6.td6-attack-card .attack-card-dmg").each((i, el) => {
+            el.style.setProperty("background", p.field, "important");
+            el.style.setProperty("border-left", "1px solid " + p.border, "important");
+            el.style.setProperty("color", p.text, "important");
+        });
+        root.find(".tinyd6.td6-attack-card .attack-card-dmg .attack-damage-value").each((i, el) => {
+            el.style.setProperty("color", p.accent, "important");
+        });
+        root.find(".tinyd6.td6-attack-card .attack-card-dmg .attack-damage-step").each((i, el) => {
+            el.style.setProperty("background", p.card, "important");
+            el.style.setProperty("border", "1px solid " + p.border, "important");
+            el.style.setProperty("color", p.accent, "important");
+        });
+
+        // MutationObserver: Carolingian (и другие модули) перекрашивают иконки
+        // инлайн после нас. Один глобальный observer на #chat / #chat-notifications
+        // с фильтрами style + fill + class + childList. При обнаружении
+        // каскада Carolingian'а - целиком перекрашиваем задетую карточку,
+        // но не чаще раза за тик (guard по dataset, а не таймер).
+        if (!TinyD6System._iconObserver)
+        {
+            TinyD6System._iconObserver = new MutationObserver((mutations) => {
+                const cards = new Set();
+                for (const m of mutations)
+                {
+                    const t = m.target;
+                    if (t?.nodeType === 1 && t.closest?.(".tinyd6.td6-attack-card"))
+                        cards.add(t.closest(".tinyd6.td6-attack-card"));
+                    if (m.type === "childList")
+                    {
+                        for (const n of m.addedNodes)
+                        {
+                            if (n?.nodeType !== 1) continue;
+                            if (n.matches?.(".tinyd6.td6-attack-card")) cards.add(n);
+                            n.querySelectorAll?.(".tinyd6.td6-attack-card").forEach(c => cards.add(c));
+                        }
+                    }
+                }
+                for (const card of cards)
+                {
+                    if (card.dataset._paintGuard === "1") continue;
+                    card.dataset._paintGuard = "1";
+                    try { TinyD6System._paintCardDiceIcons($(card), true); }
+                    finally { setTimeout(() => { delete card.dataset._paintGuard; }, 0); }
+                }
+            });
+        }
+        for (const logId of ["chat", "chat-notifications"])
+        {
+            const el = document.getElementById(logId);
+            if (el && !el.dataset?.tinyd6Obs)
+            {
+                if (el.dataset) el.dataset.tinyd6Obs = "1";
+                TinyD6System._iconObserver.observe(el, {
+                    subtree: true, attributes: true,
+                    attributeFilter: ["style", "fill", "class"], childList: true
+                });
+            }
+        }
+
+        // Carolingian может перекрасить иконки уже ПОСЛЕ renderChatMessage
+        // (инлайн-палитрой своей темы). Один повторный проход через 150 мс
+        // добивает окончательно; MutationObserver ловит остатки.
+        if (!_followUp) setTimeout(() => TinyD6System._paintCardDiceIcons(root, true), 150);
+    }
+
+    /* Класс текущей темы вешаем на <body>: палитра наследуется всеми
+     * чат-карточками (атака/проверки/предметы) и элементами вне листа,
+     * даже если класс не попал на само сообщение. Слушаем и смену
+     * настройки (updateSetting), чтобы тема менялась без перезагрузки. */
+    static _applyBodyTheme()
+    {
+        try
+        {
+            const keys = ["td-sheet-default", "td-sheet-minimal", "td-sheet-perkament", "td-sheet-noir", "td-sheet-cyberpunk"];
+            document.body.classList.remove(...keys);
+            const sheetStyle = game.settings.get(TinyD6System.SYSTEM, "sheetStyle") || "td-sheet-default";
+            document.body.classList.add(keys.includes(sheetStyle) ? sheetStyle : "td-sheet-default");
+        }
+        catch (err) { /* настройка может быть ещё не готова на init - тихо пропускаем */ }
     }
 
     /* Кастомная текстура монеты для модуля «Dice So Nice!». Спрайт-атлас
@@ -205,11 +460,11 @@ export class TinyD6System {
      * поэтому наш компилированный CSS (tinyd6.css) всегда
      * перекрывается. Решение: добавить наш <style> позже всех. */
     /* Foundry v14 грузит CSS систем внутри @layer(system), а CSS ядра
-     * (например, «themed»-стили кнопок) и модулей (Carolingian) — БЕЗ слоя.
+     * (например, «themed»-стили кнопок) и модулей (Carolingian) - БЕЗ слоя.
      * Безслойные обычные правила бьют слоёные при любой специфичности,
      * из-за чего кнопки/карточки теряют нашу тему (серые ромбы действий,
      * серые задники сообщений). Лечение: подключаем тот же tinyd6.css
-     * вторым безслойным <link> — он стоит в <head> позже всех и каскад
+     * вторым безслойным <link> - он стоит в <head> позже всех и каскад
      * возвращается к дов14-поведению. */
     static _ensureUnlayeredStyles() {
         let link = document.getElementById("tinyd6-unlayered");
@@ -240,7 +495,7 @@ export class TinyD6System {
    ================================================================ */
 
 /* ---- FontAwesome icons: Foundry v14 = Font Awesome 7 (--_fa-family).
-   "Font Awesome 6 Free" не существует на v14 — его жёсткое прописывание
+   "Font Awesome 6 Free" не существует на v14 - его жёсткое прописывание
    давало «тофу» вместо иконок. Семейство берём из переменной ядра,
    вес не трогаем (900 у .far ломает обычные иконки). ---- */
 body.crlngn-ui .tinyd6 i.fas,
@@ -258,7 +513,7 @@ body.crlngn-ui .float-num .fa-solid {
 
 /* ---- Акцентные цвета: свои, а не от темы Carolingian.
    Специфичность выше, чем у body.crlngn-ui.game .app из crlngn,
-   и стиль инжектится без слоя и позже — поэтому побеждаем. ---- */
+   и стиль инжектится без слоя и позже - поэтому побеждаем. ---- */
 body.crlngn-ui .app.tinyd6.sheet,
 body.crlngn-ui .chat-message .tinyd6 {
     --color-warm-1: var(--td-accent-soft) !important;
@@ -271,6 +526,31 @@ body.crlngn-ui .chat-message .tinyd6 .td6-attack-card {
     background: var(--td-card) !important;
     border-color: var(--td-border) !important;
     color: var(--td-text) !important;
+}
+body.crlngn-ui .chat-message .tinyd6 .td6-attack-card .attack-die {
+    background: var(--td-field) !important;
+    border-color: var(--td-border) !important;
+    color: var(--td-accent) !important;
+}
+/* Carolingian Custom-тема красит напрямую каждый элемент
+   (h3, i.fas, div… *:not(.degree)) цветом своей темы - наследование
+   от .attack-die до иконки не доходит. Красим сами иконки:
+   !important + высокая специфичность побеждают любой её каскад. */
+body.crlngn-ui .chat-message .tinyd6 .td6-attack-card .attack-die i.fas,
+body.crlngn-ui .chat-message .tinyd6 .td6-attack-card .attack-die span.fas,
+body.crlngn-ui .chat-message .tinyd6 .td6-attack-card .attack-die .fa-solid,
+body.crlngn-ui .chat-message .tinyd6 .td6-attack-card .attack-die [class*="fa-dice-"] {
+    color: var(--td-accent) !important;
+}
+body.crlngn-ui .chat-message .tinyd6 .td6-attack-card .attack-apply i,
+body.crlngn-ui .chat-message .tinyd6 .td6-attack-card .attack-apply .fas,
+body.crlngn-ui .chat-message .tinyd6 .td6-attack-card .attack-apply .fa-solid {
+    color: #fff !important;
+}
+body.crlngn-ui .chat-message .tinyd6 .td6-attack-card .attack-undo i,
+body.crlngn-ui .chat-message .tinyd6 .td6-attack-card .attack-undo .fas,
+body.crlngn-ui .chat-message .tinyd6 .td6-attack-card .attack-undo .fa-solid {
+    color: var(--td-accent) !important;
 }
 body.crlngn-ui .chat-message .tinyd6 .td6-attack-card .attack-apply {
     background: var(--td-accent) !important;
@@ -296,8 +576,16 @@ body.crlngn-ui .chat-message .tinyd6 .td6-dice-breakdown {
     color: var(--td-text) !important;
     border-color: var(--td-border) !important;
 }
-body.crlngn-ui .chat-message .tinyd6 .td6-dice-breakdown .fas {
-    color: var(--td-accent-soft) !important;
+body.crlngn-ui .chat-message .tinyd6 .td6-dice-breakdown .fas,
+body.crlngn-ui .chat-message .tinyd6 .td6-dice-breakdown .fa-solid,
+body.crlngn-ui .chat-message .tinyd6 .td6-dice-breakdown [class*="fa-dice-"] {
+    color: var(--td-accent) !important;
+}
+/* Текст на цветных чипах успеха/провала: Carolingian красит h3
+   напрямую - белый нужен всегда. */
+body.crlngn-ui .tinyd6.td6-roll-result.bg-success h3,
+body.crlngn-ui .tinyd6.td6-roll-result.bg-danger h3 {
+    color: #fff !important;
 }
 
 /* ---- Reload stub in chat ---- */
@@ -409,7 +697,7 @@ Hooks.once("init", () => {
 
 Hooks.on("ready", TinyD6System.ready);
 
-/* Токены на сцене: NPC — независимые копии (unlinked), герои — связаны
+/* Токены на сцене: NPC - независимые копии (unlinked), герои - связаны
  * со своим актёром (linked). Для NPC, если включена настройка
  * independentNpcTokens, каждый токен получает свой ActorDelta (свои
  * HP/армор) и не связан с шаблоном в директории. Героев наоборот
@@ -428,7 +716,7 @@ Hooks.on("preCreateToken", (document, data, options, userId) => {
 
     if (actor.type === "npc")
     {
-        // Homerule: Important NPC — токен важного NPC связан с актёром,
+        // Homerule: Important NPC - токен важного NPC связан с актёром,
         // чтобы открывался полный лист актёра (приоритет над независимостью).
         if (actor.system?.important)
         {
@@ -457,7 +745,9 @@ Hooks.on("preCreateActor", (document, data, options, userId) => {
             deathDie: "",
             deathRounds: "",
             deathSaveThreshold: "",
-            damageBonus: 0
+            damageBonus: 0,
+            damageResist: "",
+            movement: ""
         } });
     }
 });
@@ -491,7 +781,7 @@ Hooks.on("preUpdateActor", (actor, changes, options, userId) => {
         }
     }
 
-    // Те же дубли name портили и эти поля — приводим к числам при обновлении.
+    // Те же дубли name портили и эти поля - приводим к числам при обновлении.
     const corruptionMax = foundry.utils.getProperty(changes, "system.corruptionThreshold.max");
     if (corruptionMax !== undefined)
     {
@@ -564,11 +854,21 @@ Hooks.once("ready", async () => {
     if (updates.length)
     {
         console.log(`tinyd6 | Healed corrupted numeric fields / seeded mastery on ${updates.length} actor(s)`);
-        await game.actors.updateDocuments(updates, { render: false });
+        try
+        {
+            // game.actors.* не имеет updateDocuments в v14 - массовое обновление
+            // делаем статикой класса Actor. Миграция не критична: если упадёт,
+            // просто попробуем снова при следующей загрузке мира.
+            await Actor.updateDocuments(updates, { render: false });
+        }
+        catch (err)
+        {
+            console.warn("tinyd6 | numeric migration failed (will retry next load):", err);
+        }
     }
 });
 
-/* Homerule: TinyD6+ — при изменении Uses (или включении Reload) у оружия
+/* Homerule: TinyD6+ - при изменении Uses (или включении Reload) у оружия
  * синхронизируем текущее число зарядов, чтобы они не расходились с максимумом. */
 Hooks.on("preUpdateItem", (item, changes, options, userId) => {
     if (item.type !== "weapon") return;
@@ -583,7 +883,7 @@ Hooks.on("preUpdateItem", (item, changes, options, userId) => {
     }
 });
 
-/* Homerule: TinyD6+ / 0 HP — отслеживаем переход HP в 0 и обратно.
+/* Homerule: TinyD6+ / 0 HP - отслеживаем переход HP в 0 и обратно.
  * Храним предыдущее HP актёра, чтобы сработать только на реальном переходе
  * (не на повторном 0 → 0), и только если тима смерти включена. */
 const PREV_WOUNDS = new Map();
@@ -594,15 +894,19 @@ Hooks.on("preUpdateActor", (actor, changes, options, userId) => {
     }
 });
 
-/* Homerule: TinyD6+ tint — слегка затемняем токен только по финальным статусам
- * смерти: tinyd6Down («выведен из строя», обычные НПС) и tinyd6Dead («мёртв»,
- * герои и важные НПС). Промежуточные unconscious/dying не затемняют, чтобы
- * герой не темнел раньше времени (в момент обнуления HP). Оригинальный тинт
- * храним во флаге tinyd6v14.deathTint, чтобы вернуть его при снятии статуса
- * даже после перезагрузки клиента. */
+/* Homerule: TinyD6+ tint - слегка затемняем токен только по финальным статусам
+ * смерти: tinyd6Down («выведен из строя», обычные НПС) и «dead» («смерть»,
+ * герои и важные НПС; системный статус Foundry). Промежуточные dying не
+ * затемняют, чтобы герой не темнел раньше времени (в момент обнуления HP).
+ * Оригинальный тинт храним во флаге tinyd6v14.deathTint, чтобы вернуть его
+ * при снятии статуса даже после перезагрузки клиента. */
 const DEATH_TINT_COLOR = "#7d8287";
 const DEATH_FLAG = "deathTint";
-const DEATH_STATUS_IDS = ["tinyd6Down", "tinyd6Dead"];
+const DEATH_STATUS_IDS = ["tinyd6Down", "dead"];
+
+/* Визуал умирающего (краснота, кровь, пульс) делает deathFx - PIXI-фильтром
+ * на токене (module/helpers/deathFx.js). Перекраска texture.tint красным
+ * убрана, чтобы не дублировать эффект и не глушить токен. */
 
 /* Находит токен для актёра: по явному tokenId (зарегистрированному атакой),
  * либо по совпадению экземпляра; только если копия с таким actor.id одна. */
@@ -660,7 +964,7 @@ function _syncSceneDeathTints() {
     for (const token of scene.tokens) _syncDeathTint(token);
 }
 
-/* Статус-эффект смерти (statuses — Set id-шников статусов активного эффекта). */
+/* Статус-эффект смерти (statuses - Set id-шников статусов активного эффекта). */
 function _onDeathStatusEffectChange(effect) {
     if (!effect?.statuses?.size) return;
     if (!DEATH_STATUS_IDS.some(id => effect.statuses.has(id))) return;
@@ -671,7 +975,7 @@ function _onDeathStatusEffectChange(effect) {
 Hooks.on("createActiveEffect", _onDeathStatusEffectChange);
 Hooks.on("deleteActiveEffect", _onDeathStatusEffectChange);
 Hooks.on("updateActiveEffect", _onDeathStatusEffectChange);
-Hooks.on("canvasReady", () => { if (game.user.isGM) _syncSceneDeathTints(); });
+Hooks.on("canvasReady", () => { if (game.user.isGM) { _syncSceneDeathTints(); } });
 
 Hooks.on("updateActor", async (actor, changes, options, userId) => {
     if (userId !== game.user.id) return;
@@ -690,7 +994,7 @@ Hooks.on("updateActor", async (actor, changes, options, userId) => {
 
         // Всплывающее число урона/лечения над токеном при изменении HP.
         // Если атака зарегистрировала конкретного токена-цель (applyAttackDamage
-        // вызвал _setPendingFloat) — показываем число только над ним, чтобы
+        // вызвал _setPendingFloat) - показываем число только над ним, чтобы
         // для unlinked NPC-копий не всплывало над всеми сразу.
         const pending = Dice._takePendingFloat(actor.id);
         const delta = newValue - prev;
@@ -712,7 +1016,7 @@ Hooks.on("updateActor", async (actor, changes, options, userId) => {
             else
             {
                 Dice.spawnFloatingNumber(null, actor, `${sign}${delta}`, type);
-                // Без привязки к токену — транслируем по токенам цели, если она одна.
+                // Без привязки к токену - транслируем по токенам цели, если она одна.
             }
         }
 
@@ -729,7 +1033,10 @@ Hooks.on("updateActor", async (actor, changes, options, userId) => {
         }
     }
 
-    // Homerule: Important NPC — токен важного NPC связан с актёром
+    // Проверка остатка раундов выполняется death.js (таймер смерти),
+    // визуал умирающего - PIXI-фильтром deathFx на токене.
+
+    // Homerule: Important NPC - токен важного NPC связан с актёром
     // (открывает полный лист актёра). Переключаем actorLink на всех токенах.
     if (actor.type === "npc" && foundry.utils.getProperty(changes, "system.important") !== undefined)
     {
@@ -746,16 +1053,31 @@ Hooks.on("updateActor", async (actor, changes, options, userId) => {
     }
 });
 
-/* Homerule: TinyD6+ — тикает таймер смерти на начало хода поверженного
+/* Homerule: TinyD6+ - тикает таймер смерти на начало хода поверженного
  * персонажа (смена активного бойца). Только на клиенте GM. */
 Hooks.on("updateCombat", (combat, changes, options, userId) => {
     if (!game.user.isGM) return;
     if (!combat.active) return;
-    if (changes?.turn === undefined) return;
-    tickDeathTimers(combat);
+    if (changes?.turn !== undefined) tickDeathTimers(combat);
+
+    // Смена хода: восстанавливаем рывок (сверхпередвижение) и счётчик
+    // действий у всех участников. Бюджет движения за ход ядро сбрасывает
+    // само (movement history чистится на старте хода каждого бойца).
+    if (changes?.turn !== undefined)
+    {
+        for (const combatant of combat.combatants)
+        {
+            const actor = combatant.actor;
+            if (!actor || (actor.type !== "hero" && actor.type !== "npc")) continue;
+            const up = {};
+            if (actor.flags["tinyd6v14"]?.dashed) up["flags.tinyd6v14.dashed"] = false;
+            if (Number.isFinite(actor.system?.actions?.max)) up["system.actions.value"] = actor.system.actions.max;
+            if (Object.keys(up).length) actor.update(up, { render: false });
+        }
+    }
 });
 
-/* Homerule: TinyD6+ — после изменения зарядов оружия (выстрел с токена,
+/* Homerule: TinyD6+ - после изменения зарядов оружия (выстрел с токена,
  * возврат ресурса, перезарядка) синхронизируем открытый лист актёра и HUD,
  * чтобы счётчик не расходился с данными. render(false) не пересоздаёт окно,
  * поэтому мерцания нет. */
@@ -799,7 +1121,7 @@ Hooks.on("createItem", (item, temporary) => {
     }
 });
 
-/* Homerule: Armor HP — при изменении брони (HP/DR/экипировка) синхронизируем
+/* Homerule: Armor HP - при изменении брони (HP/DR/экипировка) синхронизируем
  * открытый лист актёра и HUD токена, чтобы суммарные значения DR/HP брони
  * не расходились с данными. Покрывает как героев, так и важных NPC
  * (link-токены открывают полный лист). render(false) не пересоздаёт окно. */
@@ -818,9 +1140,9 @@ Hooks.on("updateItem", (item, changes, options, userId) => {
 /* ============================================================
    Кнопки чат-карточек (Применить урон / Вернуть ресурс / хилы /
    стабилизация). Регистрируются на ДВУХ контейнерах:
-   1) основной лог чата #chat — через renderChatLog: html корня
+   1) основной лог чата #chat - через renderChatLog: html корня
       пересоздаётся ядром, поэтому вешаем на каждый свежий элемент;
-   2) плавающие нотификации справа #chat-notifications — это
+   2) плавающие нотификации справа #chat-notifications - это
       ОТДЕЛЬНЫЙ контейнер сайдбара (ядро копирует сообщения туда
       самостоятельно, они не лежат внутри #chat), поэтому без
       второго слушателя кнопки там мёртвые. При message.update()
@@ -828,6 +1150,26 @@ Hooks.on("updateItem", (item, changes, options, userId) => {
       нотификациях → дубликатов не возникает.
    ============================================================ */
 async function _onAttackCardClick(event) {
+    // Кнопки ± урона: GM корректирует итоговый урон карточки за
+    // креативную/усложнённую заявку (или снижает за слабую). Правят
+    // data-damage (крит уже внутри) и сразу синхронятся всем клиентам.
+    const step = event.target.closest(".attack-damage-step");
+    if (step)
+    {
+        event.preventDefault();
+        if (!game.user.isGM) return;
+        const card = step.closest(".td6-attack-card");
+        if (!card || card.dataset.damageApplied === "true") return;
+        const current = Number(card.dataset.damage) || 0;
+        const delta = Number(step.dataset.step) || 0;
+        const next = Math.max(0, current + delta);
+        card.dataset.damage = String(next);
+        const value = card.querySelector(".attack-damage-value");
+        if (value) value.textContent = String(next);
+        _syncCardToMessage(card, card);
+        return;
+    }
+
     // Кнопка «Вернуть ресурс»: откат случайно потраченного заряда оружия.
     const undo = event.target.closest(".attack-undo");
     if (undo)
@@ -865,7 +1207,121 @@ async function _onAttackCardClick(event) {
         const current = (weapon.system.charges !== undefined && weapon.system.charges !== null)
             ? Number(weapon.system.charges) : max;
         await weapon.update({ "system.charges": Math.min(max, current + 1) }, { render: false });
+        // Запоминаем возврат заряда: «Откат урона» должен аннулировать
+        // и его (заряд снова считается потраченным), а кнопку вернуть в карточку.
+        card.dataset.resourceReturned = "1";
+        card.dataset.resourceWeaponId = weaponId;
         undo.closest(".attack-card-undo")?.remove();
+        _syncCardToMessage(card, card);
+        return;
+    }
+
+    // Кнопка «Откат урона»: возвращает HP и прочность брони всем целям
+    // атаки и переводит карточку обратно в состояние «до применения» -
+    // урон снова можно править кнопками ± и применить повторно.
+    const undoDamage = event.target.closest(".attack-undo-damage");
+    if (undoDamage)
+    {
+        event.preventDefault();
+        if (!game.user.isGM) return;
+        const card = undoDamage.closest(".td6-attack-card");
+        if (!card || card.dataset.damageApplied !== "true") return;
+        if (undoDamage.dataset.busy === "true") return;
+        undoDamage.dataset.busy = "true";
+        undoDamage.disabled = true;
+
+        let applied = [];
+        try { applied = JSON.parse(card.dataset.applied || "[]"); } catch (err) { applied = []; }
+        if (applied.length) await Dice.undoAttackDamage(applied);
+
+        // Возвращаем карточку в «до применения».
+        delete card.dataset.applied;
+        card.dataset.damageApplied = "false";
+        undoDamage.remove();
+        card.querySelector(".attack-report")?.remove();
+
+        // «Откат урона» откатывает и «Возврат ресурсов»: атака остаётся
+        // в силе, поэтому ранее возвращённый заряд снова считается
+        // потраченным, а кнопка «Вернуть ресурс» возвращается в карточку.
+        if (card.dataset.resourceReturned === "1")
+        {
+            const resourceWeaponId = card.dataset.resourceWeaponId || "";
+            let resourceActor = null;
+            let attackerRef = null;
+            try { attackerRef = JSON.parse(card.dataset.attackerToken || "null"); } catch (err) { attackerRef = null; }
+            if (attackerRef?.tokenId)
+                resourceActor = game.scenes.get(attackerRef.sceneId)?.tokens.get(attackerRef.tokenId)?.actor ?? null;
+            if (!resourceActor)
+            {
+                const rid = card.dataset.actorId;
+                resourceActor = rid ? game.actors.get(rid) : null;
+            }
+            const weapon = resourceActor?.items?.get(resourceWeaponId);
+            if (weapon)
+            {
+                const max = Number(weapon.system.uses) || 0;
+                const current = (weapon.system.charges !== undefined && weapon.system.charges !== null)
+                    ? Number(weapon.system.charges) : max;
+                await weapon.update({ "system.charges": Math.max(0, current - 1) }, { render: false });
+            }
+            delete card.dataset.resourceReturned;
+            delete card.dataset.resourceWeaponId;
+            // Восстанавливаем кнопку «Вернуть ресурс» (удалена при исходном возврате).
+            if (!card.querySelector(".attack-undo"))
+            {
+                const row = document.createElement("div");
+                row.className = "attack-card-undo d-flex align-items-center";
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = "attack-undo";
+                btn.dataset.action = "undo-resource";
+                btn.dataset.weaponId = resourceWeaponId;
+                btn.innerHTML = `<i class="fas fa-undo"></i> ${game.i18n.localize("tinyd6.reload.undoResource")}`;
+                row.appendChild(btn);
+                card.appendChild(row);
+            }
+        }
+
+        const cardFooter = card.querySelector(".attack-card-footer");
+        let hasTargets = false;
+        try { hasTargets = (JSON.parse(card.dataset.targets || "[]").length > 0); } catch (err) { hasTargets = false; }
+        if (hasTargets && cardFooter && !card.querySelector(".attack-apply"))
+        {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "attack-apply";
+            btn.dataset.action = "apply-attack";
+            btn.innerHTML = `<i class="fas fa-crosshairs"></i> ${game.i18n.localize("tinyd6.attack.applyDamage")}`;
+            cardFooter.appendChild(btn);
+        }
+
+        // Возвращаем кнопки ± (контейнер мог остаться, кнопки мы снимали).
+        let stepsWrap = card.querySelector(".attack-damage-steps");
+        if (!stepsWrap)
+        {
+            stepsWrap = document.createElement("span");
+            stepsWrap.className = "attack-damage-steps";
+            const valueEl = card.querySelector(".attack-damage-value");
+            if (valueEl) valueEl.after(stepsWrap);
+            else (card.querySelector(".attack-damage") || cardFooter)?.appendChild(stepsWrap);
+        }
+        if (!stepsWrap.querySelector(".attack-damage-step"))
+        {
+            const mkStep = (delta, label) => {
+                const b = document.createElement("button");
+                b.type = "button";
+                b.className = "attack-damage-step";
+                b.dataset.action = "adjust-damage";
+                b.dataset.step = String(delta);
+                b.title = label;
+                b.textContent = delta < 0 ? "−" : "+";
+                return b;
+            };
+            stepsWrap.appendChild(mkStep(-1, "Понизить урон"));
+            stepsWrap.appendChild(mkStep(1, "Повысить урон"));
+        }
+
+        TinyD6System._paintCardDiceIcons($(card));
         _syncCardToMessage(card, card);
         return;
     }
@@ -887,10 +1343,27 @@ async function _onAttackCardClick(event) {
     if (!applied.length && !reported.length) return;
 
     card.querySelector(".attack-apply")?.remove();
-    const footer = card.querySelector(".td6-attack-card-footer");
+    // Урон применён - подкручивать карточку больше нельзя.
+    card.dataset.damageApplied = "true";
+    card.querySelectorAll(".attack-damage-step").forEach(b => b.remove());
+
+    // Данные для возможного отката: вернём HP и прочность брони по факту
+    // применённого урона (резист/броня не пересчитываются заново).
+    if (applied.length) card.dataset.applied = JSON.stringify(applied);
+
+    // После применения - кнопка «Откат урона» (рядом с «Вернуть ресурс»).
+    const footer = card.querySelector(".attack-card-footer");
+    const undoRow = card.querySelector(".attack-card-undo");
+    const undoDamageBtn = document.createElement("button");
+    undoDamageBtn.type = "button";
+    undoDamageBtn.className = "attack-undo-damage";
+    undoDamageBtn.dataset.action = "undo-damage";
+    undoDamageBtn.innerHTML = `<i class="fas fa-rotate-left"></i> ${game.i18n.localize("tinyd6.attack.undoDamage")}`;
+    if (undoRow) undoRow.appendChild(undoDamageBtn);
+    else if (footer) footer.appendChild(undoDamageBtn);
 
     const parts = [];
-    if (applied.length) parts.push(applied.map(u => `${u.name} -${u.damage}`).join(", "));
+    if (applied.length) parts.push(applied.map(u => `${u.name} -${u.damage}${u.resist ? ` (резист ${u.resist})` : ""}`).join(", "));
     if (reported.length) parts.push(reported.map(u => `${u.name} -${u.damage} (урон не списан)`).join(", "));
 
     if (footer && parts.length)
@@ -905,7 +1378,7 @@ async function _onAttackCardClick(event) {
     // показываем отчёт у каждого, а не только у нажавшего.
     _syncCardToMessage(card, card);
 
-    // Для чужих героев (урон не списан) — выводим отдельное сообщение в чат.
+    // Для чужих героев (урон не списан) - выводим отдельное сообщение в чат.
     if (reported.length)
     {
         const attackerName = card.dataset.actorName || game.actors.get(actorId)?.name || "Атака";
@@ -1010,7 +1483,7 @@ function _attachChatCardHandlers(root) {
 Hooks.on("renderChatLog", (chatLog, html) => {
     const log = html instanceof HTMLElement ? html : html[0] || html;
     _attachChatCardHandlers(log);
-    // Нотификации могут пересоздаваться ядром — перевешиваем идемпотентно.
+    // Нотификации могут пересоздаваться ядром - перевешиваем идемпотентно.
     _attachChatCardHandlers(document.getElementById("chat-notifications"));
 });
 

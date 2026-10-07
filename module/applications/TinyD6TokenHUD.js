@@ -1,10 +1,11 @@
 import * as Dice from "../helpers/dice.js";
 import { openStabilizeDialog, getStabilizeTarget, roundsWord } from "../helpers/death.js";
+import TinyTokenRuler from "../canvas/TokenRuler.js";
 
 /* РљР°СЃС‚РѕРјРЅС‹Р№ HUD С‚РѕРєРµРЅР°: СѓР±РёСЂР°РµС‚ РЅРµСЂРµР»РµРІР°РЅС‚РЅС‹Рµ РґР»СЏ TinyD6 СЌР»РµРјРµРЅС‚С‹ (РІС‹СЃРѕС‚Р°,
  * РїР°Р»РёС‚СЂС‹ СѓСЂРѕРІРЅРµР№ Рё РґРІРёР¶РµРЅРёСЏ, СЃРѕСЂС‚РёСЂРѕРІРєР°), РґРѕР±Р°РІР»СЏРµС‚ HP-СЃС‚РµРїРµСЂС‹, С‡РёРї СЃРѕСЃС‚РѕСЏРЅРёСЏ
  * СЃРјРµСЂС‚Рё Рё С€РёСЂРѕРєСѓСЋ РїР°Р»РёС‚СЂСѓ РѕСЂСѓР¶РёСЏ СЃ РєРЅРѕРїРєР°РјРё РђС‚Р°РєР° / РџРµСЂРµР·Р°СЂСЏРґРёС‚СЊ. РќР°СЃР»РµРґСѓРµС‚
- * СЃС‚РѕРєРѕРІС‹Р№ TokenHUD (РєР»Р°СЃСЃ Р±РµСЂС‘Рј РёР· CONFIG.Token.hudClass вЂ” РІРЅСѓС‚СЂРµРЅРЅРёР№ Р°Р»РёР°СЃ
+ * СЃС‚РѕРєРѕРІС‹Р№ TokenHUD (РєР»Р°СЃСЃ Р±РµСЂС‘Рј РёР· CONFIG.Token.hudClass - РІРЅСѓС‚СЂРµРЅРЅРёР№ Р°Р»РёР°СЃ
  * @client РЅРµ РґРѕСЃС‚СѓРїРµРЅ РёР· СЃРёСЃС‚РµРјРЅС‹С… РјРѕРґСѓР»РµР№), РїРѕСЌС‚РѕРјСѓ СЃС‚Р°РЅРґР°СЂС‚РЅС‹Рµ РєРЅРѕРїРєРё Рё
  * РѕР±СЂР°Р±РѕС‚С‡РёРєРё СЃРѕС…СЂР°РЅСЏСЋС‚СЃСЏ. */
 export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
@@ -20,12 +21,13 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
     /** @inheritDoc */
     static get DEFAULT_OPTIONS() {
         return foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
-            actions: {
+actions: {
                 weaponAttack: TinyD6TokenHUD._onWeaponAttack,
                 weaponReload: TinyD6TokenHUD._onWeaponReload,
                 hpStep: TinyD6TokenHUD._onHpStep,
                 stabilize: TinyD6TokenHUD._onStabilize,
-                healUse: TinyD6TokenHUD._onHealUse
+                healUse: TinyD6TokenHUD._onHealUse,
+                dash: TinyD6TokenHUD._onDash
             }
         });
     }
@@ -64,7 +66,7 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
         }
 
         // РЈ NPC РІСЃСЏ Р±СЂРѕРЅСЏ Рё РІСЃС‘ РѕСЂСѓР¶РёРµ РІСЃРµРіРґР° СЃС‡РёС‚Р°СЋС‚СЃСЏ СЌРєРёРїРёСЂРѕРІР°РЅРЅС‹РјРё
-        // (NPC РЅРµ В«РїРµСЂРµРѕРґРµРІР°РµС‚СЃСЏВ»), Сѓ РіРµСЂРѕРµРІ вЂ” С‚РѕР»СЊРєРѕ РїРѕРјРµС‡РµРЅРЅС‹Рµ equipped.
+        // (NPC РЅРµ В«РїРµСЂРµРѕРґРµРІР°РµС‚СЃСЏВ»), Сѓ РіРµСЂРѕРµРІ - С‚РѕР»СЊРєРѕ РїРѕРјРµС‡РµРЅРЅС‹Рµ equipped.
         const npcAll = actor?.type === "npc";
 
         // РўРѕР»СЊРєРѕ В«Р¶РёРІР°СЏВ» Р±СЂРѕРЅСЏ (СЌРєРёРїРёСЂРѕРІР°РЅРЅР°СЏ, СЃ Р·Р°РїР°СЃРѕРј РїСЂРѕС‡РЅРѕСЃС‚Рё > 0).
@@ -77,8 +79,8 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
         // empty = С‚РѕР»СЊРєРѕ Сѓ РѕСЂСѓР¶РёСЏ СЃ РїРµСЂРµР·Р°СЂСЏРґРєРѕР№, Сѓ РєРѕС‚РѕСЂРѕРіРѕ РєРѕРЅС‡РёР»РёСЃСЊ Р·Р°СЂСЏРґС‹
         // (Сѓ Р±Р»РёР¶РЅРµРіРѕ uses/charges = 0, РЅРѕ РѕРЅРѕ РЅРµ В«РїСѓСЃС‚РѕРµВ»).
         // РЈ NPC: С‚РѕР»СЊРєРѕ preferredWeapons (РµСЃР»Рё Р·Р°РґР°РЅС‹), РёРЅР°С‡Рµ РІСЃРµ.
-        let weaponItems = (actor?.items ?? [])
-            .filter(i => (i.type === "weapon") && (npcAll || i.system.equipped));
+let weaponItems = (actor?.items ?? [])
+            .filter(i => (i.type === "weapon") && ((npcAll && !Dice.npcRequiresEquip(actor)) || i.system.equipped));
 
         if (npcAll) {
             const preferredIds = actor.system?.preferredWeapons || [];
@@ -86,6 +88,8 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
                 weaponItems = weaponItems.filter(i => preferredIds.includes(i.id));
             }
         }
+
+const hasInfiniteAmmo = npcAll && Boolean(actor?.system?.homebrew?.infiniteAmmo);
 
         const weapons = weaponItems
             .map(i => {
@@ -100,7 +104,7 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
                     reload,
                     uses,
                     charges,
-                    empty: reload && (charges <= 0)
+                    empty: reload && !hasInfiniteAmmo && (charges <= 0)
                 };
             });
 
@@ -117,15 +121,26 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
                 qty: Number(i.system?.quantity?.value) || 0
             }));
 
+const owner = Boolean(actor?.isOwner);
+
         const healEnabled = homeruleEnabled;
         const stabTarget = homeruleEnabled ? getStabilizeTarget(actor) : null;
+
+        // Палитра «предписанные действия»: рывок (передвижение по бюджету,
+        // мировая настройка enableMovementBudget), стабилизация, heal-гиры.
+        const budgetEnabled = game.settings.get('tinyd6v14', 'enableMovementBudget');
+        const dashMoveFeet = budgetEnabled ? TinyTokenRuler._moveFeet(actor) : 0;
+        const dashed = Boolean(actor?.flags["tinyd6v14"]?.dashed);
+        const dashActionsLeft = Number(actor?.system?.actions?.value) || 0;
+        const dashEnabled = owner && dashMoveFeet > 0;
+        const canDash = dashEnabled && (dashed || dashActionsLeft > 0);
+        const dashCanUndo = game.settings.get('tinyd6v14', 'dashRefundsAction');
 
         // РџР°Р»РёС‚СЂС‹ РѕСЂСѓР¶РёСЏ Рё Р»РµС‡РµРЅРёСЏ РЅР° HUD РїРѕРєР°Р·С‹РІР°РµРј С‚РѕР»СЊРєРѕ РІР»Р°РґРµР»СЊС†Р°Рј С‚РѕРєРµРЅР°
         // (РєР°Рє HP-СЃС‚РµРїРµСЂС‹ Рё Р±СЂРѕРЅСЋ). РРЅР°С‡Рµ РёРіСЂРѕРє, РІС‹Р±СЂР°РІС€РёР№ С‡СѓР¶РѕР№ С‚РѕРєРµРЅ, СѓРІРёРґРµР»
         // Р±С‹ РєРЅРѕРїРєРё РђС‚Р°РєР°/РџРµСЂРµР·Р°СЂСЏРґРёС‚СЊ/Р›РµС‡РёС‚СЊ, РєРѕС‚РѕСЂС‹Рµ Р±РµР· РїСЂР°РІ РЅРµ СЂР°Р±РѕС‚Р°СЋС‚.
-        const owner = Boolean(actor?.isOwner);
 
-        return foundry.utils.mergeObject(context, {
+return foundry.utils.mergeObject(context, {
             armorIcon: "systems/tinyd6v14/assets/icons/armor.svg",
             healIcon: "systems/tinyd6v14/assets/icons/heal.svg",
             armorTotal,
@@ -135,9 +150,15 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
             weapons,
             showWeapons: owner && weaponsEnabled && weapons.length > 0,
             healItems,
-            showHeal: owner && healEnabled,
+            showActions: owner && healEnabled && (dashEnabled || (healItems.length > 0) || Boolean(stabTarget)),
+            dashEnabled,
+            dashed,
+            canDash,
+            dashActionsLeft,
+            dashCanUndo,
             showStab: owner && healEnabled,
             stabEnabled: Boolean(stabTarget),
+            stabUsable: Boolean(stabTarget) && (parseInt(actor.system?.actions?.value ?? 0) || 0) > 0,
             hasHealItems: healItems.length > 0,
             hpMax,
             hpEditable: owner,
@@ -200,7 +221,7 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
         this.render();
     }
 
-    /** Р—Р°РїСѓСЃРє Р°С‚Р°РєРё РІС‹Р±СЂР°РЅРЅС‹Рј РѕСЂСѓР¶РёРµРј РёР· РїР°Р»РёС‚СЂС‹ HUD. */
+    /** Р-Р°РїСѓСЃРє Р°С‚Р°РєРё РІС‹Р±СЂР°РЅРЅС‹Рј РѕСЂСѓР¶РёРµРј РёР· РїР°Р»РёС‚СЂС‹ HUD. */
     static async _onWeaponAttack(event, target) {
         event.preventDefault();
         const actor = this.document?.actor;
@@ -209,8 +230,8 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
         const weapon = actor?.items?.get(weaponId);
         if (!weapon) return;
 
-        // Homerule: TinyD6+ вЂ” РѕСЂСѓР¶РёРµ Р±РµР· Р·Р°СЂСЏРґРѕРІ РёР· HUD РЅРµРґРѕСЃС‚СѓРїРЅРѕ.
-        if (weapon.system.reload)
+        // Homerule: TinyD6+ - РѕСЂСѓР¶РёРµ Р±РµР· Р·Р°СЂСЏРґРѕРІ РёР· HUD РЅРµРґРѕСЃС‚СѓРїРЅРѕ.
+if (weapon.system.reload && !(actor?.type === "npc" && actor.system?.homebrew?.infiniteAmmo))
         {
             const charges = (weapon.system.charges !== undefined && weapon.system.charges !== null)
                 ? Number(weapon.system.charges) : (Number(weapon.system.uses) || 0);
@@ -221,7 +242,7 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
             }
         }
 
-        // Homerule: TinyD6+ вЂ” РІС‹РІРµРґРµРЅРЅС‹Р№ РёР· СЃС‚СЂРѕСЏ РїРµСЂСЃРѕРЅР°Р¶ РЅРµ РјРѕР¶РµС‚ Р°С‚Р°РєРѕРІР°С‚СЊ.
+        // Homerule: TinyD6+ - РІС‹РІРµРґРµРЅРЅС‹Р№ РёР· СЃС‚СЂРѕСЏ РїРµСЂСЃРѕРЅР°Р¶ РЅРµ РјРѕР¶РµС‚ Р°С‚Р°РєРѕРІР°С‚СЊ.
         if (game.settings.get('tinyd6v14', 'enableTinyD6Plus') && actor.system?.death?.down)
         {
             ui.notifications.warn(game.i18n.localize("tinyd6.death.cannotAct"));
@@ -231,7 +252,7 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
     }
 
     /** РџРµСЂРµР·Р°СЂСЏРґРєР° РѕСЂСѓР¶РёСЏ РёР· HUD: СЃРїРёСЃС‹РІР°РµС‚ ammo-РіРёСЂ (СЂРѕР¶РѕРє) Рё Р·Р°РїРѕР»РЅСЏРµС‚
-     *  РјР°РіР°Р·РёРЅ РґРѕ uses. Р•СЃР»Рё ammo-РіРёСЂР° РЅРµС‚ вЂ” РїСЂРµРґСѓРїСЂРµР¶РґРµРЅРёРµ, Р·Р°СЂСЏРґС‹ РЅРµ РјРµРЅСЏСЋС‚СЃСЏ. */
+     *  РјР°РіР°Р·РёРЅ РґРѕ uses. Р•СЃР»Рё ammo-РіРёСЂР° РЅРµС‚ - РїСЂРµРґСѓРїСЂРµР¶РґРµРЅРёРµ, Р·Р°СЂСЏРґС‹ РЅРµ РјРµРЅСЏСЋС‚СЃСЏ. */
     static async _onWeaponReload(event, target) {
         event.preventDefault();
         const actor = this.document?.actor;
@@ -270,7 +291,7 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
     }
 
     /** РЎС‚Р°Р±РёР»РёР·Р°С†РёСЏ РїРѕРІРµСЂР¶РµРЅРЅРѕРіРѕ С‚РѕРєРµРЅР°-С†РµР»Рё РёР· РїР°Р»РёС‚СЂС‹ Heal. */
-    static async _onStabilize(event, target) {
+static async _onStabilize(event, target) {
         event.preventDefault();
         const actor = this.document?.actor;
         if (!game.settings.get('tinyd6v14', 'enableTinyD6Plus')) return;
@@ -281,7 +302,55 @@ export default class TinyD6TokenHUD extends CONFIG.Token.hudClass {
             ui.notifications.warn(game.i18n.localize("tinyd6.stabilize.noTarget"));
             return;
         }
-        openStabilizeDialog(actor, stabTarget);
+
+        // Стабилизация тратит 1 действие.
+        const actions = parseInt(actor.system?.actions?.value ?? 0) || 0;
+        if (actions <= 0)
+        {
+            ui.notifications.warn(game.i18n.localize("tinyd6.movement.noActions"));
+            return;
+        }
+openStabilizeDialog(actor, stabTarget);
+    }
+
+    /* Dash (over-movement) from the actions palette. Mirrors the sheet's dash
+     * toggle: costs 1 action, the world setting dashRefundsAction controls
+     * whether the second click refunds the action. */
+    static async _onDash(event, target) {
+        event.preventDefault();
+        const actor = this.document?.actor;
+        if (!actor?.isOwner) return;
+        if (!game.settings.get('tinyd6v14', 'enableMovementBudget')) return;
+
+        const refund = game.settings.get('tinyd6v14', 'dashRefundsAction');
+        const dashed = Boolean(actor.flags["tinyd6v14"]?.dashed);
+
+        if (dashed)
+        {
+            const changes = { "flags.tinyd6v14.dashed": false };
+            if (refund)
+            {
+                const max = parseInt(actor.system.actions?.max) || 0;
+                const cur = parseInt(actor.system.actions?.value ?? 0) || 0;
+                changes["system.actions.value"] = Math.min(max, cur + 1);
+            }
+            await actor.update(changes, { render: false });
+            this.render();
+            return;
+        }
+
+        const actions = parseInt(actor.system.actions?.value ?? 0) || 0;
+        if (actions <= 0)
+        {
+            ui.notifications.warn(game.i18n.localize("tinyd6.movement.noActions"));
+            return;
+        }
+
+        await actor.update({
+            "flags.tinyd6v14.dashed": true,
+            "system.actions.value": actions - 1
+        }, { render: false });
+        this.render();
     }
 
     /** РСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ heal-РіРёСЂР° РёР· РїР°Р»РёС‚СЂС‹ Heal: Р»РµС‡РёС‚ С†РµР»СЊ (РёР»Рё СЃРµР±СЏ). */

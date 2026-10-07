@@ -29,7 +29,7 @@
       "url": "https://github.com/MrCaptain2B"
     }
   ],
-  "version": "14.0.5",
+  "version": "14.0.6",
   "compatibility": {
     "minimum": 14,
     "verified": 14
@@ -92,7 +92,7 @@
     ]
   },
   "manifest": "https://raw.githubusercontent.com/MrCaptain2B/TinyD6V14-Unofficial-by-Captain2B-/main/system.json",
-  "download": "https://github.com/MrCaptain2B/TinyD6V14-Unofficial-by-Captain2B-/releases/latest/download/tinyd6v14-14.0.5.zip",
+  "download": "https://github.com/MrCaptain2B/TinyD6V14-Unofficial-by-Captain2B-/releases/latest/download/tinyd6v14-14.0.6.zip",
   "protected": false,
   "initiative": "2d6",
   "grid": {

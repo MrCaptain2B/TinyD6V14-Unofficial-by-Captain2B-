@@ -16,6 +16,11 @@ Built on top of the original system (Tiny Dungeon, Tiny Frontiers & co.) with an
 - **Formula support** in death-rounds fields (e.g. `1d6+2`), skill thresholds configurable.
 - Chat buttons (apply damage / undo resource / confirm heal & stabilization) work in the chat log **and** in floating `#chat-notifications`.
 
+## Ideas for next releases
+
+- **Dash via Shift+drag** — hold Shift while dragging the token to trigger dash (over-movement); currently dash is explicit (button on the sheet / token-HUD actions palette).
+- **Turn timer** — per-combatant countdown in the combat tracker.
+
 ## Dev
 
 ```bash

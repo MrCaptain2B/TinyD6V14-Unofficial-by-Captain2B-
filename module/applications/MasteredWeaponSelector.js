@@ -1,6 +1,6 @@
 /* Окно выбора мастерского оружия (Homerule: TinyD6+).
  *
- * Подход в стиле dnd5e: на листе — кнопка, открывающая отдельное окно со
+ * Подход в стиле dnd5e: на листе - кнопка, открывающая отдельное окно со
  * списком всех оружий из директории мира (game.items). Игрок/мастер
  * выбирает одно оружие, и оно сохраняется в system.proficiencies.masteredWeapons.
  * При атаке с этого оружия рекомендуемый уровень броска становится
@@ -16,7 +16,7 @@ export default class MasteredWeaponSelector extends HandlebarsApplicationMixin(A
     /** @type {Actor} актёр, которому настраиваем мастерство. */
     actor;
 
-    /** @type {number|null} индекс слота, который редактируем (null — одиночный режим). */
+    /** @type {number|null} индекс слота, который редактируем (null - одиночный режим). */
     slotIndex = null;
 
     constructor(actor, options) {

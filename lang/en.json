@@ -1,496 +1,615 @@
 {
-    "tinyd6": {
-        "mech": {
-            "sheet": "Sheet",
-            "mechanics": "Settings",
-            "actions": "Actions",
-            "actionsMax": "Max Actions",
-            "woundsMax": "Max Wounds",
-            "corruptionMax": "Max Corruption",
-            "masteredCount": "Mastered Weapons",
-            "masteredHint": "Number of weapons the hero can master at once (requires the \"Mastered Weapons\" rule).",
-            "death": "Death & Dying",
-            "deathDie": "Death Die",
-            "worldDefault": "d6 (world default)",
-            "deathRounds": "Death Rounds",
-            "deathThreshold": "Death Save Threshold",
-            "emptyWorld": "Leave empty to use the world default.",
-            "damageBonus": "Damage Bonus",
-            "damageBonusHint": "Bonus added to all weapon damage rolls."
-        },
-        "TinyD6HeroSheet": "Hero",
-        "TinyD6NpcSheet": "NPC",
-        "TokenArmor": "Armor",
-        "TokenWeapons": "Weapons",
-        "TokenHeal": "Heal & Stabilize",
-        "TokenActions": "Actions",
-        "ArmorRestore": "Restore Armor",
-        "Attack": "Attack",
-        "Reload": "Reload",
-        "system": {
-            "name": "Tiny D6 2e",
-            "dieRoller": "Die Roller",
-            "actions": "Actions",
-            "actionAdd": "Add action",
-            "actionRemove": "Remove action",
-            "collapse": "Collapse",
-            "expand": "Expand"
-        },
-        "settings": {
-            "title": "System Settings",
-            "label": "System Settings",
-            "description": "Choose the optional rules and mechanics you would like to enable from the options below.",
-            "theme": {
-                "name": "Theme",
-                "hint": "Set this to theme your world for a specific Tiny D6 game",
-                "choices": {
-                    "cthulhu": "Tiny Cthulhu",
-                    "dungeon": "Tiny Dungeon 2e"
-                }
-            },
-            "sheetStyle": {
-                "name": "Sheet Style",
-                "hint": "Choose the visual style of the character sheets",
-                "choices": {
-                    "default": "Default Dark",
-                    "perkament": "Perkament · Folklore",
-                    "noir": "Noir · Copper",
-                    "minimal": "Default Light",
-                    "cyberpunk": "Cyberpunk · Neon"
-                }
-            },
-            "rollerInCharsheet": {
-                "name": "Dice Roller in Character Sheet",
-                "hint": "Enable to have a Dice Roller in the Character Sheet."
-            },
-            "enableCorruption": {
-                "name": "Enable Corruption Track",
-                "hint": "Add a track to the character sheet for Corruption."
-            },
-            "enableAdvancement": {
-                "name": "Character Advancement",
-                "hint": "Characters progress either based on a number of sessions or by awarding experience points",
-                "choices": {
-                    "none": "None",
-                    "minimalist": "Minimalist Advancement",
-                    "xp": "Experience Points"
-                }
-            },
-            "enableItemTracking": {
-                "name": "Enable Item Tracking",
-                "hint": "Show slot use for items and calculate remaining inventory slots."
-            },
-            "enableDepletionPoints": {
-                "name": "Enable Item Expenditure/Depletion",
-                "hint": "When item uses depletion points, track them for character items."
-            },
-            "enableCriticalHits": {
-                "name": "Enable Critical Hits",
-                "hint": "Mark Test as 'Critical Success' when all dice are 6."
-            },
-            "enableCriticalFailure": {
-                "name": "Enable Critical Failures",
-                "hint": "Mark Test as 'Critical Failures' when all dice are 1"
-            },
-            "enableVariableWeaponDamage": {
-                "name": "Variable Weapon Damage",
-                "hint": "Calculate variable weapon damage for attack tests."
-            },
-            "independentNpcTokens": {
-                "name": "Independent NPC Tokens",
-                "hint": "Tokens placed on the scene from an NPC actor become independent copies with their own HP and armor."
-            },
-            "defaultActions": {
-                "name": "Default Actions",
-                "hint": "Default maximum number of actions for newly created actors (Tiny D6 stock is 1)."
-            },
-            "enableTinyD6Plus": {
-                "name": "Homerule: TinyD6+",
-                "hint": "Enable the TinyD6+ combat house rules: reloading (ranged weapons track charges (Uses) and consume one per attack; heavy weapons can be limited to one attack per round), death & downed (at 0 HP heroes and important NPCs make a death save, then Dying with a round timer; defeated actors cannot attack), and the token HUD weapon palette (attack/reload from the token)."
-            },
-            "critAdvantage": {
-                "name": "Homerule: Crit Advantage-Normal",
-                "hint": "When all dice show identical 6s on an attack, weapon damage is doubled (Critical). Choose whether this applies to 2d6, 3d6, or both.",
-                "choices": {
-                    "off": "Off",
-                    "two": "2d6 only",
-                    "three": "3d6 only",
-                    "both": "2d6 and 3d6"
-                }
-            },
-            "showNpcReloadMessages": {
-                "name": "Show NPC Reload Messages",
-                "hint": "Also post reload / out-of-ammo messages to chat for NPC actors (off by default to reduce chat noise)."
-            },
-            "deathRounds": {
-                "name": "Death Save: Rounds to Die",
-                "hint": "Rounds until death after hitting 0 HP. Enter a number (3) or a die formula rolled when HP drops to 0, e.g. 1d6+2 or 2d5, for a random duration each time."
-            },
-            "deathSaveThreshold": {
-                "name": "Death Save: Success Threshold",
-                "hint": "A death save (1d6) succeeds when the result is at least this value (stock 4)."
-            },
-            "showNpcDeathMessages": {
-                "name": "Show NPC Down Messages",
-                "hint": "Also post a chat message when a regular NPC is defeated (off by default to reduce chat noise)."
-            },
-            "animFx": {
-                "name": "Combat Animations",
-                "hint": "Show floating damage numbers, token flashes, critical highlights and death effects. Disable for low-end machines or minimal visual noise."
-            },
-            "enablePowerOrigin": {
-                "name": "Enable Power Origin",
-                "hint": "Adds a text field for your Super Power Origin."
-            },
-            "enableWeakness": {
-                "name": "Enable Weakness",
-                "hint": "Adds a text field for your Super Weakness."
-            },
-            "enablePanic": {
-                "name": "Enable Panic",
-                "hint": "Adds a counter for keeping track of Panic."
-            },
-            "enableRadiation": {
-                "name": "Enable Radiation",
-                "hint": "Adds a counter for keeping track of Radiation."
-            },
-            "enableGrit": {
-                "name": "Enable Grit",
-                "hint": "Adds a counter for keeping track of Grit."
-            },
-            "enableHealStabProxy": {
-                "name": "GM proxy: heal & stabilize",
-                "hint": "Allows players to heal or stabilize characters/NPCs they do not own. The change is applied through the GM via socketlib (no ownership required)."
-            },
-            "enablePlayerDamageProxy": {
-                "name": "GM proxy: player damage",
-                "hint": "Allows players to apply attack damage to characters/NPCs they do not own. The damage is applied through the GM via socketlib (no ownership required)."
-            },
-            "enableAttackProficiency": {
-                "name": "Auto weapon proficiency",
-                "hint": "TinyD6+: automatically suggests the attack dice based on weapon proficiency (mastered weapon = advantage, untrained = disadvantage). The player can still pick any dice level manually."
-            },
-            "enableArmorStacking": {
-                "name": "Enable armor stacking",
-                "hint": "When enabled, multiple equipped armor pieces stack their DR. When disabled, only the highest DR armor piece applies."
-            },
-            "enableArmorBreakMessages": {
-                "name": "Armor break chat messages",
-                "hint": "Post a chat message when a shield or armor piece breaks (HP reaches 0)."
-            }
-        },
-        "dice": {
-            "modifier": {
-                "focus": "Focus",
-                "marksman": "Marksman"
-            },
-            "roll": {
-                "disadvantage": "Disadvantage",
-                "standard": "Standard Test",
-                "advantage": "Advantage",
-                "success": "Success!",
-                "failure": "Failure",
-                "critical": "Critical Success!!",
-                "botch": "Critical Failure!!"
-            }
-        },
-        "attack": {
-            "attack": "Attack",
-            "hit": "Hit",
-            "miss": "Miss",
-            "crit": "Critical",
-            "targets": "Targets",
-            "damage": "Damage",
-            "noTarget": "Select a target token (or select tokens) before attacking.",
-            "applyDamage": "Apply Damage",
-            "weapon": "Weapon",
-            "mode": "Roll",
-            "roll": "Attack",
-            "cancel": "Cancel"
-        },
-        "sheet": {
-            "newItem": "New Item",
-            "description": "Description",
-            "none": "None",
-            "noWeapons": "No weapons found in the world's Item directory.",
-            "tab": {
-                "main": "Main"
-            },
-            "combat": "Combat",
-            "weaponProficiency": "Weapon Proficiency",
-            "wounds": "Wounds",
-            "armor": "Armor",
-            "corruption": "Corruption",
-            "unequip": "Unequip",
-            "delete": "Delete",
-            "xp": "XP",
-            "actions": {
-                "name": "Actions",
-                "spend": "Spend an action",
-                "restore": "Restore an action",
-                "plus": "Add max action (+1)",
-                "minus": "Remove max action (−1)"
-            }
-        },
-        "actor": {
-            "name": "Name",
-            "npc": "NPC",
-            "people": "People",
-            "traits": "Traits",
-            "description": "Description",
-            "tiny-cthulhu": {
-                "character": "Bio",
-                "heritage": {
-                    "header": "Archetype",
-                    "traits": "Archetype Trait",
-                    "delete": "Remove Archetype"
-                }
-            },
-            "tiny-dungeon": {
-                "character": "Character",
-                "heritage": {
-                    "header": "Heritage",
-                    "traits": "Heritage Trait",
-                    "delete": "Remove Heritage"
-                }
-            },
-            "homeland": "Homeland",
-            "age": "Age",
-            "eyes": "Eyes",
-            "hair": "Hair",
-            "familyTrade": "Family Trade",
-            "powerOrigin": "Power Origin",
-            "weakness": "Weakness",
-            "belief": "Belief",
-            "xp": {
-                "header": "Experience",
-                "progression": "Progression",
-                "total": "Total",
-                "spent": "Spent",
-                "remaining": "Remaining"
-            },
-            "wounds": {
-                "header": "Health",
-                "current": "Current",
-                "max": "Max:",
-                "increaseMax": "Increment Max HP",
-                "help": "Check a box when you suffer damage. Uncheck when healed."
-            },
-            "radiation": {
-                "header": "Radiation",
-                "current": "Current",
-                "max": "Max:",
-                "increaseMax": "Increment Max Radiation",
-                "help": "Check a box when you suffer radiation."
-            },
-            "corruption": {
-                "test": "Corruption Test",
-                "header": "Corruption",
-                "current": "Current",
-                "max": "Max:",
-                "increaseMax": "Increment Corruption Threshold",
-                "help": "Check a box when you suffer corruption. Uncheck if recovered."
-            },
-            "panic": {
-                "test": "Panic Test",
-                "header": "Panic",
-                "current": "Current",
-                "help": "Uncheck a box when you get Panic. Check when recover. Panic test when Panic is 1."
-            },
-            "grit": {
-                "header": "Grit",
-                "current": "Current",
-                "help": "Uncheck a box when you spend Grit."
-            },
-            "proficiencies": {
-                "header": "Proficiency",
-                "mastered": "Mastery"
-            },
-            "gear": "Inventory",
-            "preferredWeapons": "Preferred Weapons",
-            "noPreferredWeapons": "Click to assign a preferred weapon",
-            "removePreferred": "Remove from preferred",
-            "addAmmo": "Add Ammo",
-            "addAmmoTitle": "Add Ammo",
-            "ammoType": "Ammo Type",
-            "selectWeapon": "Select Weapon",
-            "equipped": "Equipped",
-            "equipment": "Weapons",
-            "weaponry": "Weaponry",
-            "wearing": "Wearing",
-            "important": "Important NPC",
-            "money": "Currency",
-            "noMoney": "No currency",
-            "actions": {
-                "editTrait": "Edit Trait",
-                "chatTrait": "Share Trait",
-                "chatItem": "Share Item",
-                "deleteTrait": "Remove Trait"
-            }
-        },
-        "weaponCategories": {
-            "melee": "Melee",
-            "ranged": "Ranged"
-        },
-        "weaponTypes": {
-            "none": "",
-            "light": "Light",
-            "heavy": "Heavy"
-        },
-        "armorTypes": {
-            "none": "",
-            "light": "Light",
-            "medium": "Medium",
-            "heavy": "Heavy",
-            "shield": "Shield"
-        },
-        "corruptionTests": {
-            "none": "None",
-            "disadvantage": "Disadvantage",
-            "standard": "Standard"
-        },
-        "weapon": {
-            "name": "Name",
-            "type": "Weapon Type",
-            "damage": "Damage",
-            "slots": "Item Slots",
-            "description": "Description",
-            "light": "Light",
-            "heavy": "Heavy",
-            "ranged": "Ranged",
-            "lightMelee": "L. Melee",
-            "heavyMelee": "H. Melee",
-            "lightRanged": "L. Ranged",
-            "heavyRanged": "H. Ranged",
-            "lightShort": "L",
-            "heavyShort": "H",
-            "meleeShort": "M",
-            "rangedShort": "R",
-            "oneAttack": "Attacks once per round",
-            "reload": "Reload",
-            "uses": "Uses",
-            "ammoType": "Ammo type",
-            "ammoAny": "— any ammo"
-        },
-        "reload": {
-            "outOfAmmo": "Out of ammo — reload!",
-            "ranOut": "Ammo depleted — reload to continue.",
-            "reloadBtn": "Reload (reset to max)",
-            "reloaded": "reloaded",
-            "undoResource": "Restore resource",
-            "noMag": "No magazines of type \"{type}\" in inventory.",
-            "emptyMag": "Magazine \"{type}\" is empty (0 left).",
-            "noMagAny": "No magazines (ammo) in inventory.",
-            "ammoUsed": " (mag {ammo})"
-        },
-        "death": {
-            "down": "Defeated",
-            "dying": "Dying",
-            "dead": "Dead",
-            "cannotAct": "Downed characters cannot attack.",
-            "thrown": "Death save",
-            "self": "own death save",
-            "stabilized": "Stabilized",
-            "stabilizedHint": "The character is down but alive and stabilized.",
-            "dyingHint": "The character is dying and will die in {rounds} {word} if not healed.",
-            "defeated": "is defeated.",
-            "died": "has died.",
-            "turnsLeft": "{actor} will die in {n} {word}.",
-            "stabilizedRest": "falls, but nothing threatens them anymore.",
-            "dyingRest": "falls and bleeds out. Without aid, death will come in {n} {word}."
-        },
-        "stabilize": {
-            "title": "Stabilize",
-            "sheetHint": "Target a downed ally (0 HP) and roll a death save.",
-            "subtitle": "roll a death save to stabilize. Any die equal or above the threshold is a success.",
-            "self": "You cannot stabilize yourself.",
-            "noTarget": "Target a downed ally (0 HP) first, then stabilize.",
-            "notDowned": "This target is not downed.",
-            "thrown": "Stabilization",
-            "target": "target",
-            "success": "Stabilized",
-            "fail": "Failed",
-            "roll": "Stabilize",
-            "applyConfirm": "Apply"
-        },
-        "heal": {
-            "use": "Use",
-            "heal": "Heal",
-            "usesOn": "uses",
-            "heals": "heals {hp} HP",
-            "noTarget": "Select a target token to heal, or use it on yourself.",
-            "empty": "This heal item is out of uses.",
-            "full": "Target is at full HP.",
-            "badFormula": "Invalid heal formula on this item.",
-            "emptyHint": "No heal items. Target a downed ally to stabilize.",
-            "wasted": "(wasted: {wasted} HP)",
-            "useTooltip": "Heal the target token for this amount (1 use).",
-            "confirmTitle": "Heal confirmation",
-            "applyConfirm": "Apply",
-            "confirmed": "Confirmed"
-        },
-        "armor": {
-            "name": "Name",
-            "type": "Armor Type",
-            "damageReduction": "DR",
-            "armorHp": "Armor HP",
-            "slots": "Item Slots",
-            "depletion": "Depletion",
-            "description": "Description",
-            "none": "No Armor",
-            "armor": "Armor",
-            "shieldBreak": "{actor}'s shield {name} has broken!",
-            "armorBreak": "{actor}'s armor {name} has broken!"
-        },
-        "shield": {
-            "name": "Name",
-            "damageReduction": "DR",
-            "armorHp": "Shield HP",
-            "shields": "Shields",
-            "none": "No Shield",
-            "description": "Description"
-        },
-        "gear": {
-            "name": "Name",
-            "slots": "Item Slots",
-            "depletion": "Depletion",
-            "quantity": "Quantity",
-            "description": "Description",
-            "category": "Category",
-            "ammoType": "Ammo type",
-            "ammoTypePlaceholder": "e.g. 9x19",
-            "heal": "Healing (HP)",
-            "healPlaceholder": "4 or 2d4+2",
-            "categories": {
-                "item": "Item",
-                "ammo": "Ammo",
-                "heal": "Heal",
-                "money": "Money"
-            },
-            "moneyTotal": "Money"
-        },
-        "heritage": {
-            "trait": "Heritage Trait",
-            "startingHealth": "Starting HP",
-            "corruptionThreshold": "Corruption Threshold"
-        },
-        "trait": {
-            "name": "Name",
-            "description": "Description"
-        },
-        "plural": {
-            "round": {
-                "one": "round",
-                "few": "round",
-                "many": "round",
-                "other": "round"
-            },
-            "turn": {
-                "one": "turn",
-                "few": "turns",
-                "many": "turns",
-                "other": "turns"
-            }
+  "tinyd6": {
+    "mech": {
+      "sheet": "Sheet",
+      "mechanics": "Settings",
+      "actions": "Actions",
+      "actionsMax": "Max Actions",
+      "woundsMax": "Max Wounds",
+      "corruptionMax": "Max Corruption",
+      "masteredCount": "Mastered Weapons",
+      "masteredHint": "Number of weapons the hero can master at once (requires the \"Mastered Weapons\" rule).",
+      "death": "Death & Dying",
+      "deathDie": "Death Die",
+      "worldDefault": "d6 (world default)",
+      "deathRounds": "Death Rounds",
+      "deathThreshold": "Death Save Threshold",
+      "emptyWorld": "Leave empty to use the world default.",
+      "damageBonus": "Damage Bonus",
+      "damageBonusHint": "Bonus added to all weapon damage rolls.",
+      "combat": "Combat",
+      "damageResist": "Damage Resist",
+      "damageResistHint": "Adjusts damage to HP (after armor). N or +N - resist, -N - vulnerability (more damage). Can be a formula: 2d3, 1d2+1 - rolled on each application.",
+      "damageResistPlaceholder": "-2, 1, 2d3, 1d2+1",
+      "groupSheet": "Sheet",
+      "groupRules": "Rules",
+      "stats": "Attributes",
+      "intro": "Per-hero rule overrides. Empty or 0 - use the world default.",
+      "fromWorld": "from world",
+      "fromWorldShort": "world:",
+      "actionsMaxHint": "Action limit per round. Restored at the start of each round.",
+      "woundsMaxHint": "Upper bound of the hero's health track.",
+      "corruptionMaxHint": "Track size at which the corruption rule triggers.",
+      "xpTotalHint": "Lifetime XP accumulated by the hero.",
+      "progressionHint": "Overall advancement progress cells.",
+      "deathDieHint": "Personal death-save die. Empty - world default.",
+      "deathRoundsHint": "Rounds until death unaided. Empty or 0 - world default. Formulas allowed (2d5).",
+      "deathThresholdHint": "Roll result needed for a successful death save. Empty or 0 - world default.",
+      "movement": "Movement",
+      "movementHint": "Movement per turn in feet. Empty or 0 - uses the world setting. The «Dash» button in the sheet header adds the world movement for 1 action."
+    },
+    "TinyD6HeroSheet": "Hero",
+    "TinyD6NpcSheet": "NPC",
+    "TokenArmor": "Armor",
+    "TokenWeapons": "Weapons",
+    "TokenHeal": "Heal & Stabilize",
+    "TokenActions": "Actions",
+    "ArmorRestore": "Restore Armor",
+    "Attack": "Attack",
+    "Reload": "Reload",
+    "system": {
+      "name": "Tiny D6 2e",
+      "dieRoller": "Die Roller",
+      "actions": "Actions",
+      "actionAdd": "Add action",
+      "actionRemove": "Remove action",
+      "collapse": "Collapse",
+      "expand": "Expand"
+    },
+    "settings": {
+      "title": "System Settings",
+      "label": "System Settings",
+      "description": "Choose the optional rules and mechanics you would like to enable from the options below.",
+      "theme": {
+        "name": "Theme",
+        "hint": "Set this to theme your world for a specific Tiny D6 game",
+        "choices": {
+          "cthulhu": "Tiny Cthulhu",
+          "dungeon": "Tiny Dungeon 2e"
         }
+      },
+      "sheetStyle": {
+        "name": "Sheet Style",
+        "hint": "Choose the visual style of the character sheets",
+        "choices": {
+          "default": "Default Dark",
+          "perkament": "Perkament · Folklore",
+          "noir": "Noir · Copper",
+          "minimal": "Default Light",
+          "cyberpunk": "Cyberpunk · Neon"
+        }
+      },
+      "rollerInCharsheet": {
+        "name": "Dice Roller in Character Sheet",
+        "hint": "Enable to have a Dice Roller in the Character Sheet."
+      },
+      "enableCorruption": {
+        "name": "Enable Corruption Track",
+        "hint": "Add a track to the character sheet for Corruption."
+      },
+      "enableAdvancement": {
+        "name": "Character Advancement",
+        "hint": "Characters progress either based on a number of sessions or by awarding experience points",
+        "choices": {
+          "none": "None",
+          "minimalist": "Minimalist Advancement",
+          "xp": "Experience Points"
+        }
+      },
+      "enableItemTracking": {
+        "name": "Enable Item Tracking",
+        "hint": "Show slot use for items and calculate remaining inventory slots."
+      },
+      "enableDepletionPoints": {
+        "name": "Enable Item Expenditure/Depletion",
+        "hint": "When item uses depletion points, track them for character items."
+      },
+      "enableCriticalHits": {
+        "name": "Enable Critical Hits",
+        "hint": "Mark Test as 'Critical Success' when all dice are 6."
+      },
+      "enableCriticalFailure": {
+        "name": "Enable Critical Failures",
+        "hint": "Mark Test as 'Critical Failures' when all dice are 1"
+      },
+      "enableVariableWeaponDamage": {
+        "name": "Variable Weapon Damage",
+        "hint": "Calculate variable weapon damage for attack tests."
+      },
+      "independentNpcTokens": {
+        "name": "Independent NPC Tokens",
+        "hint": "Tokens placed on the scene from an NPC actor become independent copies with their own HP and armor."
+      },
+      "defaultActions": {
+        "name": "Default Actions",
+        "hint": "Default maximum number of actions for newly created actors (Tiny D6 stock is 1)."
+      },
+      "enableTinyD6Plus": {
+        "name": "Homerule: TinyD6+",
+        "hint": "Enable the TinyD6+ combat house rules: reloading (ranged weapons track charges (Uses) and consume one per attack; heavy weapons can be limited to one attack per round), death & downed (at 0 HP heroes and important NPCs make a death save, then Dying with a round timer; defeated actors cannot attack), and the token HUD weapon palette (attack/reload from the token)."
+      },
+      "critAdvantage": {
+        "name": "Homerule: Crit Advantage-Normal",
+        "hint": "When all dice show identical 6s on an attack, weapon damage is doubled (Critical). Choose whether this applies to 2d6, 3d6, or both.",
+        "choices": {
+          "off": "Off",
+          "two": "2d6 only",
+          "three": "3d6 only",
+          "both": "2d6 and 3d6"
+        }
+      },
+      "npcRequireEquipped": {
+        "name": "NPCs must equip weapons",
+        "hint": "Require NPCs to only use weapons marked as \"Equipped\". Can be overridden per NPC (Settings → Combat)."
+      },
+      "showNpcReloadMessages": {
+        "name": "Show NPC Reload Messages",
+        "hint": "Also post reload / out-of-ammo messages to chat for NPC actors (off by default to reduce chat noise)."
+      },
+      "deathRounds": {
+        "name": "Death Save: Rounds to Die",
+        "hint": "Rounds until death after hitting 0 HP. Enter a number (3) or a die formula rolled when HP drops to 0, e.g. 1d6+2 or 2d5, for a random duration each time."
+      },
+      "deathSaveThreshold": {
+        "name": "Death Save: Success Threshold",
+        "hint": "A death save (1d6) succeeds when the result is at least this value (stock 4)."
+      },
+      "showNpcDeathMessages": {
+        "name": "Show NPC Down Messages",
+        "hint": "Also post a chat message when a regular NPC is defeated (off by default to reduce chat noise)."
+      },
+      "animFx": {
+        "name": "Combat Animations",
+        "hint": "Show floating damage numbers, token flashes, critical highlights and death effects. Disable for low-end machines or minimal visual noise."
+      },
+      "enablePowerOrigin": {
+        "name": "Enable Power Origin",
+        "hint": "Adds a text field for your Super Power Origin."
+      },
+      "enableWeakness": {
+        "name": "Enable Weakness",
+        "hint": "Adds a text field for your Super Weakness."
+      },
+      "enablePanic": {
+        "name": "Enable Panic",
+        "hint": "Adds a counter for keeping track of Panic."
+      },
+      "enableRadiation": {
+        "name": "Enable Radiation",
+        "hint": "Adds a counter for keeping track of Radiation."
+      },
+      "enableGrit": {
+        "name": "Enable Grit",
+        "hint": "Adds a counter for keeping track of Grit."
+      },
+      "enableHealStabProxy": {
+        "name": "GM proxy: heal & stabilize",
+        "hint": "Allows players to heal or stabilize characters/NPCs they do not own. The change is applied through the GM via socketlib (no ownership required)."
+      },
+      "enablePlayerDamageProxy": {
+        "name": "GM proxy: player damage",
+        "hint": "Allows players to apply attack damage to characters/NPCs they do not own. The damage is applied through the GM via socketlib (no ownership required)."
+      },
+      "enableAttackProficiency": {
+        "name": "Auto weapon proficiency",
+        "hint": "TinyD6+: automatically suggests the attack dice based on weapon proficiency (mastered weapon = advantage, untrained = disadvantage). The player can still pick any dice level manually."
+      },
+      "enableArmorStacking": {
+        "name": "Enable armor stacking",
+        "hint": "When enabled, multiple equipped armor pieces stack their DR. When disabled, only the highest DR armor piece applies."
+      },
+      "enableArmorBreakMessages": {
+        "name": "Armor break chat messages",
+        "hint": "Post a chat message when a shield or armor piece breaks (HP reaches 0)."
+      },
+      "movementDefault": {
+        "name": "Standard movement",
+        "hint": "Base per-turn movement in feet. Used when a character has no personal value. The «Dash» button adds this same value to the movement budget for 1 action."
+      },
+      "movementUnit": {
+        "name": "Movement units",
+        "hint": "How movement is displayed: feet (imperial grid) or meters (metric grid). Conversion: 1 ft = 0.3048 m. Character movement is always stored in feet and converted automatically.",
+        "choices": {
+          "ft": "Feet (imperial grid)",
+          "m": "Meters (metric grid)"
+        }
+      },
+      "dashRefundsAction": {
+        "name": "Refund action when pressing «Dash» again",
+        "hint": "A dash always spends 1 action. When enabled, pressing the «Dash» button again cancels the dash and refunds the action. When disabled, pressing again simply turns the dash off without refunding the action. Well suited for games where characters have only 1 action."
+      },
+      "enableMovementBudget": {
+        "name": "Movement budget & dash",
+        "hint": "Enables the per-turn movement budget: green/yellow/red path coloring, the Dash button (over-movement for 1 action) and a remaining-budget chip on the combat tracker. Disable to restore standard unlimited Foundry movement."
+      },
+      "enableDeathSound": {
+        "name": "Death sound",
+        "hint": "Play a cue when a character dies (the death timer runs out)."
+      },
+      "deathSoundFile": {
+        "name": "Death sound (file)",
+        "hint": "Path to an audio file of any format (mp3, ogg, wav, webm, m4a, flac). Leave empty for the built-in synthesized motif."
+      },
+      "enableDeathTicks": {
+        "name": "Death ticking",
+        "hint": "A short anxious tick (heard by everyone) at the start of a dying character's turn, when their death countdown ticks. Three tiers: 5+ rounds - slow, 3-4 - medium, 1-2 - sharp."
+      },
+      "deathTickFile": {
+        "name": "Death tick (file)",
+        "hint": "Custom tick sound at the start of a dying character's turn (any format: mp3, ogg, wav, webm, m4a, flac). Volume scales with the stage: 5+ rounds - quiet, 3-4 - medium, 1-2 - loud. Empty uses the synthesized tick."
+      },
+      "enableDeathFx": {
+        "name": "Dying token effects",
+        "hint": "While a character is Dying, their token is highlighted in red by remaining rounds: 5+ - red edges, 3-4 - red creeping inward plus blood splatters, 1-2 - slow inner pulse. Also respects the master combat FX toggle."
+      },
+      "deathSoundVolume": {
+        "name": "Death sound volume",
+        "hint": "Volume (0.05-1) for the death sound, applied to both a custom file and the built-in synth. Default 0.5 - so even without a configured file the sound is not deafening."
+      }
+    },
+    "dice": {
+      "modifier": {
+        "focus": "Focus",
+        "marksman": "Marksman"
+      },
+      "roll": {
+        "disadvantage": "Disadvantage",
+        "standard": "Standard Test",
+        "advantage": "Advantage",
+        "success": "Success!",
+        "failure": "Failure",
+        "critical": "Critical Success!!",
+        "botch": "Critical Failure!!"
+      }
+    },
+    "attack": {
+      "attack": "Attack",
+      "hit": "Hit",
+      "miss": "Miss",
+      "crit": "Critical",
+      "targets": "Targets",
+      "damage": "Damage",
+      "noTarget": "Select a target token (or select tokens) before attacking.",
+      "notEquipped": "Weapon is not equipped - check \"Equipped\" in the inventory, or disable the equip rule.",
+      "applyDamage": "Apply Damage",
+      "undoDamage": "Undo Damage",
+      "weapon": "Weapon",
+      "mode": "Roll",
+      "roll": "Attack",
+      "cancel": "Cancel"
+    },
+    "sheet": {
+      "newItem": "New Item",
+      "description": "Description",
+      "modules": "Modules",
+      "panels": "Panels",
+      "none": "None",
+      "noWeapons": "No weapons found in the world's Item directory.",
+      "tab": {
+        "main": "Main"
+      },
+      "combat": "Combat",
+      "weaponProficiency": "Weapon Proficiency",
+      "wounds": "Wounds",
+      "armor": "Armor",
+      "corruption": "Corruption",
+      "unequip": "Unequip",
+      "delete": "Delete",
+      "xp": "XP",
+      "actions": {
+        "name": "Actions",
+        "spend": "Spend an action",
+        "restore": "Restore an action",
+        "plus": "Add max action (+1)",
+        "minus": "Remove max action (−1)"
+      }
+    },
+    "actor": {
+      "name": "Name",
+      "npc": "NPC",
+      "people": "People",
+      "traits": "Traits",
+      "description": "Description",
+      "tiny-cthulhu": {
+        "character": "Bio",
+        "heritage": {
+          "header": "Archetype",
+          "traits": "Archetype Trait",
+          "delete": "Remove Archetype"
+        }
+      },
+      "tiny-dungeon": {
+        "character": "Character",
+        "heritage": {
+          "header": "Heritage",
+          "traits": "Heritage Trait",
+          "delete": "Remove Heritage"
+        }
+      },
+      "homeland": "Homeland",
+      "age": "Age",
+      "eyes": "Eyes",
+      "hair": "Hair",
+      "familyTrade": "Family Trade",
+      "powerOrigin": "Power Origin",
+      "weakness": "Weakness",
+      "belief": "Belief",
+      "xp": {
+        "header": "Experience",
+        "progression": "Progression",
+        "total": "Total",
+        "spent": "Spent",
+        "remaining": "Remaining"
+      },
+      "wounds": {
+        "header": "Health",
+        "current": "Current",
+        "max": "Max:",
+        "increaseMax": "Increment Max HP",
+        "help": "Check a box when you suffer damage. Uncheck when healed."
+      },
+      "radiation": {
+        "header": "Radiation",
+        "current": "Current",
+        "max": "Max:",
+        "increaseMax": "Increment Max Radiation",
+        "help": "Check a box when you suffer radiation."
+      },
+      "corruption": {
+        "test": "Corruption Test",
+        "header": "Corruption",
+        "current": "Current",
+        "max": "Max:",
+        "increaseMax": "Increment Corruption Threshold",
+        "help": "Check a box when you suffer corruption. Uncheck if recovered."
+      },
+      "panic": {
+        "test": "Panic Test",
+        "header": "Panic",
+        "current": "Current",
+        "help": "Uncheck a box when you get Panic. Check when recover. Panic test when Panic is 1."
+      },
+      "grit": {
+        "header": "Grit",
+        "current": "Current",
+        "help": "Uncheck a box when you spend Grit."
+      },
+      "proficiencies": {
+        "header": "Proficiency",
+        "mastered": "Mastery"
+      },
+      "gear": "Inventory",
+      "preferredWeapons": "Preferred Weapons",
+      "noPreferredWeapons": "Click to assign a preferred weapon",
+      "removePreferred": "Remove from preferred",
+      "addAmmo": "Add Ammo",
+      "addAmmoTitle": "Add Ammo",
+      "ammoType": "Ammo Type",
+      "selectWeapon": "Select Weapon",
+      "equipped": "Equipped",
+      "equipment": "Weapons",
+      "weaponry": "Weaponry",
+      "wearing": "Wearing",
+      "important": "Important NPC",
+      "money": "Currency",
+      "noMoney": "No currency",
+      "bio": {
+        "origin": "Origin",
+        "role": "Occupation / role",
+        "appearance": "Appearance",
+        "goals": "Goals / motives",
+        "history": "History (brief)"
+      },
+      "faction": {
+        "header": "Faction",
+        "name": "Name",
+        "rank": "Rank",
+        "leader": "Leader",
+        "note": "Note"
+      },
+      "npcSettings": {
+        "intro": "Rules bound to this NPC sheet - the same mechanics as heroes.",
+        "actionsMaxHint": "Action limit per turn for this NPC.",
+        "woundsMaxHint": "Upper bound of this NPC's wound meter.",
+        "deathDieHint": "Personal death save die. Empty - world default.",
+        "deathRoundsHint": "Rounds this NPC survives unaided. Empty or 0 - world setting. Can be a formula (2d5).",
+        "deathThresholdHint": "Roll result needed for a successful death save. Empty or 0 - world setting.",
+        "deathScopeHint": "Death settings apply only to important NPCs (the \"Important NPC\" checkbox). Regular NPCs go down without a death save.",
+        "combat": "Combat",
+        "damageBonusHint": "Flat bonus to this NPC's attack damage.",
+        "damageResistHint": "This NPC's resist/vulnerability to HP damage (see tinyd6.mech.damageResistHint).",
+        "requireEquipped": "Equip weapons",
+        "requireEquippedWorld": "Follow world setting",
+        "requireEquippedOn": "Yes",
+        "requireEquippedOff": "No",
+        "requireEquippedHint": "Require this NPC to only use \"equipped\" weapons (marked in inventory). Per-NPC or by world setting.",
+        "infiniteAmmo": "Infinite ammo",
+        "infiniteAmmoHint": "Reloading weapons never run out: uses are not spent and reloading is unavailable.",
+        "movementHint": "This NPC per-turn movement in feet. Empty or 0 means the world setting. The «Dash» button in the Combat tab adds world movement for 1 action."
+      },
+      "actions": {
+        "editTrait": "Edit Trait",
+        "chatTrait": "Share Trait",
+        "chatItem": "Share Item",
+        "deleteTrait": "Remove Trait"
+      }
+    },
+    "weaponCategories": {
+      "melee": "Melee",
+      "ranged": "Ranged"
+    },
+    "weaponTypes": {
+      "none": "",
+      "light": "Light",
+      "heavy": "Heavy"
+    },
+    "armorTypes": {
+      "none": "",
+      "light": "Light",
+      "medium": "Medium",
+      "heavy": "Heavy",
+      "shield": "Shield"
+    },
+    "corruptionTests": {
+      "none": "None",
+      "disadvantage": "Disadvantage",
+      "standard": "Standard"
+    },
+    "weapon": {
+      "name": "Name",
+      "type": "Weapon Type",
+      "damage": "Damage",
+      "slots": "Item Slots",
+      "description": "Description",
+      "light": "Light",
+      "heavy": "Heavy",
+      "ranged": "Ranged",
+      "lightMelee": "L. Melee",
+      "heavyMelee": "H. Melee",
+      "lightRanged": "L. Ranged",
+      "heavyRanged": "H. Ranged",
+      "lightShort": "L",
+      "heavyShort": "H",
+      "meleeShort": "M",
+      "rangedShort": "R",
+      "oneAttack": "Attacks once per round",
+      "reload": "Reload",
+      "uses": "Uses",
+      "ammoType": "Ammo type",
+      "ammoAny": "- any ammo",
+      "stats": "Statistics"
+    },
+    "reload": {
+      "outOfAmmo": "Out of ammo - reload!",
+      "ranOut": "Ammo depleted - reload to continue.",
+      "reloadBtn": "Reload (reset to max)",
+      "reloaded": "reloaded",
+      "undoResource": "Restore resource",
+      "noMag": "No magazines of type \"{type}\" in inventory.",
+      "emptyMag": "Magazine \"{type}\" is empty (0 left).",
+      "noMagAny": "No magazines (ammo) in inventory.",
+      "ammoUsed": " (mag {ammo})"
+    },
+    "death": {
+      "down": "Defeated",
+      "dying": "Dying",
+      "dead": "Dead",
+      "unconscious": "Unconscious",
+      "cannotAct": "Downed characters cannot attack.",
+      "thrown": "Death save",
+      "self": "own death save",
+      "stabilized": "Stabilized",
+      "stabilizedHint": "The character is down but alive and stabilized.",
+      "dyingHint": "The character is dying and will die in {rounds} {word} if not healed.",
+      "defeated": "is defeated.",
+      "died": "has died.",
+      "turnsLeft": "{actor} will die in {n} {word}.",
+      "stabilizedRest": "falls, but nothing threatens them anymore.",
+      "dyingRest": "falls and bleeds out. Without aid, death will come in {n} {word}.",
+      "diedNotify": "{actor} has died."
+    },
+    "stabilize": {
+      "title": "Stabilize",
+      "sheetHint": "Target a downed ally (0 HP) and roll a death save.",
+      "subtitle": "roll a death save to stabilize. Any die equal or above the threshold is a success.",
+      "self": "You cannot stabilize yourself.",
+      "noTarget": "Target a downed ally (0 HP) first, then stabilize.",
+      "notDowned": "This target is not downed.",
+      "thrown": "Stabilization",
+      "target": "target",
+      "success": "Stabilized",
+      "fail": "Failed",
+      "roll": "Stabilize",
+      "applyConfirm": "Apply",
+      "actionsCost": "Stabilization costs 1 action."
+    },
+    "heal": {
+      "use": "Use",
+      "heal": "Heal",
+      "usesOn": "uses",
+      "heals": "heals {hp} HP",
+      "noTarget": "Select a target token to heal, or use it on yourself.",
+      "empty": "This heal item is out of uses.",
+      "full": "Target is at full HP.",
+      "badFormula": "Invalid heal formula on this item.",
+      "emptyHint": "No heal items. Target a downed ally to stabilize.",
+      "wasted": "(wasted: {wasted} HP)",
+      "useTooltip": "Heal the target token for this amount (1 use).",
+      "confirmTitle": "Heal confirmation",
+      "applyConfirm": "Apply",
+      "confirmed": "Confirmed"
+    },
+    "armor": {
+      "name": "Name",
+      "type": "Armor Type",
+      "damageReduction": "DR",
+      "armorHp": "Armor HP",
+      "slots": "Item Slots",
+      "depletion": "Depletion",
+      "description": "Description",
+      "none": "No Armor",
+      "armor": "Armor",
+      "shieldBreak": "{actor}'s shield {name} has broken!",
+      "armorBreak": "{actor}'s armor {name} has broken!"
+    },
+    "shield": {
+      "name": "Name",
+      "damageReduction": "DR",
+      "armorHp": "Shield HP",
+      "shields": "Shields",
+      "none": "No Shield",
+      "description": "Description"
+    },
+    "gear": {
+      "name": "Name",
+      "slots": "Item Slots",
+      "depletion": "Depletion",
+      "quantity": "Quantity",
+      "description": "Description",
+      "category": "Category",
+      "ammoType": "Ammo type",
+      "ammoTypePlaceholder": "e.g. 9x19",
+      "heal": "Healing (HP)",
+      "healPlaceholder": "4 or 2d4+2",
+      "categories": {
+        "item": "Item",
+        "ammo": "Ammo",
+        "heal": "Heal",
+        "money": "Money"
+      },
+      "moneyTotal": "Money"
+    },
+    "heritage": {
+      "trait": "Heritage Trait",
+      "startingHealth": "Starting HP",
+      "corruptionThreshold": "Corruption Threshold"
+    },
+    "trait": {
+      "name": "Name",
+      "description": "Description"
+    },
+    "plural": {
+      "round": {
+        "one": "round",
+        "few": "round",
+        "many": "round",
+        "other": "round"
+      },
+      "turn": {
+        "one": "turn",
+        "few": "turns",
+        "many": "turns",
+        "other": "turns"
+      }
+    },
+    "movement": {
+      "dash": "Dash",
+      "dashUndo": "Cancel dash and refund the action",
+      "noActions": "No free action left. A dash costs 1 action.",
+      "dashActive": "Dash active",
+      "dashHint": "Over-movement. Costs 1 action and adds the world movement value to the movement budget. Press again to cancel the dash and refund the action.",
+      "dashOff": "Cancel the dash",
+      "label": "Move"
     }
+  }
 }

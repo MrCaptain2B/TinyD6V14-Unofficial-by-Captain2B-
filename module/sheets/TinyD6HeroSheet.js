@@ -6,6 +6,7 @@ export default class TinyD6HeroSheet extends TinyD6ActorSheet {
     static get defaultOptions() {
         return foundry.utils.mergeObject(super.defaultOptions, {
             template: "systems/tinyd6v14/templates/sheets/hero-sheet.hbs",
+            width: 860,
             classes: [ TinyD6System.SYSTEM, "tinyd6", "sheet", "hero", game.settings.get(TinyD6System.SYSTEM, "theme"), game.settings.get(TinyD6System.SYSTEM, "sheetStyle") ]
         });
     }
@@ -15,7 +16,7 @@ export default class TinyD6HeroSheet extends TinyD6ActorSheet {
 
         const itemList = data.data.items ?? data.items ?? [];
         data.data.system.heritage = itemList.filter(item => { return item.type === "heritage" })[0];
-        // Старые актёры могут не иметь блока xp — подставляем дефолт, иначе
+        // Старые актёры могут не иметь блока xp - подставляем дефолт, иначе
         // getData падает и окно листа не открывается.
         if (!data.data.system.xp) data.data.system.xp = { max: 0, spent: 0 };
         data.data.system.xp.remaining = (data.data.system.xp.max || 0) - (data.data.system.xp.spent || 0);
@@ -25,7 +26,7 @@ export default class TinyD6HeroSheet extends TinyD6ActorSheet {
         data.data.system.armorTotal = 0;
         data.data.system.armorHpTotal = 0;
 
-        // Считаем DR брони: без стакинга — только максимум, с стакингом — сумму.
+        // Считаем DR брони: без стакинга - только максимум, с стакингом - сумму.
         let maxArmorDr = 0;
         data.data.system.armor.forEach((item, n) => {
             if ((Number(item.system.armorHp?.value) || 0) <= 0) return;
@@ -52,12 +53,21 @@ export default class TinyD6HeroSheet extends TinyD6ActorSheet {
         const masteredCount = Math.max(1, parseInt(homebrew.masteredCount) || 1);
         const masteredIds = (data.data.system.proficiencies?.masteredWeapons || "")
             .split(",").map(s => s.trim()).filter(Boolean);
+        const worldDeathRounds = String(game.settings.get('tinyd6v14', 'deathRounds') ?? "3").trim() || "3";
+        const worldDeathThreshold = Number(game.settings.get('tinyd6v14', 'deathSaveThreshold')) || 4;
         data.data.system.homebrew = {
             masteredCount,
             deathDie: homebrew.deathDie ?? "",
             deathRounds: homebrew.deathRounds ?? "",
             deathSaveThreshold: homebrew.deathSaveThreshold ?? "",
-            damageBonus: homebrew.damageBonus ?? 0
+            damageBonus: homebrew.damageBonus ?? 0,
+            damageResist: homebrew.damageResist ?? "",
+            movement: homebrew.movement ?? "",
+            world: {
+                deathRounds: worldDeathRounds,
+                deathSaveThreshold: worldDeathThreshold,
+                deathDie: "d6"
+            }
         };
         data.data.system.masteredSlots = Array.from({ length: masteredCount }, (_, i) => {
             const id = masteredIds[i] ?? "";
@@ -75,7 +85,6 @@ export default class TinyD6HeroSheet extends TinyD6ActorSheet {
         html.find(".advancement-progress-box").on('click change', this._setAdvancementProgress.bind(this));
 
         html.find(".td-tab").click(this._onTabClick.bind(this));
-        html.find(".td-rail-tab").click(this._onRailTabClick.bind(this));
         this._restoreActiveTab(html);
 
         super.activateListeners(html);
@@ -85,57 +94,12 @@ export default class TinyD6HeroSheet extends TinyD6ActorSheet {
     {
         const tab = event.currentTarget.dataset.tab;
         this._activeTab = tab;
-        this._activeRail = "sheet";
-        this._applyActiveRail(this.element);
-    }
-
-    _onRailTabClick(event)
-    {
-        const rail = event.currentTarget.dataset.rail;
-
-        if (rail === "mechanics")
-        {
-            if (this._activeRail !== "mechanics") this._preRailTab = this._activeTab || "main";
-            this._activeRail = "mechanics";
-        }
-        else
-        {
-            this._activeRail = "sheet";
-            this._activeTab = this._preRailTab || this._activeTab || "main";
-        }
-
-        this._applyActiveRail(this.element);
+        this._applyActiveTab(this.element);
     }
 
     _restoreActiveTab(html)
     {
-        if (this._activeRail === "mechanics")
-        {
-            this._applyActiveRail(html);
-        }
-        else if (this._activeTab)
-        {
-            this._activeRail = "sheet";
-            this._applyActiveRail(html);
-        }
-    }
-
-    _applyActiveRail(html)
-    {
-        if (this._activeRail === "mechanics")
-        {
-            html.find(".td-rail-tab").removeClass("active")
-                .filter('[data-rail="mechanics"]').addClass("active");
-            html.find(".td-tab").removeClass("active");
-            html.find(".td-pane").removeClass("active")
-                .filter('[data-pane="mechanics"]').addClass("active");
-        }
-        else
-        {
-            html.find(".td-rail-tab").removeClass("active")
-                .filter('[data-rail="sheet"]').addClass("active");
-            this._applyActiveTab(html);
-        }
+        this._applyActiveTab(html);
     }
 
     _applyActiveTab(html)

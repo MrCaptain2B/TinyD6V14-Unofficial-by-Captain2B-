@@ -1,10 +1,25 @@
 <div class="col left">
-    {{#if showHeal}}
-    <button type="button" class="control-icon heal-icon" data-action="togglePalette" data-palette="heal"
-            data-tooltip="tinyd6.TokenHeal" data-tooltip-direction="RIGHT">
-        {{{td6icon "plus"}}}
+    {{#if showActions}}
+    <button type="button" class="control-icon actions-icon" data-action="togglePalette" data-palette="actions"
+            data-tooltip="tinyd6.TokenActions" data-tooltip-direction="RIGHT">
+        {{{td6icon "burst"}}}
     </button>
-    <div class="palette palette-heal" data-palette="heal">
+    <div class="palette palette-actions" data-palette="actions">
+        {{#if dashEnabled}}
+        <div class="actions-info">
+            <span class="wname">{{localize "tinyd6.sheet.actions.name"}}</span>
+            <span class="charges">{{dashActionsLeft}}</span>
+        </div>
+        <div class="dash-row">
+            <button type="button" class="wbtn dash {{#if dashed}}dashed{{/if}} {{#unless canDash}}disabled{{/unless}}"
+                    data-action="dash"
+                    data-tooltip="{{#if dashed}}{{#if dashCanUndo}}{{localize "tinyd6.movement.dashUndo"}}{{else}}{{localize "tinyd6.movement.dashOff"}}{{/if}}{{else}}{{localize "tinyd6.movement.dashHint"}}{{/if}}"
+                    data-tooltip-direction="DOWN"
+                    {{#unless canDash}}disabled{{/unless}}>
+                {{#if dashed}}{{localize "tinyd6.movement.dashActive"}}{{else}}{{localize "tinyd6.movement.dash"}}{{/if}} {{{td6icon "run"}}}
+            </button>
+        </div>
+        {{/if}}
         {{#if showStab}}
         <div class="wcard hcard stab">
             <div class="whead">
@@ -13,9 +28,9 @@
                 <span class="charges" style="color:#6ea8fe;">0 HP</span>
             </div>
             <div class="whead" style="margin-top:2px;">
-                <button type="button" class="wbtn stab {{#unless stabEnabled}}disabled{{/unless}}" data-action="stabilize"
-                        data-tooltip="tinyd6.stabilize.sheetHint" data-tooltip-direction="DOWN"
-                        {{#unless stabEnabled}}disabled{{/unless}}>
+                <button type="button" class="wbtn stab {{#unless stabUsable}}disabled{{/unless}}" data-action="stabilize"
+                        data-tooltip="{{localize 'tinyd6.stabilize.sheetHint'}} · {{localize 'tinyd6.stabilize.actionsCost'}}" data-tooltip-direction="DOWN"
+                        {{#unless stabUsable}}disabled{{/unless}}>
                     {{localize "tinyd6.stabilize.title"}} {{{td6icon "burst"}}}
                 </button>
             </div>
@@ -26,7 +41,7 @@
             <div class="whead">
                 <img src="{{heal.img}}" alt="{{heal.name}}">
                 <span class="wname" title="{{heal.name}}">{{heal.name}}</span>
-                <span class="charges {{#if (eq heal.qty 0)}}empty{{/if}}">+{{heal.heal}} В· Г—{{heal.qty}}</span>
+                <span class="charges {{#if (eq heal.qty 0)}}empty{{/if}}">+{{heal.heal}} · ×{{heal.qty}}</span>
             </div>
             <div class="whead">
                 <button type="button" class="wbtn heal {{#if (eq heal.qty 0)}}empty{{/if}}" data-action="healUse"

@@ -49,6 +49,10 @@ export default class TinyD6NpcSheet extends TinyD6ActorSheet {
     activateListeners(html) {
         super.activateListeners(html);
 
+        // Переключение вкладок (каркас как у героя)
+        html.find(".td-tab").click(this._onNpcTabClick.bind(this));
+        this._applyNpcTab(html);
+
         // Remove preferred weapon
         html.find('.npc-remove-preferred').on('click', async (event) => {
             event.preventDefault();
@@ -79,6 +83,20 @@ export default class TinyD6NpcSheet extends TinyD6ActorSheet {
             event.preventDefault();
             this._openAddAmmoDialog();
         });
+    }
+
+    _onNpcTabClick(event)
+    {
+        event.preventDefault();
+        this._activeTab = event.currentTarget.dataset.tab;
+        this._applyNpcTab(this.element);
+    }
+
+    _applyNpcTab(html)
+    {
+        if (!this._activeTab) this._activeTab = "main";
+        html.find(".td-tab").removeClass("active").filter(`[data-tab="${this._activeTab}"]`).addClass("active");
+        html.find(".td-pane").removeClass("active").filter(`[data-pane="${this._activeTab}"]`).addClass("active");
     }
 
     _openPreferredWeaponSelector() {

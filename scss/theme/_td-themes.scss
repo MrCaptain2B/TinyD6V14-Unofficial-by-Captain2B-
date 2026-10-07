@@ -1,6 +1,6 @@
 /* ============================================================
-   Tiny D6 — Оформления листа (sheetStyle)
-   Каждая тема — класс на окне листа вида .td-sheet-*.
+   Tiny D6 - Оформления листа (sheetStyle)
+   Каждая тема - класс на окне листа вида .td-sheet-*.
    Темы переопределяют набор переменных --td-* поверх
    базового макета из redesign.css, не трогая вёрстку.
    ============================================================ */
@@ -11,13 +11,13 @@
    --td-accent-soft, --td-ok, --td-danger, --td-radius, --td-font */
 
 /* ------------------------------------------------------------
-   DEFAULT (по умолчанию) — текущий тёмный с синим акцентом.
+   DEFAULT (по умолчанию) - текущий тёмный с синим акцентом.
    Ничего не переопределяем: берём значения из redesign.css
    ------------------------------------------------------------ */
 
 
 /* ------------------------------------------------------------
-   ПЕРГАМЕНТ (V1) — тёплый фэнтези / рукописный
+   ПЕРГАМЕНТ (V1) - тёплый фэнтези / рукописный
    ------------------------------------------------------------ */
 .tinyd6.sheet.hero.td-sheet-perkament,
 .tinyd6.sheet.npc.td-sheet-perkament {
@@ -26,9 +26,9 @@
     --td-field: #e4d6b2;
     --td-hover: #d6c494;
     --td-border: #a08a58;
-    --td-text: #2e2415;
-    --td-strong: #211a0e;
-    --td-muted: #6b5b3c;
+    --td-text: #241c0f;
+    --td-strong: #191207;
+    --td-muted: #55472e;
     --td-accent: #8b2f2f;
     --td-accent-soft: #a85a3c;
     --td-ok: #3f6d3a;
@@ -148,7 +148,7 @@
 .tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .td-avatar {
     border-radius: 3px; border: 2px solid var(--td-border);
 }
-/* Броня и кнопки — сплавленные */
+/* Броня и кнопки - сплавленные */
 .tinyd6.sheet.td-sheet-perkament form.actor-sheet .equipped-armor .total-armor,
 .tinyd6.sheet.npc.td-sheet-perkament form.actor-sheet .equipped-armor .total-armor {
     border-radius: 4px; box-shadow: 0 2px 0 rgba(122,106,74,.4);
@@ -175,7 +175,7 @@
 
 
 /* ------------------------------------------------------------
-   НУАР (V2) — тёмный, медь, досье
+   НУАР (V2) - тёмный, медь, досье
    ------------------------------------------------------------ */
 .tinyd6.sheet.td-sheet-noir,
 .tinyd6.sheet.npc.td-sheet-noir {
@@ -193,7 +193,7 @@
     --td-danger: #a34a4a;
     --td-radius: 4px;
     --td-font: "Segoe UI", system-ui, sans-serif;
-    /* Точечный растр — плёночное зерно (паттерн) */
+    /* Точечный растр - плёночное зерно (паттерн) */
     --td-noise: radial-gradient(rgba(255,255,255,.06) 1px, transparent 1.5px);
     --td-noise-size: 12px 12px;
 }
@@ -205,7 +205,7 @@
         radial-gradient(90% 45% at 50% 0%, rgba(216,176,115,.10) 0%, transparent 62%),
         #0d0e11;
 }
-/* Паттерн растра — поверх всего контента листа */
+/* Паттерн растра - поверх всего контента листа */
 .tinyd6.sheet.td-sheet-noir form.actor-sheet::after,
 .tinyd6.sheet.npc.td-sheet-noir form.actor-sheet::after {
     content: ""; position: absolute; inset: 0; pointer-events: none;
@@ -317,7 +317,7 @@
 
 
 /* ------------------------------------------------------------
-   КИБЕРПАНК (V4) — старая школа: неон, сканлайны, терминал
+   КИБЕРПАНК (V4) - старая школа: неон, сканлайны, терминал
    ------------------------------------------------------------ */
 .tinyd6.sheet.td-sheet-cyberpunk,
 .tinyd6.sheet.npc.td-sheet-cyberpunk {
@@ -349,7 +349,7 @@
         #0a0c10;
     background-size: 100% 100%, 26px 26px, 26px 26px, 100% 100%;
 }
-/* Сканлайны — поверх всего контента листа */
+/* Сканлайны - поверх всего контента листа */
 .tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet::after,
 .tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet::after {
     content: ""; position: absolute; inset: 0; pointer-events: none;
@@ -476,20 +476,20 @@
 
 
 /* ------------------------------------------------------------
-   МИНИМАЛИЗМ (V3) — светлый, чистый, строгий
+   МИНИМАЛИЗМ (V3) - светлый, чистый, строгий
    ------------------------------------------------------------ */
 .tinyd6.sheet.td-sheet-minimal,
 .tinyd6.sheet.npc.td-sheet-minimal {
-    --td-bg: #fafaf7;
-    --td-card: #f3f4ef;
-    --td-field: #eef0eb;
-    --td-hover: #e5e8e1;
-    --td-border: #dfe2da;
-    --td-text: #33373f;
-    --td-strong: #1b1e24;
-    --td-muted: #9aa0a8;
-    --td-accent: #4a7db3;
-    --td-accent-soft: #6f9fce;
+    --td-bg: #dedede;
+    --td-card: #d5d5d1;
+    --td-field: #e4e4e0;
+    --td-hover: #c7c7c2;
+    --td-border: #b0b0aa;
+    --td-text: #27272c;
+    --td-strong: #1d1d22;
+    --td-muted: #56565f;
+    --td-accent: #2e6eb0;
+    --td-accent-soft: #4f7fb5;
     --td-ok: #3f7d5a;
     --td-danger: #a34a4a;
     --td-radius: 8px;
@@ -585,7 +585,7 @@
     border-color: var(--td-accent); box-shadow: 0 0 0 1px rgba(74,125,179,.25);
 }
 
-/* Minimal: акцентные кнопки — синяя заливка на hover, красные удаления */
+/* Minimal: акцентные кнопки - синяя заливка на hover, красные удаления */
 .tinyd6.sheet.td-sheet-minimal form.actor-sheet .roll-dice:hover,
 .tinyd6.sheet.npc.td-sheet-minimal form.actor-sheet .roll-dice:hover {
     background: linear-gradient(180deg, var(--td-accent), #35618f);
@@ -605,7 +605,7 @@
 }
 
 /* ============================================================
-   FOLK — декоративные фоны вкладок (perkament)
+   FOLK - декоративные фоны вкладок (perkament)
    ============================================================ */
 .tinyd6.sheet.hero.td-sheet-perkament form.actor-sheet .td-pane { position: relative; }
 .tinyd6.sheet.hero.td-sheet-perkament form.actor-sheet .td-pane > section,
@@ -615,14 +615,14 @@
     position: absolute; z-index: 0; pointer-events: none;
 }
 
-/* Женщина — слева, во всю высоту пэна */
+/* Женщина - слева, во всю высоту пэна */
 .tinyd6.sheet.hero.td-sheet-perkament form.actor-sheet .folk-bg-hero {
     top: 0; bottom: 0; left: -30px;
     height: auto; width: auto; aspect-ratio: 948 / 1612;
     background: url("../assets/folk/maincharacter.png") left center / auto 100% no-repeat;
 }
 
-/* Дракон — справа, во всю высоту пэна */
+/* Дракон - справа, во всю высоту пэна */
 .tinyd6.sheet.hero.td-sheet-perkament form.actor-sheet .folk-bg-dragon {
     top: 0; bottom: 0; right: -30px;
     height: auto; width: auto; aspect-ratio: 1906 / 2016;
@@ -633,8 +633,49 @@
 /* ============================================================
    ТЕМАТИЗАЦИЯ ВНЕШНИХ КАРТОЧЕК И ДИЕРОЛЛЕРА
    Чат-карточки получают класс темы через renderChatMessage,
-   окно Die Roller — через classes в DieRoller.js.
+   окно Die Roller - через classes в DieRoller.js.
    ============================================================ */
+
+/* ---------- Палитра темы на <body> ----------
+   Класс темы вешается на body из tinyd6.js (ready + updateSetting). Нужно,
+   чтобы чат-карточки (атака/проверки/предметы) и любые элементы вне листа
+   наследовали переменные темы даже без класса на самом сообщении, и чтобы
+   «голые» фолбэки (var(--td-*, fallback)) тоже брали палитру темы. */
+body.td-sheet-default {
+    --td-bg: #1b1b1f; --td-card: #24242a; --td-field: #2f2f36;
+    --td-hover: #3b3b44; --td-border: #3b3b44; --td-text: #d7d8dc;
+    --td-strong: #e8e9ea; --td-muted: #8a8b92; --td-accent: #4a52ca;
+    --td-accent-soft: #6ea8fe; --td-ok: #2e7d32; --td-danger: #7a3b3b;
+    --td-radius: 8px;
+}
+body.td-sheet-perkament {
+    --td-bg: #cdbb92; --td-card: #ddcca6; --td-field: #e4d6b2;
+    --td-hover: #d6c494; --td-border: #a08a58; --td-text: #241c0f;
+    --td-strong: #191207; --td-muted: #55472e; --td-accent: #8b2f2f;
+    --td-accent-soft: #a85a3c; --td-ok: #3f6d3a; --td-danger: #8b2f2f;
+    --td-radius: 6px;
+}
+body.td-sheet-noir {
+    --td-bg: #0d0e11; --td-card: #16181d; --td-field: #1b1d23;
+    --td-hover: #262a33; --td-border: #2c2c34; --td-text: #d8d8d8;
+    --td-strong: #ffffff; --td-muted: #8b8f9a; --td-accent: #b0773a;
+    --td-accent-soft: #d3a25e; --td-ok: #2e7d32; --td-danger: #a34a4a;
+    --td-radius: 4px;
+}
+body.td-sheet-minimal {
+    --td-bg: #dedede; --td-card: #d5d5d1; --td-field: #e4e4e0;
+    --td-hover: #c7c7c2; --td-border: #b0b0aa; --td-text: #27272c;
+    --td-strong: #1d1d22; --td-muted: #56565f; --td-accent: #2e6eb0;
+    --td-accent-soft: #4f7fb5; --td-ok: #3f7d5a; --td-danger: #a34a4a;
+    --td-radius: 8px;
+}
+body.td-sheet-cyberpunk {
+    --td-bg: #0a0c10; --td-card: #10141b; --td-field: #151b24;
+    --td-hover: #1d2530; --td-border: #23415a; --td-text: #b8e6e0;
+    --td-strong: #eafffb; --td-muted: #5f8a86; --td-accent: #00e5d0;
+    --td-accent-soft: #ff2e88; --td-ok: #2ee66b; --td-danger: #ff3860;
+    --td-radius: 2px;
+}
 
 /* ---------- Переменные темы для чат-карточек ----------
    Переменные вешаем и на само сообщение (.chat-message.td-sheet-*),
@@ -650,8 +691,8 @@
 .chat-message.td-sheet-perkament,
 .chat-message.td-sheet-perkament .tinyd6 {
     --td-bg: #cdbb92; --td-card: #ddcca6; --td-field: #e4d6b2;
-    --td-hover: #d6c494; --td-border: #a08a58; --td-text: #2e2415;
-    --td-strong: #211a0e; --td-muted: #6b5b3c; --td-accent: #8b2f2f;
+    --td-hover: #d6c494; --td-border: #a08a58; --td-text: #241c0f;
+    --td-strong: #191207; --td-muted: #55472e; --td-accent: #8b2f2f;
     --td-accent-soft: #a85a3c; --td-ok: #3f6d3a; --td-danger: #8b2f2f;
     --td-radius: 6px;
 }
@@ -665,10 +706,10 @@
 }
 .chat-message.td-sheet-minimal,
 .chat-message.td-sheet-minimal .tinyd6 {
-    --td-bg: #f5f5f2; --td-card: #ffffff; --td-field: #ffffff;
-    --td-hover: #eef0ed; --td-border: #dcded9; --td-text: #33373f;
-    --td-strong: #1b1e24; --td-muted: #9aa0a8; --td-accent: #4a7db3;
-    --td-accent-soft: #6f9fce; --td-ok: #3f7d5a; --td-danger: #a34a4a;
+    --td-bg: #dedede; --td-card: #d5d5d1; --td-field: #e4e4e0;
+    --td-hover: #c7c7c2; --td-border: #b0b0aa; --td-text: #27272c;
+    --td-strong: #1d1d22; --td-muted: #56565f; --td-accent: #2e6eb0;
+    --td-accent-soft: #4f7fb5; --td-ok: #3f7d5a; --td-danger: #a34a4a;
     --td-radius: 8px;
 }
 .chat-message.td-sheet-cyberpunk,
@@ -682,7 +723,7 @@
 
 /* ---------- «Задник» сообщения в теме ----------
    Дублируем с body.crlngn-ui: при включённом Carolingian его безслойные
-   правила .chat-message имеют специфичность выше — этот префикс
+   правила .chat-message имеют специфичность выше - этот префикс
    выигрывает каскад (наш CSS безслойным дублем идёт позже). */
 .chat-message.td-sheet-default,
 .chat-message.td-sheet-perkament,
@@ -754,13 +795,28 @@ body.crlngn-ui .chat-message.td-sheet-cyberpunk {
     width: 40px; height: 40px; border-radius: 8px;
     background: var(--td-field); border: 1px solid var(--td-border);
     display: inline-flex; align-items: center; justify-content: center;
-    font-size: 22px; color: var(--td-accent-soft);
+    font-size: 22px; color: var(--td-accent);
 }
 .chat-message .tinyd6.td6-attack-card .attack-card-footer {
     border-top: 1px solid var(--td-border); padding-top: 10px;
     gap: 12px; flex-wrap: wrap;
 }
 .chat-message .tinyd6.td6-attack-card .attack-damage { font-size: 13px; color: var(--td-text); }
+.chat-message .tinyd6.td6-attack-card .attack-damage-value {
+    font-size: 15px; font-weight: 700; color: var(--td-strong); margin-left: 2px;
+}
+.chat-message .tinyd6.td6-attack-card .attack-damage-steps {
+    display: inline-flex; gap: 3px; margin-left: 7px; vertical-align: 1px;
+}
+.chat-message .tinyd6.td6-attack-card .attack-damage-step {
+    width: 20px; height: 20px; padding: 0; line-height: 1;
+    border: 1px solid var(--td-border); border-radius: 5px;
+    background: var(--td-field); color: var(--td-accent);
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: inherit;
+}
+.chat-message .tinyd6.td6-attack-card .attack-damage-step:hover { background: var(--td-accent); color: #fff; }
 .chat-message .tinyd6.td6-attack-card .attack-apply {
     margin-left: auto; background: var(--td-accent); color: #fff;
     border: 0; border-radius: 6px; padding: 7px 14px; cursor: pointer;
@@ -786,6 +842,49 @@ body.crlngn-ui .chat-message.td-sheet-cyberpunk {
     display: inline-flex; align-items: center; gap: 6px;
 }
 .chat-message .tinyd6.td6-attack-card .attack-undo:hover { background: var(--td-hover); }
+.chat-message .tinyd6.td6-attack-card .attack-card-undo { gap: 10px; }
+.chat-message .tinyd6.td6-attack-card .attack-undo-damage {
+    background: var(--td-field); color: var(--td-accent); border: 1px solid var(--td-border);
+    border-radius: 6px; padding: 6px 12px; cursor: pointer;
+    font-family: inherit; font-size: 12px; font-weight: 700;
+    display: inline-flex; align-items: center; gap: 6px;
+}
+.chat-message .tinyd6.td6-attack-card .attack-undo-damage:hover { background: var(--td-hover); }
+
+/* ------- Редакция: «табель» - grid, панель урона в строке кубиков ------- */
+.chat-message .tinyd6.td6-attack-card { display: grid; }
+.chat-message .tinyd6.td6-attack-card .attack-card-center { display: flex; align-items: stretch; gap: 12px; margin: 10px 0; }
+.chat-message .tinyd6.td6-attack-card .attack-card-center .attack-card-roll { flex: 1; min-width: 0; gap: 8px; margin: 0; flex-wrap: wrap; }
+.chat-message .tinyd6.td6-attack-card .attack-card-head .attack-card-portrait {
+    flex: 0 0 44px; margin-right: 10px; border-radius: 6px; object-fit: cover;
+}
+.chat-message .tinyd6.td6-attack-card .attack-card-dmg {
+    flex: 0 0 auto; width: 90px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px; text-align: center; padding: 8px 6px;
+    border-left: 1px solid var(--td-border);
+    border-radius: 0 var(--td-radius) var(--td-radius) 0;
+    background: var(--td-field);
+}
+.chat-message .tinyd6.td6-attack-card .attack-dmg-label {
+    font-size: 9px; text-transform: uppercase; letter-spacing: .16em; color: var(--td-muted);
+}
+.chat-message .tinyd6.td6-attack-card .attack-dmg-number { line-height: 1; }
+.chat-message .tinyd6.td6-attack-card .attack-dmg-number .attack-damage-value {
+    font-size: 30px; font-weight: 800; color: var(--td-accent); margin: 0;
+}
+.chat-message .tinyd6.td6-attack-card .attack-dmg-number .attack-damage-base {
+    font-size: 13px; font-weight: 500; color: var(--td-muted);
+}
+.chat-message .tinyd6.td6-attack-card .attack-card-dmg .attack-damage-steps {
+    display: inline-flex; gap: 4px; margin: 4px 0 0; vertical-align: 0;
+}
+.chat-message .tinyd6.td6-attack-card .attack-card-dmg .attack-damage-step { width: 22px; height: 22px; font-size: 15px; }
+.chat-message .tinyd6.td6-attack-card .attack-card-footer {
+    border-top: 1px solid var(--td-border); padding-top: 10px; gap: 12px; flex-wrap: wrap;
+}
+.chat-message .tinyd6.td6-attack-card .attack-apply { margin-left: auto; }
+.chat-message .tinyd6.td6-attack-card .attack-report { width: 100%; order: 10; font-size: 11.5px; opacity: .9; margin-top: 2px; }
 
 /* ---------- Отчёт о применённом уроне / заглушки ---------- */
 .chat-message .tinyd6.attack-report-chat {
@@ -836,13 +935,13 @@ body.crlngn-ui .chat-message.td-sheet-cyberpunk {
     border: 1px solid var(--td-border); border-radius: var(--td-radius);
     border-top: 0; border-top-left-radius: 0; border-top-right-radius: 0;
 }
-.chat-message .tinyd6.td6-dice-breakdown .fas { color: var(--td-accent-soft); }
+.chat-message .tinyd6.td6-dice-breakdown .fas { color: var(--td-accent); }
 
 /* ---------- Die Roller (окно) ---------- */
 .tinyd6.die-roller.td-sheet-perkament {
     --td-bg: #cdbb92; --td-card: #ddcca6; --td-field: #e4d6b2;
-    --td-hover: #d6c494; --td-border: #a08a58; --td-text: #2e2415;
-    --td-strong: #211a0e; --td-muted: #6b5b3c; --td-accent: #8b2f2f;
+    --td-hover: #d6c494; --td-border: #a08a58; --td-text: #241c0f;
+    --td-strong: #191207; --td-muted: #55472e; --td-accent: #8b2f2f;
     --td-accent-soft: #a85a3c; --td-radius: 6px;
     --dr-bg: var(--td-card);
     --dr-field: var(--td-field);
@@ -868,10 +967,10 @@ body.crlngn-ui .chat-message.td-sheet-cyberpunk {
     --dr-act-spent: rgba(70,70,78,.85);
 }
 .tinyd6.die-roller.td-sheet-minimal {
-    --td-bg: #f5f5f2; --td-card: #ffffff; --td-field: #ffffff;
-    --td-hover: #eef0ed; --td-border: #dcded9; --td-text: #33373f;
-    --td-strong: #1b1e24; --td-muted: #9aa0a8; --td-accent: #4a7db3;
-    --td-accent-soft: #6f9fce; --td-radius: 8px;
+    --td-bg: #dedede; --td-card: #d5d5d1; --td-field: #e4e4e0;
+    --td-hover: #c7c7c2; --td-border: #b0b0aa; --td-text: #27272c;
+    --td-strong: #1d1d22; --td-muted: #56565f; --td-accent: #2e6eb0;
+    --td-accent-soft: #4f7fb5; --td-radius: 8px;
     --dr-bg: var(--td-card);
     --dr-field: var(--td-field);
     --dr-border: var(--td-border);
@@ -983,4 +1082,90 @@ body.crlngn-ui .chat-message.td-sheet-cyberpunk {
 .tinyd6.die-roller.td-sheet-minimal .dr-shapes .actions-btns button.minus:hover,
 .tinyd6.die-roller.td-sheet-cyberpunk .dr-shapes .actions-btns button.minus:hover {
     border-color: var(--td-danger); color: var(--td-danger);
+}
+
+/* ============================================================
+   ЗАЩИТА ДЕКОРА ОТ UI-МОДУЛЕЙ (Cali UI и т.п.)
+   Повышенная специфичность + !important, чтобы сторонние модули
+   не перебивали фоны и паттерны листа.
+   ============================================================ */
+
+/* --- Noir: виньетка + растр --- */
+.tinyd6.sheet.td-sheet-noir form.actor-sheet,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet {
+    background:
+        radial-gradient(120% 90% at 50% 50%, transparent 45%, rgba(0,0,0,.5) 100%),
+        radial-gradient(90% 45% at 50% 0%, rgba(216,176,115,.10) 0%, transparent 62%),
+        #0d0e11 !important;
+}
+.tinyd6.sheet.td-sheet-noir form.actor-sheet::after,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet::after {
+    content: "" !important; position: absolute !important; inset: 0 !important;
+    pointer-events: none !important; z-index: 5 !important;
+    background-image: var(--td-noise) !important;
+    background-size: var(--td-noise-size) !important;
+    opacity: .55 !important;
+}
+.tinyd6.sheet.td-sheet-noir form.actor-sheet .td-hero-head,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .td-hero-head {
+    background:
+        linear-gradient(90deg, #0d0e11 0%, rgba(13,14,17,0) 16%),
+        linear-gradient(90deg, rgba(13,14,17,0) 84%, #0d0e11 100%),
+        linear-gradient(180deg, rgba(13,14,17,0) 0%, rgba(13,14,17,.12) 30%, rgba(13,14,17,.82) 92%, rgba(13,14,17,1) 100%),
+        url("../assets/noir/city.svg") no-repeat center bottom / cover !important;
+}
+.tinyd6.sheet.hero.td-sheet-noir form.actor-sheet .td-tabbody,
+.tinyd6.sheet.npc.td-sheet-noir form.actor-sheet .td-tabbody {
+    background-color: #0d0e11 !important;
+    background-image:
+        radial-gradient(120% 90% at 50% 50%, transparent 45%, rgba(0,0,0,.5) 100%),
+        radial-gradient(90% 45% at 50% 0%, rgba(216,176,115,.10) 0%, transparent 62%) !important;
+}
+
+/* --- Cyberpunk: неоновая дымка + сетка «терминала» --- */
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet {
+    background:
+        radial-gradient(120% 90% at 50% 0%, rgba(0, 229, 208, .07) 0%, transparent 55%),
+        linear-gradient(rgba(0, 229, 208, .03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 229, 208, .03) 1px, transparent 1px),
+        #0a0c10 !important;
+    background-size: 100% 100%, 26px 26px, 26px 26px, 100% 100% !important;
+}
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet::after,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet::after {
+    content: "" !important; position: absolute !important; inset: 0 !important;
+    pointer-events: none !important; z-index: 5 !important;
+    background-image: var(--td-noise) !important;
+    background-size: var(--td-noise-size) !important;
+    opacity: .5 !important;
+}
+.tinyd6.sheet.td-sheet-cyberpunk form.actor-sheet .td-hero-head,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet .td-hero-head {
+    background:
+        linear-gradient(90deg, #0a0c10 0%, rgba(10, 12, 16, 0) 16%),
+        linear-gradient(90deg, rgba(10, 12, 16, 0) 84%, #0a0c10 100%),
+        linear-gradient(180deg, rgba(10, 12, 16, 0) 0%, rgba(10, 12, 16, .12) 30%, rgba(10, 12, 16, .82) 92%, rgba(10, 12, 16, 1) 100%),
+        url("../assets/noir/city.svg") no-repeat center bottom / cover !important;
+}
+.tinyd6.sheet.hero.td-sheet-cyberpunk form.actor-sheet .td-tabbody,
+.tinyd6.sheet.npc.td-sheet-cyberpunk form.actor-sheet .td-tabbody {
+    background-color: #0a0c10 !important;
+    background-image:
+        linear-gradient(rgba(0, 229, 208, .03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 229, 208, .03) 1px, transparent 1px) !important;
+    background-size: 26px 26px, 26px 26px !important;
+}
+
+/* --- Folk (perkament): SVG/PNG задники --- */
+.tinyd6.sheet.hero.td-sheet-perkament form.actor-sheet .folk-bg {
+    position: absolute !important; z-index: 0 !important;
+    display: block !important; pointer-events: none !important;
+}
+.tinyd6.sheet.hero.td-sheet-perkament form.actor-sheet .folk-bg-hero {
+    background: url("../assets/folk/maincharacter.png") left center / auto 100% no-repeat !important;
+}
+.tinyd6.sheet.hero.td-sheet-perkament form.actor-sheet .folk-bg-dragon {
+    background: url("../assets/folk/dragon.svg") right center / auto 100% no-repeat !important;
+    opacity: .4 !important;
 }

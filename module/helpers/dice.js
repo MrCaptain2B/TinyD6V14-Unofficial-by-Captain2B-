@@ -9,7 +9,7 @@ export function isAnimFxEnabled() {
 }
 
 /* Р РµРµСЃС‚СЂ РІСЃРїР»С‹РІР°СЋС‰РёС… С‡РёСЃРµР», РїСЂРёРІСЏР·Р°РЅРЅС‹С… Рє РєРѕРЅРєСЂРµС‚РЅРѕРјСѓ С‚РѕРєРµРЅСѓ-С†РµР»Рё.
- * РљР»СЋС‡ вЂ” id Р°РєС‚С‘СЂР°, Р·РЅР°С‡РµРЅРёРµ вЂ” id С‚РѕРєРµРЅР°, РЅР°Рґ РєРѕС‚РѕСЂС‹Рј РЅР°РґРѕ РїРѕРєР°Р·Р°С‚СЊ С‡РёСЃР»Рѕ.
+ * РљР»СЋС‡ - id Р°РєС‚С‘СЂР°, Р·РЅР°С‡РµРЅРёРµ - id С‚РѕРєРµРЅР°, РЅР°Рґ РєРѕС‚РѕСЂС‹Рј РЅР°РґРѕ РїРѕРєР°Р·Р°С‚СЊ С‡РёСЃР»Рѕ.
  * РќСѓР¶РµРЅ РїРѕС‚РѕРјСѓ, С‡С‚Рѕ РґР»СЏ unlinked NPC Сѓ РІСЃРµС… РєРѕРїРёР№ РѕРґРЅРѕРіРѕ Р°РєС‚С‘СЂР° РѕРґРёРЅР°РєРѕРІС‹Р№
  * actor.id, РїРѕСЌС‚РѕРјСѓ С…СѓРє updateActor СЃР°Рј РЅРµ РјРѕР¶РµС‚ СЂР°Р·Р»РёС‡РёС‚СЊ, РєР°РєРѕР№ РёР· РЅРёС… СЂР°РЅРµРЅ. */
 const PENDING_FLOAT = new Map();
@@ -139,6 +139,19 @@ function _activeArmor(actor) {
     return _equippedArmor(actor).filter(i => (Number(i.system?.armorHp?.value) || 0) > 0);
 }
 
+/* Требуется ли NPC «надеть» оружие перед использованием.
+ * По умолчанию NPC использует всё оружие без экипировки; правило включается
+ * мировой настройкой npcRequireEquipped или персональным полем NPC
+ * (homebrew.requireEquipped: "" - по миру, "on"/"off" - переопределение). */
+export function npcRequiresEquip(actor) {
+    if (actor?.type !== "npc") return false;
+    const override = actor.system?.homebrew?.requireEquipped;
+    if (override === "on") return true;
+    if (override === "off") return false;
+    try { return game.settings.get('tinyd6v14', 'npcRequireEquipped') === true; }
+    catch (err) { return false; }
+}
+
 /* Р­РєРёРїРёСЂРѕРІР°РЅРЅС‹Рµ С‰РёС‚С‹ СЃ РЅРµРЅСѓР»РµРІС‹Рј HP. */
 function _activeShields(actor) {
     const npcAll = actor?.type === "npc";
@@ -178,15 +191,15 @@ async function _reduceArmorHp(actor) {
         await item.update({ "system.armorHp.value": newVal });
         if (breakMsg && newVal <= 0) {
             await ChatMessage.create({
-                speaker: ChatMessage.getSpeaker({ actor }),
+speaker: ChatMessage.getSpeaker({ actor }),
                 content: `<div class="tinyd6">${iconSvg("shield-halved")} ${game.i18n.format("tinyd6.armor.shieldBreak", { name: item.name, actor: actor.name })}</div>`
             });
         }
-        return true;
+        return item;
     }
     // РџРѕС‚РѕРј Р±СЂРѕРЅСЏ
     const active = _activeArmor(actor).filter(i => i.type === "armor");
-    if (!active.length) return false;
+    if (!active.length) return null;
     const item = active[0];
     const current = Number(item.system?.armorHp?.value) || 0;
     const newVal = Math.max(0, current - 1);
@@ -194,17 +207,17 @@ async function _reduceArmorHp(actor) {
     if (breakMsg && newVal <= 0) {
         await ChatMessage.create({
             speaker: ChatMessage.getSpeaker({ actor }),
-            content: `<div class="tinyd6">${iconSvg("shield-halved")} ${game.i18n.format("tinyd6.armor.armorBreak", { name: item.name, actor: actor.name })}</div>`
+content: `<div class="tinyd6">${iconSvg("shield-halved")} ${game.i18n.format("tinyd6.armor.armorBreak", { name: item.name, actor: actor.name })}</div>`
         });
     }
-    return true;
+    return item;
 }
 
 /* РЈСЂРѕРЅ Р°С‚Р°РєРё РїРѕ РєРѕРЅРєСЂРµС‚РЅРѕР№ С†РµР»Рё СЃ СѓС‡С‘С‚РѕРј РµС‘ Р±СЂРѕРЅРё.
  * Р‘СЂРѕРЅСЏ РІ Tiny D6 РІСЃРµРіРґР° Р°РєС‚РёРІРЅР°:
- *  - РµСЃР»Рё СѓСЂРѕРЅ <= DR Р°РєС‚РёРІРЅРѕР№ Р±СЂРѕРЅРё вЂ” СѓСЂРѕРЅ РїРѕР»РЅРѕСЃС‚СЊСЋ РїРѕРіР»РѕС‰С‘РЅ (0),
+ *  - РµСЃР»Рё СѓСЂРѕРЅ <= DR Р°РєС‚РёРІРЅРѕР№ Р±СЂРѕРЅРё - СѓСЂРѕРЅ РїРѕР»РЅРѕСЃС‚СЊСЋ РїРѕРіР»РѕС‰С‘РЅ (0),
  *    РЅРѕ СЃ Р±СЂРѕРЅРё СЃРЅРёРјР°РµС‚СЃСЏ 1 Р·Р°РїР°СЃ РїСЂРѕС‡РЅРѕСЃС‚Рё;
- *  - РµСЃР»Рё СѓСЂРѕРЅ > DR вЂ” С†РµР»СЊ РїРѕР»СѓС‡Р°РµС‚ СѓСЂРѕРЅ - DR, Рё СЃ Р±СЂРѕРЅРё СЃРЅРёРјР°РµС‚СЃСЏ 1 Р·Р°РїР°СЃ;
+ *  - РµСЃР»Рё СѓСЂРѕРЅ > DR - С†РµР»СЊ РїРѕР»СѓС‡Р°РµС‚ СѓСЂРѕРЅ - DR, Рё СЃ Р±СЂРѕРЅРё СЃРЅРёРјР°РµС‚СЃСЏ 1 Р·Р°РїР°СЃ;
  *  - РєРѕРіРґР° Р·Р°РїР°СЃ Р±СЂРѕРЅРё РЅР° РЅСѓР»Рµ, РѕРЅР° РїРµСЂРµСЃС‚Р°С‘С‚ Р·Р°С‰РёС‰Р°С‚СЊ. */
 export function computeDamage(weaponDamage, targetActor) {
     let dmg = Number(weaponDamage) || 1;
@@ -236,8 +249,38 @@ function _diceFace(result) {
  *  - РІР»Р°РґРµР»РµС† РѕР±СѓС‡РµРЅ С‚РёРїСѓ РѕСЂСѓР¶РёСЏ в†’ СЃС‚Р°РЅРґР°СЂС‚ (2d6);
  *  - РЅРµРѕР±СѓС‡РµРЅ в†’ РїРѕРјРµС…Р° (1d6);
  *  - NPC Р±РµР· Р·Р°РїРѕР»РЅРµРЅРЅС‹С… РїСЂРѕС„РёС€РµРЅСЃРё в†’ СЃС‚Р°РЅРґР°СЂС‚.
- * Р’РѕР·РІСЂР°С‰Р°РµС‚ 1 | 2 | 3. РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ С‚РѕР»СЊРєРѕ РєР°Рє В«РїРѕРґСЃРєР°Р·РєР°В» РІ РґРёР°Р»РѕРіРµ вЂ”
+ * Р’РѕР·РІСЂР°С‰Р°РµС‚ 1 | 2 | 3. РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ С‚РѕР»СЊРєРѕ РєР°Рє В«РїРѕРґСЃРєР°Р·РєР°В» РІ РґРёР°Р»РѕРіРµ -
  * РёРіСЂРѕРє РјРѕР¶РµС‚ РІС‹Р±СЂР°С‚СЊ Р»СЋР±РѕР№ СѓСЂРѕРІРµРЅСЊ РІСЂСѓС‡РЅСѓСЋ. */
+/* Мастерство оружия (новая механика слотов мастерства, homebrew.masteredCount):
+ * system.proficiencies.masteredWeapons хранит запятая-разделённый список ID
+ * оружия из директории мира (слоты). Поддерживаем все форматы:
+ *  - новые слоты: "id1,id2,id3";
+ *  - одиночный ID старой механики: "id";
+ *  - legacy-имена через запятую ("Длинный меч,Топорик").
+ * Инвентарная копия оружия у актёра имеет свой id, поэтому сравниваем и по имени
+ * элемента директории (по id) - как это делала старая логика для одного оружия. */
+export function isMasteredWeapon(actor, weapon) {
+    if (!actor || !weapon) return false;
+    const raw = ((actor.system?.proficiencies?.masteredWeapons) || "").trim();
+    if (!raw) return false;
+    const weaponId = (weapon.id || "").toLowerCase();
+    const weaponName = (weapon.name || "").trim().toLowerCase();
+    for (const chunk of raw.split(","))
+    {
+        const entry = chunk.trim();
+        if (!entry) continue;
+        if (entry.toLowerCase() === weaponId) return true;
+        const dirItem = game.items.get(entry);
+        if (dirItem)
+        {
+            if ((dirItem.name || "").trim().toLowerCase() === weaponName) return true;
+            continue;
+        }
+        if (entry.toLowerCase() === weaponName) return true;
+    }
+    return false;
+}
+
 export function suggestAttackDice(actor, weapon) {
     if (!actor || !weapon) return 2;
     if (actor.type === "npc")
@@ -245,27 +288,9 @@ export function suggestAttackDice(actor, weapon) {
         const prof = actor.system?.proficiencies ?? {};
         if (!prof.lightMelee && !prof.heavyMelee && !prof.lightRanged && !prof.heavyRanged && !(prof.masteredWeapons || "").trim())
             return 2;
-    }
+}
 
-    const masteredRaw = (actor.system?.proficiencies?.masteredWeapons || "").trim();
-    // РњР°СЃС‚РµСЂСЃС‚РІРѕ С…СЂР°РЅРёС‚СЃСЏ РєР°Рє ID РѕСЂСѓР¶РёСЏ РёР· РґРёСЂРµРєС‚РѕСЂРёРё РјРёСЂР° (game.items),
-    // РІС‹Р±СЂР°РЅРЅРѕРіРѕ РІ РѕРєРЅРµ (РєРЅРѕРїРєР° РЅР° Р»РёСЃС‚Рµ). РЈ РёРЅРІРµРЅС‚Р°СЂРЅРѕР№ РєРѕРїРёРё РѕСЂСѓР¶РёСЏ СЃРІРѕР№
-    // id, РїРѕСЌС‚РѕРјСѓ СЃСЂР°РІРЅРёРІР°РµРј РїРѕ РёРјРµРЅРё: РёРјСЏ РѕСЂСѓР¶РёСЏ РґРёСЂРµРєС‚РѕСЂРёРё (РїРѕ id) РґРѕР»Р¶РЅРѕ
-    // СЃРѕРІРїР°СЃС‚СЊ СЃ РёРјРµРЅРµРј Р°С‚Р°РєСѓСЋС‰РµРіРѕ РѕСЂСѓР¶РёСЏ. РЎС‚Р°СЂС‹Р№ textbox-С„РѕСЂРјР°С‚ С…СЂР°РЅРёР»
-    // РёРјРµРЅР° С‡РµСЂРµР· Р·Р°РїСЏС‚СѓСЋ вЂ” РјР°С‚С‡РёРј РїРѕ РёРјРµРЅР°Рј РЅР°РїСЂСЏРјСѓСЋ.
-    const weaponName = (weapon.name || "").trim().toLowerCase();
-    const weaponId = (weapon.id || "").toLowerCase();
-    if (weaponId === masteredRaw.toLowerCase()) return 3;
-    // РќРѕРІС‹Р№ С„РѕСЂРјР°С‚: id РѕСЂСѓР¶РёСЏ РґРёСЂРµРєС‚РѕСЂРёРё в†’ Р±РµСЂС‘Рј РµРіРѕ РёРјСЏ.
-    const dirItem = game.items.get(masteredRaw);
-    if (dirItem) {
-        if (dirItem.name.trim().toLowerCase() === weaponName) return 3;
-    }
-    // РЎС‚Р°СЂС‹Р№ С„РѕСЂРјР°С‚: РёРјРµРЅР° С‡РµСЂРµР· Р·Р°РїСЏС‚СѓСЋ.
-    else {
-        const names = masteredRaw.split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
-        if (names.includes(weaponName)) return 3;
-    }
+    if (isMasteredWeapon(actor, weapon)) return 3;
 
     const prof = actor.system?.proficiencies ?? {};
     const type = _weaponProficiencyKey(weapon);
@@ -292,7 +317,7 @@ export function openAttackDialog(actor, weapon) {
     const focusLabel = game.i18n.localize("tinyd6.dice.modifier.focus");
     const marksmanLabel = game.i18n.localize("tinyd6.dice.modifier.marksman");
 
-    // Homerule: TinyD6+ + Auto weapon proficiency вЂ” СЂРµРєРѕРјРµРЅРґСѓРµРјС‹Р№ СѓСЂРѕРІРµРЅСЊ
+    // Homerule: TinyD6+ + Auto weapon proficiency - СЂРµРєРѕРјРµРЅРґСѓРµРјС‹Р№ СѓСЂРѕРІРµРЅСЊ
     // РїРѕРґСЃРІРµС‡РёРІР°РµС‚СЃСЏ РІ РґРёР°Р»РѕРіРµ, РЅРѕ РІСЃРµ РєРЅРѕРїРєРё РѕСЃС‚Р°СЋС‚СЃСЏ Р°РєС‚РёРІРЅС‹РјРё, С‡С‚РѕР±С‹
     // РёРіСЂРѕРє РјРѕРі РїРµСЂРµРѕРїСЂРµРґРµР»РёС‚СЊ РїРѕРґ СЃРёС‚СѓР°С†РёСЋ (РќР Р, Р° РЅРµ Р°РІС‚Рѕ-РёРіСЂР°).
     let suggested = 2;
@@ -303,7 +328,7 @@ export function openAttackDialog(actor, weapon) {
     }
 
     // РљРЅРѕРїРєРё РґРёР°Р»РѕРіР° РІ Foundry v14 РїРѕР»СѓС‡Р°СЋС‚ cssClass РёР· key/default, Р° РЅРµ РёР·
-    // РїРµСЂРµРґР°РЅРЅРѕРіРѕ className вЂ” РїРѕСЌС‚РѕРјСѓ СЂРµРєРѕРјРµРЅРґСѓРµРјСѓСЋ РєРЅРѕРїРєСѓ РїРѕРґСЃРІРµС‡РёРІР°РµРј
+    // РїРµСЂРµРґР°РЅРЅРѕРіРѕ className - РїРѕСЌС‚РѕРјСѓ СЂРµРєРѕРјРµРЅРґСѓРµРјСѓСЋ РєРЅРѕРїРєСѓ РїРѕРґСЃРІРµС‡РёРІР°РµРј
     // РІСЂСѓС‡РЅСѓСЋ С‡РµСЂРµР· render-РєРѕР»Р±СЌРє (РєР»Р°СЃСЃ attack-suggest).
     const suggestButtons = { 1: "disadvantage", 2: "standard", 3: "advantage" };
     const suggestKey = suggestButtons[suggested] ?? null;
@@ -376,25 +401,35 @@ export function openAttackDialog(actor, weapon) {
  * СЂРµРЅРґРµСЂРёС‚ attack-card РІ С‡Р°С‚. РЈСЂРѕРЅ РїСЂРёРјРµРЅСЏРµС‚СЃСЏ РєРЅРѕРїРєРѕР№ РЅР° РєР°СЂС‚РѕС‡РєРµ.
  * dice: 1 = РїРѕРјРµС…Р°, 2 = СЃС‚Р°РЅРґР°СЂС‚, 3 = РїСЂРµРёРјСѓС‰РµСЃС‚РІРѕ.
  * focusAction / marksmanTrait СЃРЅРёР¶Р°СЋС‚ РїРѕСЂРѕРі СѓСЃРїРµС…Р° РЅР° 1 РєР°Р¶РґС‹Р№.
- * Homerule: TinyD6+ вЂ” Сѓ РѕСЂСѓР¶РёСЏ СЃ reload С‚СЂР°С‚РёС‚СЃСЏ 1 Р·Р°СЂСЏРґ (РґР°Р¶Рµ РїСЂРё
+ * Homerule: TinyD6+ - Сѓ РѕСЂСѓР¶РёСЏ СЃ reload С‚СЂР°С‚РёС‚СЃСЏ 1 Р·Р°СЂСЏРґ (РґР°Р¶Рµ РїСЂРё
  * РїСЂРѕРјР°С…Рµ); РїСЂРё 0 Р·Р°СЂСЏРґРѕРІ Р°С‚Р°РєР° Р±Р»РѕРєРёСЂСѓРµС‚СЃСЏ Рё РІ С‡Р°С‚ РёРґС‘С‚ Р·Р°РіР»СѓС€РєР°. */
 export async function performWeaponAttack(actor, weapon, dice = 2, { focusAction = false, marksmanTrait = false } = {}) {
-    const homerule = game.settings.get('tinyd6v14', 'enableTinyD6Plus');
+const homerule = game.settings.get('tinyd6v14', 'enableTinyD6Plus');
     const showNpcMessages = game.settings.get('tinyd6v14', 'showNpcReloadMessages');
     const isNpc = actor?.type === "npc";
+    // Homerule: персональная опция NPC «бесконечные патроны» - заряды не
+    // списываются, пустой магазин невозможен.
+    const infiniteAmmo = isNpc && Boolean(actor?.system?.homebrew?.infiniteAmmo);
 
-    // Homerule: TinyD6+ вЂ” РІС‹РІРµРґРµРЅРЅС‹Р№ РёР· СЃС‚СЂРѕСЏ РїРµСЂСЃРѕРЅР°Р¶ РЅРµ РјРѕР¶РµС‚ Р°С‚Р°РєРѕРІР°С‚СЊ.
-    if (game.settings.get('tinyd6v14', 'enableTinyD6Plus') && isDowned(actor))
+    // Homerule: TinyD6+ - РІС‹РІРµРґРµРЅРЅС‹Р№ РёР· СЃС‚СЂРѕСЏ РїРµСЂСЃРѕРЅР°Р¶ РЅРµ РјРѕР¶РµС‚ Р°С‚Р°РєРѕРІР°С‚СЊ.
+if (game.settings.get('tinyd6v14', 'enableTinyD6Plus') && isDowned(actor))
     {
         ui.notifications.warn(game.i18n.localize("tinyd6.death.cannotAct"));
         return;
     }
 
-    // Homerule: TinyD6+ вЂ” РїСЂРѕРІРµСЂРєР° Р·Р°СЂСЏРґРѕРІ РїРµСЂРµРґ Р°С‚Р°РєРѕР№.
+    // Homerule: режим «NPC должен надеть оружие» - без экипировки атака невозможна.
+    if (isNpc && npcRequiresEquip(actor) && !weapon?.system?.equipped)
+    {
+        ui.notifications.warn(game.i18n.localize("tinyd6.attack.notEquipped"));
+        return;
+    }
+
+    // Homerule: TinyD6+ - РїСЂРѕРІРµСЂРєР° Р·Р°СЂСЏРґРѕРІ РїРµСЂРµРґ Р°С‚Р°РєРѕР№.
     let weaponReload = false;
     let weaponMax = 0;
-    let weaponCharges = 0;
-    if (homerule && weapon?.system?.reload)
+let weaponCharges = 0;
+    if (homerule && weapon?.system?.reload && !infiniteAmmo)
     {
         weaponReload = true;
         weaponMax = Number(weapon.system.uses) || 0;
@@ -438,7 +473,7 @@ export async function performWeaponAttack(actor, weapon, dice = 2, { focusAction
     const targetNames = targets.map(t => t.actor.name).join(", ");
     const results = roll.dice[0].results;
 
-    // Homerule: Crit Advantage-Normal вЂ” РїСЂРё РІС‹РїР°РґРµРЅРёРё РѕРґРёРЅР°РєРѕРІС‹С… 6-РѕРє РЅР° РІСЃРµС…
+    // Homerule: Crit Advantage-Normal - РїСЂРё РІС‹РїР°РґРµРЅРёРё РѕРґРёРЅР°РєРѕРІС‹С… 6-РѕРє РЅР° РІСЃРµС…
     // РєСѓР±Р°С… (2d6 РёР»Рё 3d6 РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ РЅР°СЃС‚СЂРѕР№РєРё) СѓСЂРѕРЅ СѓРґРІР°РёРІР°РµС‚СЃСЏ.
     let isCrit = false;
     const critMode = game.settings.get('tinyd6v14', 'critAdvantage');
@@ -452,11 +487,11 @@ export async function performWeaponAttack(actor, weapon, dice = 2, { focusAction
     }
     // Доп. урон из листа героя (homebrew.damageBonus): плоская прибавка
     // к урону атаки, добавляется и к криту («Урон, добавляемый к любому
-    // случайному броску урона» — настройка на листе персонажа).
+    // случайному броску урона» - настройка на листе персонажа).
     const damageBonus = Number(actor?.system?.homebrew?.damageBonus) || 0;
     const cardDamage = (isCrit ? weaponDamage * 2 : weaponDamage) + damageBonus;
 
-    // Homerule: TinyD6+ вЂ” С‚СЂР°С‚РёРј 1 Р·Р°СЂСЏРґ РїРѕСЃР»Рµ Р±СЂРѕСЃРєР° (Рё РїСЂРё РїСЂРѕРјР°С…Рµ).
+    // Homerule: TinyD6+ - С‚СЂР°С‚РёРј 1 Р·Р°СЂСЏРґ РїРѕСЃР»Рµ Р±СЂРѕСЃРєР° (Рё РїСЂРё РїСЂРѕРјР°С…Рµ).
     let reloadedToEmpty = false;
     if (weaponReload)
     {
@@ -481,7 +516,7 @@ export async function performWeaponAttack(actor, weapon, dice = 2, { focusAction
         weaponDamage,
         faces: results.map(r => _diceFace(r.result)),
         roll,
-        // РљРЅРѕРїРєР° В«Р’РµСЂРЅСѓС‚СЊ СЂРµСЃСѓСЂСЃВ» вЂ” С‚РѕР»СЊРєРѕ Сѓ ranged+reload РѕСЂСѓР¶РёСЏ.
+        // РљРЅРѕРїРєР° В«Р’РµСЂРЅСѓС‚СЊ СЂРµСЃСѓСЂСЃВ» - С‚РѕР»СЊРєРѕ Сѓ ranged+reload РѕСЂСѓР¶РёСЏ.
         showUndoResource: weaponReload,
         weaponId: weapon?.id || "",
         // Р”Р»СЏ РїРѕРёСЃРєР° РѕСЂСѓР¶РёСЏ Сѓ unlinked NPC-С‚РѕРєРµРЅР° (Р°РєС‚С‘СЂ РЅРµ РІ game.actors).
@@ -500,7 +535,7 @@ export async function performWeaponAttack(actor, weapon, dice = 2, { focusAction
 }
 
 /* РќР°С…РѕРґРёС‚ ammo-РіРёСЂ РґР»СЏ РїРµСЂРµР·Р°СЂСЏРґРєРё РѕСЂСѓР¶РёСЏ.
- * РС‰РµС‚ РїРѕ ammoType РѕСЂСѓР¶РёСЏ. Р•СЃР»Рё С‚РёРї РЅРµ Р·Р°РґР°РЅ вЂ” РЅРµ_consumes ammo (РїСЂРѕСЃС‚РѕР№ reset).
+ * РС‰РµС‚ РїРѕ ammoType РѕСЂСѓР¶РёСЏ. Р•СЃР»Рё С‚РёРї РЅРµ Р·Р°РґР°РЅ - РЅРµ_consumes ammo (РїСЂРѕСЃС‚РѕР№ reset).
  * Р’РѕР·РІСЂР°С‰Р°РµС‚ РїРѕРґС…РѕРґСЏС‰РёР№ РїСЂРµРґРјРµС‚ РёР»Рё null. */
 export function findAmmoItem(actor, weapon) {
     if (!weapon?.system?.reload) return null;
@@ -512,9 +547,9 @@ export function findAmmoItem(actor, weapon) {
 }
 
 /* РџРµСЂРµР·Р°СЂСЏРґРєР° РѕСЂСѓР¶РёСЏ СЃ СѓС‡С‘С‚РѕРј ammo-РіРёСЂР°: СЃРїРёСЃС‹РІР°РµС‚ 1 СЂРѕР¶РѕРє Рё Р·Р°РїРѕР»РЅСЏРµС‚
- * РјР°РіР°Р·РёРЅ (charges = uses). Р•СЃР»Рё Сѓ РѕСЂСѓР¶РёСЏ РЅРµС‚ ammoType вЂ” РїСЂРѕСЃС‚РѕР№ reset
+ * РјР°РіР°Р·РёРЅ (charges = uses). Р•СЃР»Рё Сѓ РѕСЂСѓР¶РёСЏ РЅРµС‚ ammoType - РїСЂРѕСЃС‚РѕР№ reset
  * Р±РµР· consumo ammo. Р’РѕР·РІСЂР°С‰Р°РµС‚ { ok, weapon, ammo } РіРґРµ
- * ammo вЂ” РёСЃРїРѕР»СЊР·РѕРІР°РЅРЅС‹Р№ РіРёСЂ Р»РёР±Рѕ null. */
+ * ammo - РёСЃРїРѕР»СЊР·РѕРІР°РЅРЅС‹Р№ РіРёСЂ Р»РёР±Рѕ null. */
 export async function reloadWeapon(actor, weapon, { render = true } = {}) {
     const weaponReload = Boolean(weapon?.system?.reload);
     if (!weaponReload) return { ok: false, weapon, ammo: null, reason: "notReload" };
@@ -582,6 +617,38 @@ export function formatHealFormula(formula) {
     return s;
 }
 
+/* Парсинг поля «резист/уязвимость к урону» (homebrew.damageResist):
+ *  - число с минусом ("-1") - уязвимость: цель получает +N к урону;
+ *  - число/плюс ("1", "+2") - резист: −N к итоговому урону;
+ *  - формула кубов ("2d3", "1d2+1", "d6-1") - бросок резиста при применении.
+ * Отличие от parseHealFormula: отрицательные числа не обрезаются. */
+function parseResistFormula(raw) {
+    const f = String(raw ?? "").trim().toLowerCase().replace(/[−-]/g, "-");
+    if (!f) return null;
+    const diceMatch = f.match(/^(\d+)?d(\d+)([+-]\d+)?$/);
+    if (diceMatch) {
+        const n = Math.max(1, parseInt(diceMatch[1]) || 1);
+        const sides = Math.max(1, parseInt(diceMatch[2]) || 1);
+        const bonus = diceMatch[3] ? parseInt(diceMatch[3]) : 0;
+        return { kind: "dice", n, sides, bonus };
+    }
+    const fixed = Number(f);
+    if (Number.isFinite(fixed) && f !== "") return { kind: "fixed", value: fixed };
+    return null;
+}
+
+/* Текущий резист/уязвимость цели: фиксированное число как есть, формула
+ * кидается заново при каждом применении урона. Положительное - резист,
+ * отрицательное - уязвимость (+N к урону), 0 - нет эффекта. */
+export async function rollDamageResist(actor) {
+    const parsed = parseResistFormula(actor?.system?.homebrew?.damageResist);
+    if (!parsed) return 0;
+    if (parsed.kind === "fixed") return parsed.value;
+    const formula = `${parsed.n}d${parsed.sides}${parsed.bonus ? (parsed.bonus > 0 ? "+" : "") + parsed.bonus : ""}`;
+    const roll = await new Roll(formula, {}).evaluate();
+    return Number(roll.total) || 0;
+}
+
 /* РљСѓР±РёРєРё С„РѕСЂРјСѓР»С‹ Р»РµС‡РµРЅРёСЏ РґР»СЏ РєР°СЂС‚РѕС‡РєРё РІ С‡Р°С‚Рµ: СЃРїРёСЃРѕРє { face, result }.
  * Р”Р»СЏ С„РёРєСЃР° РІРѕР·РІСЂР°С‰Р°РµС‚ РѕРґРёРЅ СЌР»РµРјРµРЅС‚ Р±РµР· РіСЂР°РЅРё РєСѓР±Р°. */
 function _healRollFaces(parsed) {
@@ -591,7 +658,7 @@ function _healRollFaces(parsed) {
     return faces;
 }
 
-/* РњРѕР¶РµС‚ Р»Рё С‚РµРєСѓС‰РёР№ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РјРµРЅСЏС‚СЊ Р°РєС‚С‘СЂР° (РёРіСЂРѕРєРё вЂ” С‚РѕР»СЊРєРѕ СЃРІРѕРёС…, GM вЂ” РІСЃРµС…). */
+/* РњРѕР¶РµС‚ Р»Рё С‚РµРєСѓС‰РёР№ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РјРµРЅСЏС‚СЊ Р°РєС‚С‘СЂР° (РёРіСЂРѕРєРё - С‚РѕР»СЊРєРѕ СЃРІРѕРёС…, GM - РІСЃРµС…). */
 function _canEditActor(target) {
     if (game.user?.isGM) return true;
     try { return Boolean(target?.testUserPermission?.(game.user, CONST.DOCUMENT_PERMISSION_LEVELS.OWNER)); }
@@ -607,8 +674,8 @@ function _jsonAttr(value) {
 
 /* РџСЂРёРјРµРЅСЏРµС‚ heal-РіРёСЂ Рє С†РµР»Рё: Р±СЂРѕСЃР°РµС‚ С„РѕСЂРјСѓР»Сѓ (РµСЃР»Рё РєСѓР±РѕРІР°СЏ), РІРѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµС‚
  * HP (РЅРµ РІС‹С€Рµ max), СЃРїРёСЃС‹РІР°РµС‚ 1 С€С‚. Рё РїРѕСЃС‚РёС‚ РєР°СЂС‚РѕС‡РєСѓ РІ С‡Р°С‚. Р•СЃР»Рё Сѓ С‚РµРєСѓС‰РµРіРѕ
- * РёРіСЂРѕРєР° РЅРµС‚ РїСЂР°РІ РЅР° С†РµР»СЊ вЂ” РїСЂРёРјРµРЅСЏРµС‚ С‡РµСЂРµР· GM-РїСЂРѕРєСЃРё (socketlib, РЅР°СЃС‚СЂРѕР№РєР°
- * enableHealStabProxy), Р° РµСЃР»Рё РїСЂРѕРєСЃРё РЅРµРґРѕСЃС‚СѓРїРµРЅ вЂ” РїРѕСЃС‚РёС‚ РєР°СЂС‚РѕС‡РєСѓ-РїРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ
+ * РёРіСЂРѕРєР° РЅРµС‚ РїСЂР°РІ РЅР° С†РµР»СЊ - РїСЂРёРјРµРЅСЏРµС‚ С‡РµСЂРµР· GM-РїСЂРѕРєСЃРё (socketlib, РЅР°СЃС‚СЂРѕР№РєР°
+ * enableHealStabProxy), Р° РµСЃР»Рё РїСЂРѕРєСЃРё РЅРµРґРѕСЃС‚СѓРїРµРЅ - РїРѕСЃС‚РёС‚ РєР°СЂС‚РѕС‡РєСѓ-РїРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ
  * РґР»СЏ GM. Р’РѕР·РІСЂР°С‰Р°РµС‚ { ok, reason, healed, applied, target, item, needConfirm }. */
 export async function useHealItem(healer, healItem, target, { showForNpc = false, healerRef = null, targetRef = null } = {}) {
     const homerule = game.settings.get('tinyd6v14', 'enableTinyD6Plus');
@@ -644,8 +711,8 @@ export async function useHealItem(healer, healItem, target, { showForNpc = false
     }
     healed = Math.max(0, Math.floor(healed));
 
-    // Р¦РµР»СЊ С‡СѓР¶Р°СЏ Рё Сѓ РёРіСЂРѕРєР° РЅРµС‚ РїСЂР°РІ вЂ” РїСЂРёРјРµРЅСЏРµРј С‡РµСЂРµР· GM-РїСЂРѕРєСЃРё (socketlib),
-    // РµСЃР»Рё РІРєР»СЋС‡РµРЅР° РЅР°СЃС‚СЂРѕР№РєР° enableHealStabProxy. РРЅР°С‡Рµ вЂ” fallback РЅР°
+    // Р¦РµР»СЊ С‡СѓР¶Р°СЏ Рё Сѓ РёРіСЂРѕРєР° РЅРµС‚ РїСЂР°РІ - РїСЂРёРјРµРЅСЏРµРј С‡РµСЂРµР· GM-РїСЂРѕРєСЃРё (socketlib),
+    // РµСЃР»Рё РІРєР»СЋС‡РµРЅР° РЅР°СЃС‚СЂРѕР№РєР° enableHealStabProxy. РРЅР°С‡Рµ - fallback РЅР°
     // РєР°СЂС‚РѕС‡РєСѓ-РїРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ, РєРѕС‚РѕСЂСѓСЋ РїСЂРёРјРµРЅСЏРµС‚ РІР»Р°РґРµР»РµС†/GM РІСЂСѓС‡РЅСѓСЋ.
     if (!_canEditActor(target))
     {
@@ -709,7 +776,7 @@ export async function postHealConfirmation(healer, healItem, target, { healerRef
         data-heal-item-id="${healItem.id}"
         data-healed="${healed}">
         <div class="death-mini-body">
-            <span class="death-mini-title">${game.i18n.localize("tinyd6.heal.confirmTitle")} вЂ” <b>${healItem.name}</b></span>
+            <span class="death-mini-title">${game.i18n.localize("tinyd6.heal.confirmTitle")} - <b>${healItem.name}</b></span>
             <span class="death-mini-sub"><b>${healer.name}</b> ${game.i18n.localize("tinyd6.heal.usesOn")} <b>${target.name}</b>: +${healed} HP (${formula || ""})</span>
             ${facesHtml ? `<div class="death-mini-rolls">${facesHtml}</div>` : ""}
             <button type="button" class="heal-apply" data-action="confirm-heal">
@@ -725,7 +792,7 @@ export async function postHealConfirmation(healer, healItem, target, { healerRef
 }
 
 /* РџСЂРёРјРµРЅСЏРµС‚ РїРѕРґС‚РІРµСЂР¶РґС‘РЅРЅС‹Р№ GM С…РёР»: СЃРїРёСЃС‹РІР°РµС‚ Р·Р°СЂСЏРґ РіРёСЂР° Рё HP С†РµР»Рё.
- * Р Р°Р±РѕС‚Р°РµС‚ РїРѕ СЂРµС„РµСЂРµРЅСЃР°Рј (healerRef/targetRef) вЂ” РІС‹Р·С‹РІР°РµС‚ Рё GM-РєРЅРѕРїРєР°
+ * Р Р°Р±РѕС‚Р°РµС‚ РїРѕ СЂРµС„РµСЂРµРЅСЃР°Рј (healerRef/targetRef) - РІС‹Р·С‹РІР°РµС‚ Рё GM-РєРЅРѕРїРєР°
  * РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ, Рё socket-РѕР±СЂР°Р±РѕС‚С‡РёРє (GM-РїСЂРѕРєСЃРё). */
 export async function applyHealRefs({ healerRef, targetRef, healItemId, healed }) {
     if (!healerRef || !targetRef || !healItemId) return null;
@@ -792,7 +859,7 @@ export async function postHealMessage(healer, healItem, target, { applied, heale
 
     const content = `<div class="tinyd6 death-mini heal-mini">
         <div class="death-mini-body">
-            <span class="death-mini-title">${game.i18n.localize("tinyd6.heal.heal")} вЂ” <b>${healItem.name}</b></span>
+            <span class="death-mini-title">${game.i18n.localize("tinyd6.heal.heal")} - <b>${healItem.name}</b></span>
             <span class="death-mini-sub"><b>${healer.name}</b> ${game.i18n.localize("tinyd6.heal.usesOn")} <b>${target.name}</b>: +${applied} HP (${formula || ""})${wastage}</span>
         </div>
     </div>`;
@@ -811,7 +878,7 @@ export function findHealItem(actor, itemId) {
  * РљР°Р¶РґР°СЏ С†РµР»СЊ РёРґРµРЅС‚РёС„РёС†РёСЂСѓРµС‚СЃСЏ РїРѕ (sceneId, tokenId): СѓСЂРѕРЅ РёРґС‘С‚ РёРјРµРЅРЅРѕ
  * СЌС‚РѕРјСѓ С‚РѕРєРµРЅСѓ, РїРѕСЌС‚РѕРјСѓ РґР»СЏ unlinked NPC-С‚РѕРєРµРЅРѕРІ HP РјРµРЅСЏРµС‚СЃСЏ С‚РѕР»СЊРєРѕ Сѓ
  * РєРѕРЅРєСЂРµС‚РЅРѕР№ РєРѕРїРёРё, Р° РЅРµ Сѓ С€Р°Р±Р»РѕРЅР° РІ РґРёСЂРµРєС‚РѕСЂРёРё.
- * Р•СЃР»Рё Сѓ РёРіСЂРѕРєР° РЅРµС‚ РїСЂР°РІ РЅР° С†РµР»СЊ (С‡СѓР¶РѕР№ РіРµСЂРѕР№) вЂ” HP РЅРµ РјРµРЅСЏРµС‚СЃСЏ,
+ * Р•СЃР»Рё Сѓ РёРіСЂРѕРєР° РЅРµС‚ РїСЂР°РІ РЅР° С†РµР»СЊ (С‡СѓР¶РѕР№ РіРµСЂРѕР№) - HP РЅРµ РјРµРЅСЏРµС‚СЃСЏ,
  * РЅРѕ СѓСЂРѕРЅ РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ РІ `reported`, С‡С‚РѕР±С‹ РІС‹РІРµСЃС‚Рё РµРіРѕ РІ С‡Р°С‚. */
 export async function applyAttackDamage({ actorId, targetIds, damage, isCrit = false }) {
     const applied = [];
@@ -841,21 +908,26 @@ export async function applyAttackDamage({ actorId, targetIds, damage, isCrit = f
 
         if (!targetActor) continue;
 
-        const finalDamage = computeDamage(damage, targetActor);
+        const armorDamage = computeDamage(damage, targetActor);
 
-        // РРіСЂРѕРє РјРѕР¶РµС‚ РјРµРЅСЏС‚СЊ С‚РѕР»СЊРєРѕ СЃРІРѕРёС… Р°РєС‚РѕСЂРѕРІ; GM вЂ” РІСЃРµС….
+        // Резист/уязвимость цели (homebrew.damageResist): вычитается из урона
+        // ПОСЛЕ брони, т.е. влияет только на здоровье.
+        const resistVal = await rollDamageResist(targetActor);
+        const finalDamage = Math.max(0, armorDamage - resistVal);
+
+        // РРіСЂРѕРє РјРѕР¶РµС‚ РјРµРЅСЏС‚СЊ С‚РѕР»СЊРєРѕ СЃРІРѕРёС… Р°РєС‚РѕСЂРѕРІ; GM - РІСЃРµС….
         // Р”Р»СЏ С‚РѕРєРµРЅР° РїСЂР°РІР° Р±РµСЂС‘Рј РёР· С‚РѕРєРµРЅР° (РІР°Р¶РЅРѕ РґР»СЏ unlinked РєРѕРїРёР№).
         const canApply = game.user.isGM || (targetToken ? targetToken.isOwner : targetActor.testUserPermission(game.user, CONST.DOCUMENT_PERMISSION_LEVELS.OWNER));
         if (!canApply)
         {
             // Р§СѓР¶Р°СЏ С†РµР»СЊ: РїСЂРёРјРµРЅСЏРµРј С‡РµСЂРµР· GM-РїСЂРѕРєСЃРё (socketlib, РЅР°СЃС‚СЂРѕР№РєР°
-            // enablePlayerDamageProxy), РёРЅР°С‡Рµ вЂ” С‚РѕР»СЊРєРѕ РѕС‚С‡РёС‚С‹РІР°РµРјСЃСЏ.
+            // enablePlayerDamageProxy), РёРЅР°С‡Рµ - С‚РѕР»СЊРєРѕ РѕС‚С‡РёС‚С‹РІР°РµРјСЃСЏ.
             proxyTargets.push({ ref, name: targetActor.name, finalDamage });
             continue;
         }
 
         // Р‘Р»РѕРє Р±СЂРѕРЅРё: СЃРµСЂРѕРµ РІСЃРїР»С‹РІР°СЋС‰РµРµ С‡РёСЃР»Рѕ РїРѕРіР»РѕС‰С‘РЅРЅРѕРіРѕ СѓСЂРѕРЅР° (DR).
-        const absorbed = Math.max(0, Number(damage) - finalDamage);
+        const absorbed = Math.max(0, Number(damage) - armorDamage);
         if (absorbed > 0 && isAnimFxEnabled())
         {
             const refTokenId = targetToken?.id ?? ref?.tokenId ?? null;
@@ -886,10 +958,17 @@ export async function applyAttackDamage({ actorId, targetIds, damage, isCrit = f
         await targetActor.update({ "system.wounds.value": newValue });
 
         // РЎРЅСЏС‚СЊ 1 Р·Р°РїР°СЃ РїСЂРѕС‡РЅРѕСЃС‚Рё Р±СЂРѕРЅРё (РµСЃР»Рё РѕРЅР° Р±С‹Р»Р° Рё Р·Р°С‰РёС‚РёР»Р°/РїРѕСЃС‚СЂР°РґР°Р»Р°).
-        const hadArmor = _actorArmorTotal(targetActor) > 0;
-        if (hadArmor) await _reduceArmorHp(targetActor);
+const hadArmor = _actorArmorTotal(targetActor) > 0;
+        const dentedItem = hadArmor ? await _reduceArmorHp(targetActor) : null;
 
-        applied.push({ name: targetActor.name, damage: finalDamage });
+        applied.push({
+            name: targetActor.name,
+            damage: finalDamage,
+            resist: resistVal > 0 ? resistVal : 0,
+            actorId: targetActor.id,
+            ref: { sceneId: ref?.sceneId ?? null, tokenId: ref?.tokenId ?? null },
+            armorItemId: dentedItem?.id ?? null
+        });
     }
 
     // Р§СѓР¶РёРµ С†РµР»Рё: GM-РїСЂРѕРєСЃРё РїСЂРёРјРµРЅСЏРµС‚ РёС… СѓСЂРѕРЅ Р·Р° РёРіСЂРѕРєР°.
@@ -911,16 +990,63 @@ export async function applyAttackDamage({ actorId, targetIds, damage, isCrit = f
 
     broadcastFx(fxEvents);
 
-    return { applied, reported };
+return { applied, reported };
+}
+
+/* Откат применённого урона: возвращает HP (и прочность брони, если она
+ * «зазубрилась») всем целям атаки. Вызывается кнопкой «Откат урона» на
+ * карточке атаки (только GM). Опирается на сохранённые числа
+ * applyAttackDamage, а не на повторный бросок (резист/броня не
+ * пересчитываются). Если HP после отката снова > 0 - общий хук
+ * updateActor сам снимет состояние смерти. */
+export async function undoAttackDamage(applied = []) {
+    const restored = [];
+    for (const entry of applied)
+    {
+        const t = entry?.ref ?? null;
+        let targetActor = null;
+        if (t && t.tokenId)
+        {
+            const scene = game.scenes.get(t.sceneId);
+            targetActor = scene?.tokens.get(t.tokenId)?.actor ?? null;
+        }
+        if (!targetActor && entry?.actorId) targetActor = game.actors.get(entry.actorId);
+        if (!targetActor) continue;
+
+        const current = Number(targetActor.system?.wounds?.value) || 0;
+        const max = Number(targetActor.system?.wounds?.max) || current;
+        const amount = Math.min(Math.max(0, Number(entry.damage) || 0), Math.max(0, max - current));
+        if (amount > 0)
+        {
+            await targetActor.update({ "system.wounds.value": current + amount });
+        }
+
+        if (entry?.armorItemId)
+        {
+            const item = targetActor.items.get(entry.armorItemId);
+            if (item?.system?.armorHp)
+            {
+                const cur = Number(item.system.armorHp.value) || 0;
+                const armorMax = Number(item.system.armorHp.max) || cur;
+                if (cur < armorMax)
+                {
+                    await item.update({ "system.armorHp.value": Math.min(armorMax, cur + 1) }, { render: false });
+                }
+            }
+        }
+
+        restored.push({ name: targetActor.name, amount });
+    }
+    return restored;
 }
 
 /* Р’СЃРїР»С‹РІР°СЋС‰РµРµ С‡РёСЃР»Рѕ СѓСЂРѕРЅР°/Р»РµС‡РµРЅРёСЏ РЅР°Рґ С‚РѕРєРµРЅРѕРј (Р°РЅРёРјР°С†РёСЏ .float-num РІ css).
  * РЎРѕР·РґР°С‘Рј .float-num РІ document.body: CSS Р°РЅРёРјРёСЂСѓРµС‚ РїРѕРґСЉС‘Рј Рё Р·Р°С‚СѓС…Р°РЅРёРµ,
- * JS СЃР°Рј СѓРґР°Р»СЏРµС‚ СЌР»РµРјРµРЅС‚ РїРѕСЃР»Рµ Р·Р°РІРµСЂС€РµРЅРёСЏ. РџРѕР·РёС†РёСЏ вЂ” client viewport
+ * JS СЃР°Рј СѓРґР°Р»СЏРµС‚ СЌР»РµРјРµРЅС‚ РїРѕСЃР»Рµ Р·Р°РІРµСЂС€РµРЅРёСЏ. РџРѕР·РёС†РёСЏ - client viewport
  * РєРѕРѕСЂРґРёРЅР°С‚С‹, С‡СѓС‚СЊ РІС‹С€Рµ С†РµРЅС‚СЂР° С‚РѕРєРµРЅР° */
 export function spawnFloatingNumber(token, actor, text, type = "dmg", { html = false } = {}) {
     try {
-        // Р•СЃР»Рё РїРµСЂРµРґР°РЅ С‚РѕРєРµРЅ вЂ” РёСЃРїРѕР»СЊР·СѓРµРј РµРіРѕ; РёРЅР°С‡Рµ (РїСЂР°РІРєР° HP РЅР° Р»РёСЃС‚Рµ,
+        // Р•СЃР»Рё РїРµСЂРµРґР°РЅ С‚РѕРєРµРЅ - РёСЃРїРѕР»СЊР·СѓРµРј РµРіРѕ; РёРЅР°С‡Рµ (РїСЂР°РІРєР° HP РЅР° Р»РёСЃС‚Рµ,
         // Р±РµР· РїСЂРёРІСЏР·РєРё Рє РєРѕРЅРєСЂРµС‚РЅРѕР№ РєРѕРїРёРё) РёС‰РµРј РЅР° СЃС†РµРЅРµ РїРѕ Р°РєС‚С‘СЂСѓ.
         const matches = [];
         if (token)
@@ -931,9 +1057,9 @@ export function spawnFloatingNumber(token, actor, text, type = "dmg", { html = f
         else
         {
             const list = game.canvas?.scene && canvas.tokens ? canvas.tokens.placeables : [];
-            // РЎРЅР°С‡Р°Р»Р° С‚РѕС‡РЅРѕРµ СЃРѕРІРїР°РґРµРЅРёРµ РїРѕ СЌРєР·РµРјРїР»СЏСЂСѓ (linked-С‚РѕРєРµРЅС‹: t.actor вЂ”
+            // РЎРЅР°С‡Р°Р»Р° С‚РѕС‡РЅРѕРµ СЃРѕРІРїР°РґРµРЅРёРµ РїРѕ СЌРєР·РµРјРїР»СЏСЂСѓ (linked-С‚РѕРєРµРЅС‹: t.actor -
             // С‚РѕС‚ Р¶Рµ РѕР±СЉРµРєС‚, С‡С‚Рѕ Рё Р°РєС‚С‘СЂ). Р•СЃР»Рё СЌРєР·РµРјРїР»СЏСЂ РЅРµ СЃРѕРІРїР°Р» РЅРё Сѓ РєРѕРіРѕ,
-            // РЅРѕ СЃРѕРІРїР°Р» id вЂ” РїРѕРєР°Р·С‹РІР°РµРј РўРћР›Р¬РљРћ РµСЃР»Рё С‚Р°РєР°СЏ РєРѕРїРёСЏ РѕРґРЅР° (РёРЅР°С‡Рµ
+            // РЅРѕ СЃРѕРІРїР°Р» id - РїРѕРєР°Р·С‹РІР°РµРј РўРћР›Р¬РљРћ РµСЃР»Рё С‚Р°РєР°СЏ РєРѕРїРёСЏ РѕРґРЅР° (РёРЅР°С‡Рµ
             // РґР»СЏ unlinked NPC-РєРѕРїРёР№ С‡РёСЃР»Рѕ РІСЃРїР»С‹Р»Рѕ Р±С‹ РЅР°Рґ РІСЃРµРјРё СЃСЂР°Р·Сѓ).
             for (const t of list) {
                 if (t.actor === actor) matches.push(t);
@@ -956,7 +1082,7 @@ export function spawnFloatingNumber(token, actor, text, type = "dmg", { html = f
 }
 
 /* Р’СЃРїС‹С€РєР° РЅР°Рґ С‚РѕРєРµРЅРѕРј (СѓСЂРѕРЅ/Р»РµС‡РµРЅРёРµ/РєСЂРёС‚/СЃРјРµСЂС‚СЊ). РЎРѕР·РґР°С‘С‚ .fx-flash
- * РІ body РїРѕРІРµСЂС… С‚РѕРєРµРЅР°. РџРѕР·РёС†РёСЏ вЂ” client viewport РєРѕРѕСЂРґРёРЅР°С‚С‹. */
+ * РІ body РїРѕРІРµСЂС… С‚РѕРєРµРЅР°. РџРѕР·РёС†РёСЏ - client viewport РєРѕРѕСЂРґРёРЅР°С‚С‹. */
 export function spawnTokenFlash(token, type = "dmg") {
     try {
         if (!isAnimFxEnabled()) return;
@@ -978,7 +1104,7 @@ export function spawnTokenFlash(token, type = "dmg") {
     }
 }
 
-/* Р—Р°С‚РµРјРЅРµРЅРёРµ С‚РѕРєРµРЅР° РїСЂРё СЃРјРµСЂС‚Рё. РЎРѕР·РґР°С‘С‚ .fx-death РїРѕРІРµСЂС… С‚РѕРєРµРЅР°. */
+/* Р-Р°С‚РµРјРЅРµРЅРёРµ С‚РѕРєРµРЅР° РїСЂРё СЃРјРµСЂС‚Рё. РЎРѕР·РґР°С‘С‚ .fx-death РїРѕРІРµСЂС… С‚РѕРєРµРЅР°. */
 export function spawnTokenDeath(token) {
     try {
         if (!isAnimFxEnabled()) return;

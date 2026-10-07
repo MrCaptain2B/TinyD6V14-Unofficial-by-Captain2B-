@@ -1,8 +1,8 @@
 <div class="tinyd6 td6-attack-card" data-attack-id="{{attackId}}" data-actor-id="{{actorId}}" data-actor-name="{{actorName}}" data-targets='{{targetIds}}' data-damage="{{damage}}" data-is-crit="{{isCrit}}" data-attacker-token='{{attackerToken}}'>
     <div class="attack-card-head d-flex align-items-start">
-        <img src="{{actorImg}}" alt="{{actorName}}" width="36" height="36" class="align-middle mr-2"/>
-        <div class="w-100">
-            <h3 class="attack-card-name m-0">{{actorName}} — {{weaponName}}</h3>
+        <img src="{{actorImg}}" alt="{{actorName}}" width="44" height="44" class="align-middle attack-card-portrait"/>
+        <div class="attack-card-meta w-100">
+            <h3 class="attack-card-name m-0">{{actorName}} - {{weaponName}}</h3>
             <div class="attack-card-sub">
                 {{#if isHit}}
                     <span class="attack-hit">{{localize "tinyd6.attack.hit"}}</span>
@@ -16,36 +16,45 @@
             </div>
         </div>
     </div>
-    <div class="attack-card-roll d-flex align-items-center">
-        {{#each faces as |face id|}}
-            <span class="attack-die"><i class="fas {{face}}"></i></span>
-        {{/each}}
+    <div class="attack-card-center">
+        <div class="attack-card-roll d-flex align-items-center">
+            {{#each faces as |face id|}}
+                <span class="attack-die"><i class="fas {{face}}"></i></span>
+            {{/each}}
+        </div>
+        {{#if isHit}}
+        <div class="attack-card-dmg">
+            <div class="attack-dmg-label">{{localize "tinyd6.attack.damage"}}</div>
+            <div class="attack-dmg-number">
+                {{#if isCrit}}
+                    <s class="attack-damage-base">{{weaponDamage}}</s>
+                {{/if}}
+                <b class="attack-damage-value">{{damage}}</b>
+            </div>
+            <span class="attack-damage-steps">
+                <button type="button" class="attack-damage-step" data-action="adjust-damage" data-step="-1" title="Понизить урон">−</button>
+                <button type="button" class="attack-damage-step" data-action="adjust-damage" data-step="1" title="Повысить урон">+</button>
+            </span>
+        </div>
+        {{/if}}
     </div>
     {{#if ranOut}}
     <div class="attack-card-ranout">{{localize "tinyd6.reload.ranOut"}}</div>
     {{/if}}
     {{#if isHit}}
-        <div class="attack-card-footer d-flex align-items-center">
-            <span class="attack-damage">{{localize "tinyd6.attack.damage"}}:
-                {{#if isCrit}}
-                    <s class="attack-damage-base">{{weaponDamage}}</s>
-                {{/if}}
-                <b>{{damage}}</b>
-            </span>
-            {{#if hasTargets}}
-                <button type="button" class="attack-apply" data-action="apply-attack">
-                    <i class="fas fa-crosshairs"></i>
-                    {{localize "tinyd6.attack.applyDamage"}}
-                </button>
-            {{/if}}
-        </div>
+    <div class="attack-card-footer d-flex align-items-center">
+        {{#if hasTargets}}
+        <button type="button" class="attack-apply" data-action="apply-attack">
+            <i class="fas fa-crosshairs"></i>{{localize "tinyd6.attack.applyDamage"}}
+        </button>
+        {{/if}}
+    </div>
     {{/if}}
     {{#if showUndoResource}}
-        <div class="attack-card-undo d-flex align-items-center">
-            <button type="button" class="attack-undo" data-action="undo-resource" data-weapon-id="{{weaponId}}">
-                <i class="fas fa-undo"></i>
-                {{localize "tinyd6.reload.undoResource"}}
-            </button>
-        </div>
+    <div class="attack-card-undo d-flex align-items-center">
+        <button type="button" class="attack-undo" data-action="undo-resource" data-weapon-id="{{weaponId}}">
+            <i class="fas fa-undo"></i>{{localize "tinyd6.reload.undoResource"}}
+        </button>
+    </div>
     {{/if}}
 </div>

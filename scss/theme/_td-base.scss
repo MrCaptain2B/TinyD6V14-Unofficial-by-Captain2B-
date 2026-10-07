@@ -23,7 +23,7 @@
 .tiny-cthulhu.die-roller button{background:#2f2f36;color:#d7d8dc;border:1px solid #3b3b44}
 .tiny-cthulhu.die-roller button:hover{background:#3b3b44;color:#fff}
 .tinyd6.die-roller .die-roller-collapsed{background:#2f2f36;color:#d7d8dc}
-.tinyd6.td6-dice-breakdown{background-color:#24242a;color:#d7d8dc;border:1px solid #3b3b44;border-radius:4px}
+.tinyd6.td6-dice-breakdown{background:var(--td-card,#24242a);color:var(--td-text,#d7d8dc);border:1px solid var(--td-border,#3b3b44);border-radius:4px}
 .tinyd6.td6-roll-result{color:#e8e9ea;border-radius:4px}
 .tinyd6.td6-roll-result.bg-success{background-color:#2e7d32;color:#fff}
 .tinyd6.td6-roll-result.bg-danger{background-color:#8a6d1a;color:#fff}

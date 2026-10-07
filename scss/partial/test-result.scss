@@ -1,10 +1,15 @@
 &.td6-dice-breakdown
 {
-  background-color: $theme-card-bg;
-  color: $theme-text;
-  border: 1px solid $theme-border;
+  background: var(--td-card, $theme-card-bg);
+  color: var(--td-text, $theme-text);
+  border: 1px solid var(--td-border, $theme-border);
   border-radius: 4px;
   padding: toRem(8px) toRem(16px);
+}
+
+&.td6-dice-breakdown .fas
+{
+  color: var(--td-accent);
 }
 
 &.td6-roll-result

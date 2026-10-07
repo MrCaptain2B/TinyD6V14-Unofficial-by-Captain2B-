@@ -1,0 +1,218 @@
+/* ============================================================
+   Tiny D6 — weapon-sheet-v2: полностью автономный шаблон.
+   Префикс ws-* (weapon-sheet), НЕ наследует Foundry .sheet-header
+   и НЕ зависит от core-правил для .app.sheet.
+   Три колонки: ws-core (200px) | ws-dock (132px) | ws-body (flex).
+   ============================================================ */
+
+/* ─── Внешний фрейм: form замыкает всю высоту окна ─── */
+.weapon-sheet-v2 {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: var(--td-font, "Signika", "Segoe UI", system-ui, sans-serif);
+    font-size: 13px;
+    color: var(--td-text, #d7d8dc);
+    background: var(--td-bg, #1b1b1f);
+    overflow: hidden;
+}
+
+/* ─── Шапка: иконка + имя ( standalone, НЕ Foundry .sheet-header ) ─── */
+.weapon-sheet-v2 .ws-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px 8px;
+    border-bottom: 1px solid var(--td-border, #3b3b44);
+    flex: 0 0 auto;
+}
+
+.weapon-sheet-v2 .ws-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 8px;
+    border: 1px solid var(--td-border, #3b3b44);
+    background: var(--td-field, #2f2f36);
+    object-fit: contain;
+    flex: 0 0 64px;
+    cursor: pointer;
+}
+
+.weapon-sheet-v2 .ws-name {
+    flex: 1;
+    min-width: 0;
+    height: 48px;
+    line-height: 48px;
+    margin: 0;
+    padding: 0 8px;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--td-strong, #e8e9ea);
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid transparent;
+    outline: none;
+    font-family: inherit;
+}
+.weapon-sheet-v2 .ws-name:focus {
+    background: var(--td-field, #2f2f36);
+    border-bottom-color: var(--td-accent, #4a52ca);
+}
+
+/* ─── Три колонки ─── */
+.weapon-sheet-v2 .ws-layout {
+    display: flex;
+    align-items: stretch;
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* ─── Левая колонка: характеристики ─── */
+.weapon-sheet-v2 .ws-core {
+    flex: 0 0 200px;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 12px 14px;
+    background: color-mix(in srgb, var(--td-card, #24242a) 28%, var(--td-bg, #1b1b1f));
+    border-right: 1px solid var(--td-border, #3b3b44);
+    overflow-y: auto;
+}
+
+.weapon-sheet-v2 .ws-section-title {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    color: var(--td-muted, #8a8b92);
+    padding-bottom: 5px;
+    margin-bottom: 2px;
+    border-bottom: 1px solid var(--td-border, #3b3b44);
+}
+
+.weapon-sheet-v2 .ws-row {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.weapon-sheet-v2 .ws-row-inline {
+    flex-direction: row;
+    align-items: center;
+    gap: 7px;
+}
+
+.weapon-sheet-v2 .ws-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--td-muted, #8a8b92);
+    line-height: 1.2;
+}
+
+.weapon-sheet-v2 .ws-field {
+    width: 100%;
+    padding: 4px 6px;
+    font-size: 13px;
+    color: var(--td-text, #d7d8dc);
+    background: var(--td-field, #2f2f36);
+    border: 1px solid var(--td-border, #3b3b44);
+    border-radius: 3px;
+    box-sizing: border-box;
+    font-family: inherit;
+    outline: none;
+}
+.weapon-sheet-v2 .ws-field:focus {
+    border-color: var(--td-accent-soft, #6ea8fe);
+}
+
+.weapon-sheet-v2 .mb-1 { margin-bottom: 4px; }
+
+.weapon-sheet-v2 .ws-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: var(--td-text, #d7d8dc);
+    cursor: pointer;
+}
+.weapon-sheet-v2 .ws-toggle input {
+    margin: 0;
+    accent-color: var(--td-accent, #4a52ca);
+}
+
+/* ─── Центр: док вкладок ─── */
+.weapon-sheet-v2 .ws-dock {
+    flex: 0 0 132px;
+    width: 132px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 8px 14px 6px;
+    background: color-mix(in srgb, var(--td-card, #24242a) 35%, var(--td-bg, #1b1b1f));
+    border-right: 1px solid var(--td-border, #3b3b44);
+}
+
+.weapon-sheet-v2 .ws-dock-group {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    color: var(--td-muted, #8a8b92);
+    margin: 10px 6px 3px;
+    line-height: 1.2;
+}
+.weapon-sheet-v2 .ws-dock-group:first-child { margin-top: 2px; }
+
+.weapon-sheet-v2 .ws-tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    background: transparent;
+    color: var(--td-muted, #8a8b92);
+    font-size: 13px;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    font-family: inherit;
+    text-align: left;
+    line-height: 1.2;
+    cursor: pointer;
+    box-shadow: none;
+}
+.weapon-sheet-v2 .ws-tab i {
+    width: 16px;
+    flex: 0 0 auto;
+    text-align: center;
+    font-size: 13px;
+}
+.weapon-sheet-v2 .ws-tab:hover {
+    background: var(--td-hover, #3b3b44);
+    color: var(--td-text, #d7d8dc);
+}
+.weapon-sheet-v2 .ws-tab.active {
+    background: color-mix(in srgb, var(--td-accent, #4a52ca) 22%, var(--td-field, #2f2f36));
+    border-color: var(--td-border, #3b3b44);
+    color: var(--td-accent-soft, #6ea8fe);
+    font-weight: 600;
+}
+.weapon-sheet-v2 .ws-tab.active > span { color: var(--td-strong, #e8e9ea); }
+
+/* ─── Правая колонка: содержимое ─── */
+.weapon-sheet-v2 .ws-body {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 12px 14px 14px;
+    overflow-y: auto;
+}
+
+.weapon-sheet-v2 .ws-pane { display: none; }
+.weapon-sheet-v2 .ws-pane.active { display: block; }
+.weapon-sheet-v2 .ws-pane .editor { min-height: 140px; }

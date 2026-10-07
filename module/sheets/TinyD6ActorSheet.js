@@ -46,23 +46,43 @@ export default class TinyD6ActorSheet extends ActorSheet {
         data.config.enableCorruption = game.settings.get('tinyd6v14', 'enableCorruption');
         data.config.advancementMethod = game.settings.get('tinyd6v14', 'enableAdvancement');
         data.config.enableTinyD6Plus = game.settings.get('tinyd6v14', 'enableTinyD6Plus');
+        data.config.dashRefundsAction = game.settings.get('tinyd6v14', 'dashRefundsAction');
+        data.config.enableMovementBudget = game.settings.get('tinyd6v14', 'enableMovementBudget');
         
         data.data.system.owner = this.actor.isOwner;
 
-        // Старые актёры могут не иметь поля actions — подставляем дефолт из настроек.
+        // Старые актёры могут не иметь поля actions - подставляем дефолт из настроек.
         if (!data.data.system.actions)
         {
             const def = Number(game.settings.get('tinyd6v14', 'defaultActions'));
-            data.data.system.actions = { value: 0, max: Number.isNaN(def) ? 1 : Math.max(0, def) };
+            const max = Number.isNaN(def) ? 1 : Math.max(0, def);
+            data.data.system.actions = { value: max, max };
         }
+
+        // Передвижение: персональное homebrew.movement (пусто = мир) либо
+        // мировая настройка movementDefault. Значение хранится в футах; на
+        // канвасе TokenRuler сам переводит его в единицы сцены (метрика).
+        const worldMove = Number(game.settings.get('tinyd6v14', 'movementDefault')) || 0;
+        const rawMove = this.actor.system?.homebrew?.movement;
+        const moveNum = Number(rawMove);
+        const effectiveMove = Number.isFinite(moveNum) && moveNum > 0 ? moveNum : worldMove;
+        data.data.system.movement = {
+            effective: Number.isFinite(effectiveMove) && effectiveMove > 0 ? effectiveMove : 0,
+            homebrew: (rawMove === undefined || rawMove === null) ? "" : String(rawMove),
+            world: worldMove,
+            dashed: Boolean(this.actor.flags["tinyd6v14"]?.dashed),
+            unit: game.settings.get('tinyd6v14', 'movementUnit') === 'm' ? 'm' : 'ft'
+        };
         data.data.system.traits = data.data.items.filter(item => { return item.type === "trait" });
-        // У NPC вся броня и всё оружие всегда считаются экипированными.
+        // У NPC вся броня и всё оружие по умолчанию считаются экипированными.
+        // Режим «надеть оружие» (мир или поле NPC) требует флаг equipped у оружия.
         const npcAll = this.actor.type === "npc";
-        data.data.system.weapons = data.data.items.filter(item => { return item.type === "weapon" && (npcAll || item.system.equipped) });
+        const npcAllWeapons = npcAll && !Dice.npcRequiresEquip(this.actor);
+        data.data.system.weapons = data.data.items.filter(item => { return item.type === "weapon" && (npcAllWeapons || item.system.equipped) });
         data.data.system.armor = data.data.items.filter(item => { return item.type === "armor" && item.system?.group !== "shield" && (npcAll || item.system.equipped) });
         data.data.system.shields = data.data.items.filter(item => { return item.type === "armor" && item.system?.group === "shield" && (npcAll || item.system.equipped) });
 
-        // Мастерство оружия — кнопка открывает окно выбора (в стиле dnd5e).
+        // Мастерство оружия - кнопка открывает окно выбора (в стиле dnd5e).
         // Список оружий собирается из директории мира (game.items), а не из
         // инвентаря актёра. Храним id оружия мира; на листе показываем его имя.
         const masteredId = data.data.system.proficiencies?.masteredWeapons ?? "";
@@ -74,7 +94,7 @@ export default class TinyD6ActorSheet extends ActorSheet {
         data.data.system.nonMoneyGear = data.data.items.filter(item => {
             if (item.type === "trait" || item.type === "heritage") return false;
             if (item.type === "gear" && item.system?.category === "money") return false;
-            if (item.type === "weapon" && (npcAll || item.system.equipped)) return false;
+            if (item.type === "weapon" && (npcAllWeapons || item.system.equipped)) return false;
             if (item.type === "armor" && item.system?.group !== "shield" && (npcAll || item.system.equipped)) return false;
             return true;
         });
@@ -113,6 +133,7 @@ export default class TinyD6ActorSheet extends ActorSheet {
         html.find(".action-meter .act").on('click', this._setCurrentAction.bind(this));
         html.find(".actions-btns .plus").click(this._onActionPlus.bind(this));
         html.find(".actions-btns .minus").click(this._onActionMinus.bind(this));
+        html.find(".dash-btn").click(this._onDashToggle.bind(this));
 
         html.find(".mastered-weapon-picker").click(this._onMasteredWeaponPicker.bind(this));
         html.find(".mastered-slot-clear").click(this._onMasteredSlotClear.bind(this));
@@ -122,6 +143,15 @@ export default class TinyD6ActorSheet extends ActorSheet {
         html.find(".inv-row-btn.delete").click(this._onItemDelete.bind(this));
         html.find(".inv-row-img, .inv-row-name").click(this._onInvRowOpen.bind(this));
         html.find(".inv-section-toggle").click(this._onSectionToggle.bind(this));
+
+        /* Capture-phase listeners ensure item drops are handled anywhere on
+         * the sheet regardless of which tab is active.  Inner elements
+         * (ProseMirror editors, list handlers) can call stopPropagation on
+         * drop/dragover which would prevent the base DragDrop on
+         * .window-content from ever firing.  Capture listeners on the form
+         * itself fire first, before any inner handler. */
+        html[0].addEventListener("dragover", this._onSheetDragOver.bind(this), true);
+        html[0].addEventListener("drop", this._onSheetDrop.bind(this), true);
     }
 
     /* Кнопка «мастерское оружие» открывает окно выбора из директории мира. */
@@ -208,7 +238,7 @@ export default class TinyD6ActorSheet extends ActorSheet {
     }
 
     /* Перезарядка оружия (кнопка ↻): списывает ammo-гир (рожок) и заполняет
-     * магазин до uses. Если ammo-гира нет — предупреждение, заряды не меняются.
+     * магазин до uses. Если ammo-гира нет - предупреждение, заряды не меняются.
      * Для NPC сообщение в чат выводится только если включено в настройках. */
     async _onWeaponReload(event)
     {
@@ -261,7 +291,7 @@ export default class TinyD6ActorSheet extends ActorSheet {
         }
 
         // Heritage (архетип) кидает в чат ДВЕ отдельные секции: описание и
-        // архетип-способность (trait). Для всех остальных предметов — только
+        // архетип-способность (trait). Для всех остальных предметов - только
         // описание, как и раньше.
         const isHeritage = item.type === "heritage";
         const enrich = (text) => text
@@ -337,9 +367,10 @@ export default class TinyD6ActorSheet extends ActorSheet {
         this.element.find(`[data-live="${attr}"]`).text(text);
     }
 
-    /* Трата/возврат действия по клику на фигуру. Считаем по индексу
-     * кликнутой фигуры (как у health-box): клик правее текущего значения
-     * тратит действие, левее — возвращает. */
+    /* Трата/возврат действия по клику на фигуру. value = сколько действий
+     * осталось (доступные ромбы слева). Клик в зоне доступных тратит одно
+     * действие (остаток становится индексом клика), клик в зоне
+     * израсходованных возвращает одно (остаток = индекс + 1). */
     async _setCurrentAction(event)
     {
         event.preventDefault();
@@ -351,29 +382,29 @@ export default class TinyD6ActorSheet extends ActorSheet {
         const current = parseInt(this.actor.system.actions?.value ?? 0);
 
         let newValue;
-        if (index >= current)
+        if (index < current)
         {
-            newValue = Math.min(max, index + 1);
+            newValue = Math.max(0, index);
         }
         else
         {
-            newValue = Math.max(0, index);
+            newValue = Math.min(max, index + 1);
         }
         if (newValue === current) return;
 
         await this.actor.update({ "system.actions.value": newValue }, { render: false });
-        boxes.each((i, el) => { el.classList.toggle("spent", i < newValue); el.classList.toggle("avail", i >= newValue); });
+        boxes.each((i, el) => { el.classList.toggle("spent", i >= newValue); el.classList.toggle("avail", i < newValue); el.classList.toggle("last-avail", i === newValue - 1); });
     }
 
-    /* Если у актёра ещё нет поля actions (старые актёры до введения виджета) —
+    /* Если у актёра ещё нет поля actions (старые актёры до введения виджета) -
      * инициализируем его значением из настроек мира, чтобы счёт начинался
-     * с дефолта системы, а не с 0. */
+     * с дефолта системы, а не с 0. value означает «сколько действий есть». */
     async _ensureActions()
     {
         if (this.actor.system.actions) return;
         const def = Number(game.settings.get('tinyd6v14', 'defaultActions'));
         const max = Number.isNaN(def) ? 1 : Math.max(0, def);
-        await this.actor.update({ "system.actions": { value: 0, max } }, { render: false });
+        await this.actor.update({ "system.actions": { value: max, max } }, { render: false });
     }
 
     /* Увеличить максимум действий (+1) для владельца. */
@@ -398,8 +429,8 @@ export default class TinyD6ActorSheet extends ActorSheet {
     }
 
     /* Синхронизирует отрисованные фигуры с текущим значением после изменения
-     * максимума: если фигур стало больше/меньше — перерисовываем лист, иначе
-     * только переключаем классы. */
+     * максимума: если фигур стало больше/меньше - перерисовываем лист, иначе
+     * только переключаем классы (avail слева = доступные, spent справа). */
     _syncActionBoxes()
     {
         const max = parseInt(this.actor.system.actions?.max) || 0;
@@ -409,7 +440,52 @@ export default class TinyD6ActorSheet extends ActorSheet {
             this.render(false);
             return;
         }
-        boxes.each((i, el) => { el.classList.toggle("spent", i < value); el.classList.toggle("avail", i >= value); });
+        boxes.each((i, el) => { el.classList.toggle("avail", i < value); el.classList.toggle("spent", i >= value); el.classList.toggle("last-avail", i === value - 1); });
+    }
+
+    /* Homerule: TinyD6+ - «Рывок» (сверхпередвижение) в механике «Бой».
+     * Рывок всегда стоит 1 действие из счётчика (value - сколько действий
+     * осталось): списывает его и даёт бонус +мировое передвижение к бюджету
+     * (жёлтая зона пути на канвасе). Настройка dashRefundsAction (мир)
+     * управляет только возвратом: если включено, повторное нажатие кнопки
+     * «Рывок» отменяет рывок и возвращает действие; если выключено - просто
+     * выключает рывок без возврата. Флаг храним в flags - там не действует
+     * чистка схемы system. */
+    async _onDashToggle(event)
+    {
+        event.preventDefault();
+        await this._ensureActions();
+        const refund = game.settings.get('tinyd6v14', 'dashRefundsAction');
+        const dashed = Boolean(this.actor.flags["tinyd6v14"]?.dashed);
+
+        if (dashed)
+        {
+            const changes = { "flags.tinyd6v14.dashed": false };
+            if (refund)
+            {
+                const max = parseInt(this.actor.system.actions?.max) || 0;
+                const actions = parseInt(this.actor.system.actions?.value ?? 0) || 0;
+                changes["system.actions.value"] = Math.min(max, actions + 1);
+            }
+            await this.actor.update(changes, { render: false });
+            if (refund) this._syncActionBoxes();
+            this.render(false);
+            return;
+        }
+
+        const actions = parseInt(this.actor.system.actions?.value ?? 0) || 0;
+        if (actions <= 0)
+        {
+            ui.notifications.warn(game.i18n.localize("tinyd6.movement.noActions"));
+            return;
+        }
+
+        await this.actor.update({
+            "flags.tinyd6v14.dashed": true,
+            "system.actions.value": actions - 1
+        }, { render: false });
+        this._syncActionBoxes();
+        this.render(false);
     }
 
     /* Полное восстановление запаса прочности всей экипированной брони
@@ -417,7 +493,10 @@ export default class TinyD6ActorSheet extends ActorSheet {
     async _onArmorRestore(event)
     {
         event.preventDefault();
-        const armorItems = (this.actor.items ?? []).filter(i => i.type === "armor" && i.system?.equipped);
+        // Возможность «спрятать» броню есть только у героев: у NPC вся
+        // броня считается надетой (см. _equippedArmor в dice.js).
+        const npcAll = this.actor.type === "npc";
+        const armorItems = (this.actor.items ?? []).filter(i => i.type === "armor" && (npcAll || i.system?.equipped));
         if (!armorItems.length) return;
 
         // Анимация: крутится только иконка, затем восстанавливаем броню.
@@ -443,7 +522,8 @@ export default class TinyD6ActorSheet extends ActorSheet {
     async _onArmorHpEdit(event)
     {
         const target = Math.max(0, Number(event.currentTarget.value) || 0);
-        const armorItems = (this.actor.items ?? []).filter(i => i.type === "armor" && i.system?.equipped);
+        const npcAll = this.actor.type === "npc";
+        const armorItems = (this.actor.items ?? []).filter(i => i.type === "armor" && (npcAll || i.system?.equipped));
         if (!armorItems.length) { this.render(false); return; }
 
         const current = armorItems.reduce((s, i) => s + (Number(i.system.armorHp?.value) || 0), 0);
@@ -553,8 +633,19 @@ export default class TinyD6ActorSheet extends ActorSheet {
                 this.render(false);
                 return;
             }
+            const raw = input.value;
+            const asNum = Number(raw);
+            // Текстовые поля (формулы вида "2d3", "1d6+2") сохраняем строкой,
+            // числовые - с клампингом по min/max.
+            if (input.type === "text" || (raw.trim() !== "" && Number.isNaN(asNum)))
+            {
+                if (foundry.utils.getProperty(this.actor.system, path) === raw) return;
+                await this.actor.update({ [path]: raw }, { render: false });
+                this.render(false);
+                return;
+            }
             const min = input.min !== undefined && input.min !== "" ? Number(input.min) : 0;
-            let value = Number(input.value);
+            let value = asNum;
             if (Number.isNaN(value)) return;
             if (Number.isFinite(min)) value = Math.max(min, value);
             const max = input.max !== undefined && input.max !== "" ? Number(input.max) : Infinity;
@@ -596,5 +687,30 @@ export default class TinyD6ActorSheet extends ActorSheet {
         const toggle = event.currentTarget;
         const section = toggle.closest(".inv-collapsible");
         if (section) section.classList.toggle("collapsed");
+    }
+
+    /* Capture-phase dragover: allow drop anywhere on the sheet, even when
+     * an inner element (ProseMirror editor) would otherwise call
+     * stopPropagation, preventing the base handler from enabling the drop. */
+    _onSheetDragOver(event)
+    {
+        event.dataTransfer.dropEffect = "copy";
+        event.preventDefault();
+    }
+
+    /* Capture-phase drop: handle Foundry document drops (Item, Folder,
+     * ActiveEffect, Actor) anywhere on the sheet regardless of active tab
+     * or target element.  Non-Foundry drops (plain text into editors,
+     * images, etc.) pass through normally. */
+    async _onSheetDrop(event)
+    {
+        let data;
+        try { data = JSON.parse(event.dataTransfer.getData("text/plain")); }
+        catch { return; }
+        if ( !data?.type ) return;
+        if ( !["Item", "ActiveEffect", "Actor", "Folder"].includes(data.type) ) return;
+        event.preventDefault();
+        event.stopPropagation();
+        return this._onDrop(event);
     }
 }

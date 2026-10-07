@@ -40,7 +40,7 @@ tinyd6.advancementMethods = {
     "xp": "tinyd6.settings.enableAdvancement.choices.xp"
 }
 
-/* Homerule: Crit Advantage-Normal — на каких бросках действует крит
+/* Homerule: Crit Advantage-Normal - на каких бросках действует крит
  * (удвоение урона при выпадении одинаковых 6-ок на всех кубах). */
 tinyd6.critAdvantageModes = {
     off: "tinyd6.settings.critAdvantage.choices.off",
@@ -69,7 +69,7 @@ tinyd6.corruptionTests = {
     standard: "tinyd6.corruptionTests.standard"
 }
 
-/* Homerule: TinyD6+ — категории снаряжения (gear). ammo = патроны/рожки,
+/* Homerule: TinyD6+ - категории снаряжения (gear). ammo = патроны/рожки,
  * которые перезарядка оружия списывает по одному за клик. */
 tinyd6.gearCategories = {
     item: "tinyd6.gear.categories.item",
@@ -77,3 +77,22 @@ tinyd6.gearCategories = {
     heal: "tinyd6.gear.categories.heal",
     money: "tinyd6.gear.categories.money"
 }
+
+/* Homerule: TinyD6+ - передвижение. Значения скорости хранятся в футах;
+ * на канвасе переводятся в единицы сцены (мировая настройка movementUnit
+ * + метрическая сетка сцены). */
+tinyd6.movementUnits = {
+    "ft": "tinyd6.settings.movementUnit.choices.ft",
+    "m": "tinyd6.settings.movementUnit.choices.m"
+}
+
+/* Цвета пути токена: зелёный - в пределах обычного передвижения,
+ * жёлтый - сверхпередвижение (рывок), красный - выходит за бюджет. */
+tinyd6.tokenRulerColors = {
+    normal: 0x33BC4E,
+    dash: 0xF1D836,
+    over: 0xE72124
+}
+
+/* Перевод футов в метры (1 фт = 0.3048 м). */
+tinyd6.feetPerMeter = 1 / 0.3048;
